@@ -3,8 +3,8 @@
 namespace Tofandel;
 
 use Tofandel\Apidae\Shortcodes\Apidae_List;
-use Tofandel\Core\Classes\WP_Plugin;
 use Tofandel\Core\Objects\ReduxConfig;
+use Tofandel\Core\Objects\WP_Plugin;
 
 require_once __DIR__ . '/admin/tgmpa-config.php';
 
