@@ -4,10 +4,7 @@ namespace Tofandel;
 
 use Tofandel\Apidae\Shortcodes\Apidae_List;
 use Tofandel\Core\Classes\WP_Plugin;
-
-use stdClass;
 use Tofandel\Core\Objects\ReduxConfig;
-use WP_Post;
 
 require_once __DIR__ . '/admin/tgmpa-config.php';
 
@@ -147,77 +144,6 @@ class WPlusPlusApidae extends WP_Plugin {
 
 	const FAKEPAGE_URL = 'apiref';
 
-	/**
-	 * Detection de la fausse page pour creer un fausse page de detail d'objet touristique en utilisant le template wordpress en cours
-	 * @global $wp
-	 * @global $wp_query
-	 * @global boolean $fakepage_WP84_detect
-	 *
-	 * @param WP_Post[] $posts
-	 *
-	 * @return WP_Post[]
-	 * @throws \JsonPath\InvalidJsonException
-	 */
-	public static function fakepage_WP84_detect( $posts ) {
-		global $wp, $wp_query, $post, $fakepage_WP84_detect; // used to stop double loading
-		if ( ! $fakepage_WP84_detect && ( is_array( $wp->query_vars ) && self::array_key_exists_r( 'pagename|templatedetailid|oid|typeoi|commune|nom', $wp->query_vars ) && $wp->query_vars['pagename'] == static::FAKEPAGE_URL ) ) {
-			// stop interferring with other $posts arrays on this page (only works if the sidebar is rendered *after* the main page)
-			$fakepage_WP84_detect = true;
-			//charger template
-			$aTemplateDetail = self::getlistdetail( $wp->query_vars['templatedetailid'] );
-			$aTemplateJSON   = count( $aTemplateDetail ) === 1 ? json_decode( $aTemplateDetail[0]['confvalue'], true ) : false;
-			if ( $aTemplateJSON !== false ) {
-				//charger OBT
-				$oJSON = WP84ApidaeReqAPI::getOBT( $wp->query_vars['oid'], $aTemplateJSON['fields'], $aTemplateJSON['locales'], $aTemplateJSON['overload'] );
-				if ( $oJSON !== false ) {
-					// create a fake virtual page
-					//js - css
-					if ( array_key_exists( 'css', $aTemplateJSON ) ) {
-						foreach ( explode( ',', $aTemplateJSON['css'] ) as $k => $cssfl ) {
-							wp_enqueue_style( 'wp84apidaecssdetailtag' . $k, ( strpos( $cssfl, 'http://' ) === 0 || strpos( $cssfl, 'https://' ) === 0 || strpos( $cssfl, '//' ) === 0 ) ? $cssfl : '/' . $cssfl );
-						}
-					}
-					if ( array_key_exists( 'js', $aTemplateJSON ) ) {
-						foreach ( explode( ',', $aTemplateJSON['js'] ) as $k => $jsfl ) {
-							wp_enqueue_script( 'wp84apidaejsdetailtag' . $k, ( strpos( $jsfl, 'http://' ) === 0 || strpos( $jsfl, 'https://' ) === 0 || strpos( $jsfl, '//' ) === 0 ) ? $jsfl : '/' . $jsfl );
-						}
-					}
-					$post              = new stdClass;
-					$post->post_author = 1;
-					$post->post_name   = static::FAKEPAGE_URL;
-					$post->guid        = site_url( static::FAKEPAGE_URL );
-					$post->post_title  = WP84ApidaeTemplate::renderTemplate( $oJSON, $aTemplateJSON['title'] );
-					//$post->post_content = fakepage_chat_render();
-					$post->post_content   = WP84ApidaeTemplate::renderTemplate( $oJSON, $aTemplateJSON['code'] );
-					$post->ID             = 0;
-					$post->post_type      = 'page';
-					$post->post_parent    = 0;
-					$post->post_status    = 'static';
-					$post->comment_status = 'closed';
-					$post->ping_status    = 'open';
-					$post->comment_count  = 0;
-					$post->post_date      = current_time( 'mysql' );
-					$post->post_date_gmt  = current_time( 'mysql', 1 );
-					$posts                = null;
-					$posts[]              = $post;
-					// make wpQuery believe this is a real page too
-					$wp_query->is_page     = true;
-					$wp_query->is_singular = true;
-					$wp_query->is_home     = false;
-					$wp_query->is_archive  = false;
-					$wp_query->is_category = false;
-					unset( $wp_query->query["error"] );
-					$wp_query->query_vars["error"] = "";
-					$wp_query->is_404              = false;
-				}
-			}
-		}
-		if ( ! ( is_array( $wp->query_vars ) && self::array_key_exists_r( 'pagename|templatedetailid|oid|typeoi|commune|nom', $wp->query_vars ) && $wp->query_vars['pagename'] == static::FAKEPAGE_URL ) ) {
-			unset( $_SESSION['wp84apidae_url_list'] );
-		}
-
-		return $posts;
-	}
 
 	public function fix_logo() {
 		echo '<style>.toplevel_page_wplusplus-apidae #redux-header{display: none}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
