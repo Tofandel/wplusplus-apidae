@@ -91,6 +91,54 @@ class WPlusPlusApidae extends WP_Plugin {
 	 */
 	public function actionsAndFilters() {
 		add_action( 'admin_head', [ $this, 'fix_logo' ] );
+		add_action( 'redux/options/tofandel_apidae/saved', [ $this, 'update_templates' ], 10, 2 );
+	}
+
+	public function update_templates( $options, $changed_values ) {
+		/**
+		 * @var \WP_Filesystem_Base $wp_filesystem
+		 */
+		global $wp_filesystem;
+
+		$list_titles   = array();
+		$detail_titles = array();
+
+		if ( ! empty( $changed_values['list-template'] ) ) {
+			foreach ( $changed_values['list-template'] as $list_template ) {
+				foreach ( $list_template['redux_repeater_data'] as $k => $data ) {
+					$title = wpp_slugify( $data['title'] );
+					$i     = '';
+					while ( in_array( $title . $i, $list_titles ) ) {
+						$i ++;
+					}
+					$title         = $title . $i;
+					$list_titles[] = $title;
+					$wp_filesystem->put_contents(
+						__DIR__ . '/templates/list/' . $title . '.twig.html',
+						$list_template['list-code'][ $k ],
+						FS_CHMOD_FILE // predefined mode settings for WP files
+					);
+				}
+			}
+		}
+		if ( ! empty( $changed_values['detail-template'] ) ) {
+			foreach ( $changed_values['detail-template'] as $detail_template ) {
+				foreach ( $detail_template['redux_repeater_data'] as $k => $data ) {
+					$title = wpp_slugify( $data['title'] );
+					$i     = '';
+					while ( in_array( $title . $i, $detail_titles ) ) {
+						$i ++;
+					}
+					$title           = $title . $i;
+					$detail_titles[] = $title;
+					$wp_filesystem->put_contents(
+						__DIR__ . '/templates/list/' . $title . '.twig.html',
+						$detail_template['list-code'][ $k ],
+						FS_CHMOD_FILE // predefined mode settings for WP files
+					);
+				}
+			}
+		}
 	}
 
 	/**
