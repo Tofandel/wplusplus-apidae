@@ -98,14 +98,12 @@ class WPlusPlusApidae extends WP_Plugin {
 	 */
 	public static function uninstall() {
 		parent::uninstall();
+		delete_option( 'tofandel_apidae' );
 
 		global $wpdb;
-		delete_option( 'wp84apidae_params' );
-		delete_option( 'wp84apidae_dureecache' );
 		$table_name = $wpdb->prefix . "wp84apidaeplugin";
 		$sql        = "DROP TABLE $table_name;";
 		$wpdb->query( $sql );
-		wp_clear_scheduled_hook( 'wp84apidae_cacheclear' );
 
 		//soft flush le plugin ne modifie pas le .htaccess
 		flush_rewrite_rules( true );
@@ -132,14 +130,6 @@ class WPlusPlusApidae extends WP_Plugin {
         ) $charset_collate;";
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
-		if ( ! wp_next_scheduled( 'wp84apidae_cacheclear' ) ) {
-			wp_schedule_event( time(), 'hourly', 'wp84apidae_cacheclear' );
-		}
-		if ( version_compare( $GLOBALS['wp_version'], '4.7', '>=' ) && version_compare( phpversion(), '5.6.0', '>=' ) ) {
-			set_transient( 'wp84apidae_msg_status', 'install_success', 5 );
-		} else {
-			set_transient( 'wp84apidae_msg_status', 'version_doubt', 5 );
-		}
 	}
 
 	const FAKEPAGE_URL = 'apiref';
@@ -165,7 +155,6 @@ class WPlusPlusApidae extends WP_Plugin {
 			'allow_sub_menu'      => true,
 			'page_priority'       => '39',
 			'customizer'          => true,
-			//'default_mark'       => ' (default)',
 			'hints'               => array(
 				'icon'          => 'el el-question-sign',
 				'icon_position' => 'right',
@@ -201,17 +190,13 @@ class WPlusPlusApidae extends WP_Plugin {
 			'open_expanded'       => false,
 		) );
 
+		//Todo Doc
 		$r->setHelpTab( array(
 			array(
-				'id'      => 'redux-help-tab-1',
-				'title'   => __( 'Theme Information 1', 'admin_folder' ),
-				'content' => __( '<p>This is the tab content, HTML is allowed.</p>', 'admin_folder' )
+				//'id'      => 'redux-help-tab-1',
+				//'title'   => __( 'Theme Information 1', 'admin_folder' ),
+				//'content' => __( '<p>This is the tab content, HTML is allowed.</p>', 'admin_folder' )
 			),
-			array(
-				'id'      => 'redux-help-tab-2',
-				'title'   => __( 'Theme Information 2', 'admin_folder' ),
-				'content' => __( '<p>This is the tab content, HTML is allowed.</p>', 'admin_folder' )
-			)
 		) );
 
 		$r->setSection( array(
@@ -252,11 +237,13 @@ class WPlusPlusApidae extends WP_Plugin {
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->text_domain ),
 					'icon'         => 'el el-file-edit',
+					'bind-title'   => 'list-name',
 					'fields'       => array(
 						array(
-							'title' => __( 'Template Name', $this->text_domain ),
-							'id'    => 'list-name',
-							'type'  => 'text',
+							'title'    => __( 'Template Name', $this->text_domain ),
+							'id'       => 'list-name',
+							'type'     => 'text',
+							'validate' => 'unique_slug'
 						),
 						array(
 							'title'    => __( 'Template Code', $this->text_domain ),
@@ -280,6 +267,7 @@ class WPlusPlusApidae extends WP_Plugin {
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->text_domain ),
 					'icon'         => 'el el-file-edit',
+					'bind-title'   => 'detail-name',
 					'fields'       => array(
 						array(
 							'title' => __( 'Template Name', $this->text_domain ),
@@ -305,9 +293,16 @@ class WPlusPlusApidae extends WP_Plugin {
 			'icon'   => 'el el-map-marker',
 			'fields' => array(
 				array(
-					'title' => __( 'Api Key', $this->text_domain ),
-					'id'    => 'maps_api_key',
-					'type'  => 'text'
+					'title'   => __( 'Enable google maps', $this->text_domain ),
+					'id'      => 'maps_enable',
+					'type'    => 'switch',
+					'default' => false
+				),
+				array(
+					'title'    => __( 'Api Key', $this->text_domain ),
+					'id'       => 'maps_api_key',
+					'type'     => 'text',
+					'required' => array( 'maps_enable', 'equals', true )
 				)
 			)
 		) );
