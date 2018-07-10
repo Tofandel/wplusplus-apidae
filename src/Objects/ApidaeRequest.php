@@ -16,31 +16,18 @@ class ApidaeRequest {
 	 * @param int $id identifiant de l'objet
 	 * @param array $fields champs retournés
 	 * @param string $locale langues demandées
-	 * @param string $bypass paramètre supplémentaires (prioritaires)
 	 *
-	 * @return array
+	 * @return array|false
 	 */
-	public static function getOBT( $id, $fields, $locale, $bypass ) {
-		$qover = array();
-		if ( $bypass != '' ) {
-			parse_str( $bypass, $qover );
-		}
-		$basepay = json_decode( get_option( 'wp84apidae_params', json_encode( array() ) ), true );
-		$aRK     = array( 'idproj' => 'projetId', 'apikey' => 'apiKey' );
-		$query   = array();
-		foreach ( $basepay as $ky => $vl ) {
-			if ( in_array( $ky, array_keys( $aRK ) ) ) {
-				$query[ $aRK[ $ky ] ] = $vl;
-			} else {
-				$query[ $ky ] = $vl;
-			}
-		}
+	public static function getSingleObject( $id, $fields, $locale ) {
+		global $tofandel_apidae;
+
+		$query = array( 'projetId' => $tofandel_apidae['project_id'], 'apiKey' => $tofandel_apidae['api_key'] );
 		if ( $fields != '' ) {
 			$query['responseFields'] = $fields;
 		}
 		$query['locales'] = $locale;
-		$mquery           = array_merge( $query, $qover );
-		$url              = sprintf( 'https://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/%d/?', $id ) . http_build_query( $mquery );
+		$url              = sprintf( 'https://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/%d/?', $id ) . http_build_query( $query );
 		$md               = md5( $url );
 		$cache            = self::getCache( $md );
 		$isValid          = true;
@@ -49,8 +36,9 @@ class ApidaeRequest {
 			curl_setopt( $ch, CURLOPT_URL, $url );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			curl_setopt( $ch, CURLOPT_TIMEOUT, 15 );
-			$isValid = ! curl_errno( $ch );
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 			$rep     = curl_exec( $ch );
+			$isValid = ! curl_errno( $ch );
 			curl_close( $ch );
 			$rep = json_decode( $rep, true );
 		} else {
@@ -65,10 +53,10 @@ class ApidaeRequest {
 
 				return $rep;
 			} else {
-				return array();
+				return false;
 			}
 		} else {
-			return array();
+			return false;
 		}
 	}
 
@@ -87,27 +75,26 @@ class ApidaeRequest {
 	}
 
 	/**
-	 * exécute une requête de recherche Apidae
+	 * Exécute une requête de recherche Apidae
 	 *
-	 * @param int $cnt nombre de résutats
-	 * @param array $basepay tableau de paramètres
+	 * @param array $query tableau de paramètres
+	 * @param int $count nombre de résutats
 	 * @param int $first indice du premier résultat à retourner
 	 *
-	 * @return array nombre de résultats, string json des résultats
+	 * @return array|false nombre de résultats, string json des résultats
 	 */
-	public static function doReq( $cnt, $basepay, $first = 0 ) {
-		$aRK     = array( 'idproj' => 'projetId', 'apikey' => 'apiKey' );
-		$payload = array();
-		foreach ( $basepay as $ky => $vl ) {
-			if ( in_array( $ky, array_keys( $aRK ) ) ) {
-				$payload[ $aRK[ $ky ] ] = $vl;
-			} else {
-				$payload[ $ky ] = $vl;
-			}
-		}
-		$payload['count'] = $cnt;
-		$payload['first'] = $first;
-		if ( array_key_exists( 'order', $payload ) && $payload['order'] === 'RANDOM' ) {
+	public static function getList( $query, $count, $first = 0 ) {
+		global $tofandel_apidae;
+
+		$def_query = array(
+			'projetId' => $tofandel_apidae['project_id'],
+			'apiKey'   => $tofandel_apidae['api_key'],
+			'count'    => $count,
+			'first'    => $first
+		);
+		$query     = array_merge( $query, $def_query );
+
+		if ( array_key_exists( 'order', $query ) && $query['order'] === 'RANDOM' ) {
 			if ( array_key_exists( 'WP84randomSeed', $_SESSION ) ) {
 				$payload['randomSeed'] = $_SESSION['WP84randomSeed'];
 			} else {
@@ -116,7 +103,7 @@ class ApidaeRequest {
 				$payload['randomSeed']      = $seed;
 			}
 		}
-		$query   = array( 'query' => json_encode( $payload ) );
+		$query   = array( 'query' => json_encode( $query ) );
 		$url     = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?' . http_build_query( $query );
 		$md      = md5( $url );
 		$cache   = self::getCache( $md );
@@ -126,6 +113,7 @@ class ApidaeRequest {
 			curl_setopt( $ch, CURLOPT_URL, $url );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			curl_setopt( $ch, CURLOPT_TIMEOUT, 15 );
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 			$isValid = ! curl_errno( $ch );
 			$rep     = curl_exec( $ch );
 			curl_close( $ch );
@@ -139,16 +127,15 @@ class ApidaeRequest {
 				if ( $cache === false ) {
 					self::setCache( $md, $rep );
 				}
-				$numFound = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
-				$ret      = ( $numFound > 0 ) ? $rep['objetsTouristiques'] : array();
+				$rep['numFound'] = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
 
 				//$nbPages= $numFound>0?ceil($numFound/$cnt):0;
-				return array( $numFound, $ret );
+				return $rep;
 			} else {
-				return array( 0, array() );
+				return false;
 			}
 		} else {
-			return array( 0, array() );
+			return false;
 		}
 	}
 
