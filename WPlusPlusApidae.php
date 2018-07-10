@@ -3,6 +3,7 @@
 namespace Tofandel;
 
 use Tofandel\Apidae\Shortcodes\Apidae_List;
+use Tofandel\Apidae\Shortcodes\Apidae_Map;
 use Tofandel\Core\Objects\ReduxConfig;
 use Tofandel\Core\Objects\WP_Plugin;
 
@@ -38,13 +39,16 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * Add the tables and settings and any plugin variable specifics here
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	public function definitions() {
+
 		//add_shortcode( 'apidaelist', array( $this, 'apidaelist_shorttag' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
 		//add_filter( 'the_posts', array( $this, 'fakepage_WP84_detect' ), - 10 );
-		Apidae_List::__init__();
+		add_action( 'init', function () {
+			Apidae_List::__init__();
+			Apidae_Map::__init__();
+		}, 1 );
 	}
 
 	/**
@@ -181,7 +185,7 @@ class WPlusPlusApidae extends WP_Plugin {
 
 
 	public function fix_logo() {
-		echo '<style>.toplevel_page_wplusplus-apidae #redux-header{display: none}.toplevel_page_wplusplus-apidae .form-table>tbody>tr>th{width: 190px}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
+		echo '<style>.vc_element-icon.dashicons{font-size: 2.5em;background-image: none}.toplevel_page_wplusplus-apidae #redux-header{display: none}.toplevel_page_wplusplus-apidae .form-table>tbody>tr>th{width: 190px}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
 	}
 
 	/**
@@ -245,33 +249,33 @@ class WPlusPlusApidae extends WP_Plugin {
 		) );
 
 		$r->setSection( array(
-			'title'  => __( 'Settings', $this->text_domain ),
+			'title'  => __( 'Settings', $this->getTextDomain() ),
 			'id'     => 'settings',
-			'desc'   => __( 'Apidae API parameters.', $this->text_domain ),
+			'desc'   => __( 'Apidae API parameters.', $this->getTextDomain() ),
 			'icon'   => 'el el-cogs',
 			'fields' => array(
 				array(
-					'title'    => __( 'Project ID', $this->text_domain ),
+					'title'    => __( 'Project ID', $this->getTextDomain() ),
 					'id'       => 'project_id',
 					'type'     => 'text',
 					'validate' => 'numeric'
 				),
 				array(
-					'title' => __( 'Api Key', $this->text_domain ),
+					'title' => __( 'Api Key', $this->getTextDomain() ),
 					'id'    => 'api_key',
 					'type'  => 'text',
 				),
 				array(
-					'title'    => __( 'Cache duration', $this->text_domain ),
+					'title'    => __( 'Cache duration', $this->getTextDomain() ),
 					'id'       => 'cache_duration',
 					'type'     => 'text',
-					'desc'     => __( 'In minutes, 0 = no cache', $this->text_domain ),
+					'desc'     => __( 'In minutes, 0 = no cache', $this->getTextDomain() ),
 					'validate' => 'numeric',
 					'default'  => 1440
 				),
 				array(
-					'title'   => __( 'More request parameters', $this->text_domain ),
-					'desc'    => __( 'Checkout <a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches" rel="noopener" target="_blank">the apidae documentation</a> for more information', $this->text_domain ),
+					'title'   => __( 'More request parameters', $this->getTextDomain() ),
+					'desc'    => __( 'Checkout <a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches" rel="noopener" target="_blank">the apidae documentation</a> for more information', $this->getTextDomain() ),
 					'id'      => 'more_json',
 					'type'    => 'ace_editor',
 					'mode'    => 'json',
@@ -280,26 +284,26 @@ class WPlusPlusApidae extends WP_Plugin {
 			)
 		) );
 		$r->setSection( array(
-			'title'  => __( 'Object List Templates', $this->text_domain ),
+			'title'  => __( 'Object List Templates', $this->getTextDomain() ),
 			'icon'   => 'el el-file-edit',
 			'fields' => array(
 				array(
-					'title'        => __( ' Object List Templates', $this->text_domain ),
+					'title'        => __( ' Object List Templates', $this->getTextDomain() ),
 					'id'           => 'list-template',
 					'type'         => 'repeater',
 					'group_values' => true,
-					'item_name'    => __( 'template', $this->text_domain ),
+					'item_name'    => __( 'template', $this->getTextDomain() ),
 					'icon'         => 'el el-file-edit',
 					'bind-title'   => 'list-name',
 					'fields'       => array(
 						array(
-							'title'    => __( 'Template Name', $this->text_domain ),
+							'title'    => __( 'Template Name', $this->getTextDomain() ),
 							'id'       => 'list-name',
 							'type'     => 'text',
 							'validate' => 'unique_slug'
 						),
 						array(
-							'title'   => __( 'Template Code', $this->text_domain ),
+							'title'   => __( 'Template Code', $this->getTextDomain() ),
 							'id'      => 'list-code',
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
@@ -310,25 +314,25 @@ class WPlusPlusApidae extends WP_Plugin {
 			)
 		) );
 		$r->setSection( array(
-			'title'  => __( 'Single Object Templates', $this->text_domain ),
+			'title'  => __( 'Single Object Templates', $this->getTextDomain() ),
 			'icon'   => 'el el-file-edit',
 			'fields' => array(
 				array(
-					'title'        => __( 'Single Object Templates', $this->text_domain ),
+					'title'        => __( 'Single Object Templates', $this->getTextDomain() ),
 					'id'           => 'detail-template',
 					'type'         => 'repeater',
 					'group_values' => true,
-					'item_name'    => __( 'template', $this->text_domain ),
+					'item_name'    => __( 'template', $this->getTextDomain() ),
 					'icon'         => 'el el-file-edit',
 					'bind-title'   => 'detail-name',
 					'fields'       => array(
 						array(
-							'title' => __( 'Template Name', $this->text_domain ),
+							'title' => __( 'Template Name', $this->getTextDomain() ),
 							'id'    => 'detail-name',
 							'type'  => 'text',
 						),
 						array(
-							'title'   => __( 'Template Code', $this->text_domain ),
+							'title'   => __( 'Template Code', $this->getTextDomain() ),
 							'id'      => 'detail-code',
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
@@ -340,19 +344,19 @@ class WPlusPlusApidae extends WP_Plugin {
 		) );
 
 		$r->setSection( array(
-			'title'  => __( 'Google Maps', $this->text_domain ),
+			'title'  => __( 'Google Maps', $this->getTextDomain() ),
 			'id'     => 'gmaps',
-			'desc'   => __( 'Google Maps API parameters.', $this->text_domain ),
+			'desc'   => __( 'Google Maps API parameters.', $this->getTextDomain() ),
 			'icon'   => 'el el-map-marker',
 			'fields' => array(
 				array(
-					'title'   => __( 'Enable google maps', $this->text_domain ),
+					'title'   => __( 'Enable google maps', $this->getTextDomain() ),
 					'id'      => 'maps_enable',
 					'type'    => 'switch',
 					'default' => false
 				),
 				array(
-					'title'    => __( 'Api Key', $this->text_domain ),
+					'title'    => __( 'Api Key', $this->getTextDomain() ),
 					'id'       => 'maps_api_key',
 					'type'     => 'text',
 					'required' => array( 'maps_enable', 'equals', true )

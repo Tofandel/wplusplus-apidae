@@ -19,16 +19,8 @@ class Apidae_List {
 
 	protected function __init() {
 		global $WPlusPlusApidae;
-		static::$atts = array(
-			'selection_ids' => '',
-			'order'         => 'PERTINENCE',
-			'reverse_order' => '',
-			'search_fields' => 'NOM_DESCRIPTION_CRITERES',
-			'lang'          => 'fr',
-			'more_json'     => ''
-		);
 
-		$templates  = glob( $WPlusPlusApidae->folder( 'template/list/*.twig' ) );
+		$templates  = glob( $WPlusPlusApidae->folder( 'templates/list/*.twig' ) );
 		$file_names = array();
 
 		foreach ( $templates as $template ) {
@@ -37,88 +29,90 @@ class Apidae_List {
 		}
 
 		static::$vc_params = array(
-			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->text_domain ),
-			'description' => __( 'Shortcode to create an apidae list', $WPlusPlusApidae->text_domain ),
-			'name'        => __( 'Apidae List', $WPlusPlusApidae->text_domain ),
+			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
+			'description' => __( 'Shortcode to create an apidae list', $WPlusPlusApidae->getTextDomain() ),
+			'name'        => __( 'Apidae List', $WPlusPlusApidae->getTextDomain() ),
+			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array(
 				array(
 					'type'       => 'dropdown',
-					'heading'    => esc_html__( 'Template', $WPlusPlusApidae->text_domain ),
+					'heading'    => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'template',
 					'value'      => $file_names,
 				),
 				array(
 					'type'        => 'checkbox',
-					'heading'     => esc_html__( 'Paged', $WPlusPlusApidae->text_domain ),
+					'heading'     => esc_html__( 'Paged', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'paged',
-					'description' => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->text_domain ),
+					'description' => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
-					'type'       => 'integer',
-					'heading'    => esc_html__( 'Number of results per page', $WPlusPlusApidae->text_domain ),
+					'type'       => 'number',
+					'heading'    => esc_html__( 'Number of results per page', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'nb_result',
 					'std'        => 30,
-					'dependency' => array( 'element' => 'paged', 'value' => array( true, '1' ) )
+					'dependency' => array( 'element' => 'paged', 'value' => array( 'true', true ) ),
+					'extra'      => array( 'min' => 1, 'max' => 999 )
 				),
 				array(
 					'type'        => 'textfield',
-					'heading'     => esc_html__( 'Selection IDs', $WPlusPlusApidae->text_domain ),
+					'heading'     => esc_html__( 'Selection IDs', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'selection_ids',
-					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->text_domain )
+					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->getTextDomain() )
 				),
 				array(
-					'type'       => 'dropdown',
-					'heading'    => esc_html__( 'Order', $WPlusPlusApidae->text_domain ),
+					'type'       => 'wpp_dropdown',
+					'heading'    => esc_html__( 'Order by', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'order',
 					'value'      => array(
-						'NOM'            => __( 'Name', $WPlusPlusApidae->text_domain ),
-						'IDENTIFIANT'    => __( 'Identifier', $WPlusPlusApidae->text_domain ),
-						'RANDOM'         => __( 'Random', $WPlusPlusApidae->text_domain ),
-						'DATE_OUVERTURE' => __( 'Date', $WPlusPlusApidae->text_domain ),
-						'PERTINENCE'     => __( 'Pertinence', $WPlusPlusApidae->text_domain ),
-						'DISTANCE'       => __( 'Distance', $WPlusPlusApidae->text_domain ),
+						'NOM'            => __( 'Name', $WPlusPlusApidae->getTextDomain() ),
+						'IDENTIFIANT'    => __( 'Identifier', $WPlusPlusApidae->getTextDomain() ),
+						'RANDOM'         => __( 'Random', $WPlusPlusApidae->getTextDomain() ),
+						'DATE_OUVERTURE' => __( 'Date', $WPlusPlusApidae->getTextDomain() ),
+						'PERTINENCE'     => __( 'Pertinence', $WPlusPlusApidae->getTextDomain() ),
+						'DISTANCE'       => __( 'Distance', $WPlusPlusApidae->getTextDomain() ),
 					),
 					"std"        => 'PERTINENCE'
 				),
 				array(
 					'type'        => 'checkbox',
-					'heading'     => esc_html__( 'Reverse Order', $WPlusPlusApidae->text_domain ),
+					'heading'     => esc_html__( 'Reverse Order', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'reverse_order',
-					'description' => __( 'If checked the ordering will be inverted.', $WPlusPlusApidae->text_domain ),
+					'description' => __( 'If checked the ordering will be inverted.', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
-					'type'       => 'dropdown',
-					'heading'    => esc_html__( 'Search Fields', $WPlusPlusApidae->text_domain ),
+					'type'       => 'wpp_dropdown',
+					'heading'    => esc_html__( 'Search Fields', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'search_fields',
 					'value'      => array(
-						'NOM'                      => __( 'Name', $WPlusPlusApidae->text_domain ),
-						'NOM_DESCRIPTION'          => __( 'Name & description', $WPlusPlusApidae->text_domain ),
-						'NOM_DESCRIPTION_CRITERES' => __( 'Name, description & criteria', $WPlusPlusApidae->text_domain ),
+						'NOM'                      => __( 'Name', $WPlusPlusApidae->getTextDomain() ),
+						'NOM_DESCRIPTION'          => __( 'Name & description', $WPlusPlusApidae->getTextDomain() ),
+						'NOM_DESCRIPTION_CRITERES' => __( 'Name, description & criteria', $WPlusPlusApidae->getTextDomain() ),
 					),
 					"std"        => 'NOM_DESCRIPTION_CRITERES'
 				),
 				array(
-					'type'       => 'dropdown',
-					'heading'    => esc_html__( 'Lang', $WPlusPlusApidae->text_domain ),
+					'type'       => 'multidropdown',
+					'heading'    => esc_html__( 'Lang', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'lang',
 					'value'      => array(
-						'fr'    => __( 'French', $WPlusPlusApidae->text_domain ),
-						'en'    => __( 'English', $WPlusPlusApidae->text_domain ),
-						'de'    => __( 'German', $WPlusPlusApidae->text_domain ),
-						'nl'    => __( 'Dutch', $WPlusPlusApidae->text_domain ),
-						'it'    => __( 'Italian', $WPlusPlusApidae->text_domain ),
-						'es'    => __( 'Spanish', $WPlusPlusApidae->text_domain ),
-						'ru'    => __( 'Russian', $WPlusPlusApidae->text_domain ),
-						'zh'    => __( 'Chinese', $WPlusPlusApidae->text_domain ),
-						'pt-br' => __( 'Portuguese (Brazil)', $WPlusPlusApidae->text_domain ),
+						'fr'    => __( 'French', $WPlusPlusApidae->getTextDomain() ),
+						'en'    => __( 'English', $WPlusPlusApidae->getTextDomain() ),
+						'de'    => __( 'German', $WPlusPlusApidae->getTextDomain() ),
+						'nl'    => __( 'Dutch', $WPlusPlusApidae->getTextDomain() ),
+						'it'    => __( 'Italian', $WPlusPlusApidae->getTextDomain() ),
+						'es'    => __( 'Spanish', $WPlusPlusApidae->getTextDomain() ),
+						'ru'    => __( 'Russian', $WPlusPlusApidae->getTextDomain() ),
+						'zh'    => __( 'Chinese', $WPlusPlusApidae->getTextDomain() ),
+						'pt-br' => __( 'Portuguese (Brazil)', $WPlusPlusApidae->getTextDomain() ),
 					),
 					"std"        => 'fr'
 				),
 				array(
 					'type'        => 'textarea',
-					'heading'     => esc_html__( 'More JSON', $WPlusPlusApidae->text_domain ),
+					'heading'     => esc_html__( 'More JSON', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'more_json',
-					'description' => __( 'Additional configuration in JSON (ex: {"territoires": [95938, 156922]})<br><strong style="color:red">This will override any already present parameters!</strong>', $WPlusPlusApidae->text_domain )
+					'description' => __( 'Additional configuration in JSON (ex: {"territoires": [95938, 156922]})<br><strong style="color:red">This will override any already present parameters!</strong>', $WPlusPlusApidae->getTextDomain() )
 				),
 			)
 		);
