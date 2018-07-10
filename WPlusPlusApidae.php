@@ -92,51 +92,48 @@ class WPlusPlusApidae extends WP_Plugin {
 	public function actionsAndFilters() {
 		add_action( 'admin_head', [ $this, 'fix_logo' ] );
 		add_action( 'redux/options/tofandel_apidae/saved', [ $this, 'update_templates' ], 10, 2 );
+		add_action( 'redux/options/tofandel_apidae/import', [ $this, 'update_templates' ], 10, 2 );
+		add_action( 'redux/options/tofandel_apidae/reset', [ $this, 'delete_templates' ], 10, 0 );
 	}
 
-	public function update_templates( $options, $changed_values ) {
-		/**
-		 * @var \WP_Filesystem_Base $wp_filesystem
-		 */
-		global $wp_filesystem;
+	public function delete_templates() {
+		$this->delete( '/templates/list' );
+		$this->delete( '/templates/detail' );
+	}
 
+	public function update_templates( $options, $changed_values = array() ) {
+		if ( empty( $changed_values ) ) {
+			return;
+		}
 		$list_titles   = array();
 		$detail_titles = array();
 
 		if ( ! empty( $changed_values['list-template'] ) ) {
-			foreach ( $changed_values['list-template'] as $list_template ) {
-				foreach ( $list_template['redux_repeater_data'] as $k => $data ) {
-					$title = wpp_slugify( $data['title'] );
-					$i     = '';
-					while ( in_array( $title . $i, $list_titles ) ) {
-						$i ++;
-					}
-					$title         = $title . $i;
-					$list_titles[] = $title;
-					$wp_filesystem->put_contents(
-						__DIR__ . '/templates/list/' . $title . '.twig.html',
-						$list_template['list-code'][ $k ],
-						FS_CHMOD_FILE // predefined mode settings for WP files
-					);
+			$this->delete( '/templates/list' );
+			foreach ( $changed_values['list-template']['redux_repeater_data'] as $k => $data ) {
+				$title = wpp_slugify( $changed_values['list-template']['list-name'][ $k ] );
+				$i     = '';
+				while ( in_array( $title . $i, $list_titles ) ) {
+					$i ++;
 				}
+				$title         = $title . $i;
+				$list_titles[] = $title;
+				$this->mkdir( '/templates/list' );
+				$this->put_contents( '/templates/list/' . $title . '.twig', $changed_values['list-template']['list-code'][ $k ] );
 			}
 		}
 		if ( ! empty( $changed_values['detail-template'] ) ) {
-			foreach ( $changed_values['detail-template'] as $detail_template ) {
-				foreach ( $detail_template['redux_repeater_data'] as $k => $data ) {
-					$title = wpp_slugify( $data['title'] );
-					$i     = '';
-					while ( in_array( $title . $i, $detail_titles ) ) {
-						$i ++;
-					}
-					$title           = $title . $i;
-					$detail_titles[] = $title;
-					$wp_filesystem->put_contents(
-						__DIR__ . '/templates/list/' . $title . '.twig.html',
-						$detail_template['list-code'][ $k ],
-						FS_CHMOD_FILE // predefined mode settings for WP files
-					);
+			$this->delete( '/templates/detail' );
+			foreach ( $changed_values['detail-template']['redux_repeater_data'] as $k => $data ) {
+				$title = wpp_slugify( $changed_values['detail-template']['detail-name'][ $k ] );
+				$i     = '';
+				while ( in_array( $title . $i, $detail_titles ) ) {
+					$i ++;
 				}
+				$title           = $title . $i;
+				$detail_titles[] = $title;
+				$this->mkdir( '/templates/detail' );
+				$this->put_contents( '/templates/detail/' . $title . '.twig', $changed_values['detail-template']['detail-code'][ $k ] );
 			}
 		}
 	}
@@ -184,7 +181,7 @@ class WPlusPlusApidae extends WP_Plugin {
 
 
 	public function fix_logo() {
-		echo '<style>.toplevel_page_wplusplus-apidae #redux-header{display: none}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
+		echo '<style>.toplevel_page_wplusplus-apidae #redux-header{display: none}.toplevel_page_wplusplus-apidae .form-table>tbody>tr>th{width: 190px}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
 	}
 
 	/**
@@ -255,28 +252,36 @@ class WPlusPlusApidae extends WP_Plugin {
 			'fields' => array(
 				array(
 					'title'    => __( 'Project ID', $this->text_domain ),
-					'id'       => 'apidae_project_id',
+					'id'       => 'project_id',
 					'type'     => 'text',
 					'validate' => 'numeric'
 				),
 				array(
 					'title' => __( 'Api Key', $this->text_domain ),
-					'id'    => 'apidae_api_key',
+					'id'    => 'api_key',
 					'type'  => 'text',
 				),
 				array(
 					'title'    => __( 'Cache duration', $this->text_domain ),
-					'id'       => 'apidae_cache_duration',
+					'id'       => 'cache_duration',
 					'type'     => 'text',
 					'desc'     => __( 'In minutes, 0 = no cache', $this->text_domain ),
 					'validate' => 'numeric',
 					'default'  => 1440
+				),
+				array(
+					'title'   => __( 'More request parameters', $this->text_domain ),
+					'desc'    => __( 'Checkout <a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches" rel="noopener" target="_blank">the apidae documentation</a> for more information', $this->text_domain ),
+					'id'      => 'more_json',
+					'type'    => 'ace_editor',
+					'mode'    => 'json',
+					'default' => '{}'
 				)
 			)
 		) );
 		$r->setSection( array(
-			'title'        => __( 'Object List Templates', $this->text_domain ),
-			'icon'         => 'el el-file-edit',
+			'title'  => __( 'Object List Templates', $this->text_domain ),
+			'icon'   => 'el el-file-edit',
 			'fields' => array(
 				array(
 					'title'        => __( ' Object List Templates', $this->text_domain ),
@@ -294,19 +299,19 @@ class WPlusPlusApidae extends WP_Plugin {
 							'validate' => 'unique_slug'
 						),
 						array(
-							'title'    => __( 'Template Code', $this->text_domain ),
-							'id'       => 'list-code',
-							'type'     => 'ace_editor',
-							'mode'     => 'twig',
-							'compiler' => true,
+							'title'   => __( 'Template Code', $this->text_domain ),
+							'id'      => 'list-code',
+							'type'    => 'ace_editor',
+							'mode'    => 'twig',
+							'options' => array( 'minLines' => 20, 'maxLines' => 400 )
 						),
 					),
 				)
 			)
 		) );
 		$r->setSection( array(
-			'title'        => __( 'Single Object Templates', $this->text_domain ),
-			'icon'         => 'el el-file-edit',
+			'title'  => __( 'Single Object Templates', $this->text_domain ),
+			'icon'   => 'el el-file-edit',
 			'fields' => array(
 				array(
 					'title'        => __( 'Single Object Templates', $this->text_domain ),
@@ -323,11 +328,11 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'  => 'text',
 						),
 						array(
-							'title'    => __( 'Template Code', $this->text_domain ),
-							'id'       => 'detail-code',
-							'type'     => 'ace_editor',
-							'mode'     => 'twig',
-							'compiler' => true,
+							'title'   => __( 'Template Code', $this->text_domain ),
+							'id'      => 'detail-code',
+							'type'    => 'ace_editor',
+							'mode'    => 'twig',
+							'options' => array( 'minLines' => 20, 'maxLines' => 400 )
 						),
 					),
 				)
