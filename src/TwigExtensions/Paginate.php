@@ -29,14 +29,17 @@ class Paginate {
 	public static function PaginateFunction( $link, $totalPages, $currentPage, $length = 11, $prev = false, $next = false ) {
 		global $WPlusPlusApidae;
 		$p    = new Paginate( $length );
-		$data = $p->getPaginationData( $currentPage, $totalPages, $length );
+		$data = $p->getPaginationData( $currentPage, $totalPages );
 		$html = "<ul class='pagination'>";
 		if ( ! empty( $prev ) && $currentPage > 1 ) {
-			$html .= "<li class='prev' title='" . __( 'Previous', $WPlusPlusApidae->getTextDomain() ) . "'>" . esc_html( $prev ) . "</li>";
+			$l    = esc_attr( str_replace( '%PAGE%', $currentPage - 1, $link ) );
+			$html .= "<li class='prev' title='" . __( 'Previous', $WPlusPlusApidae->getTextDomain() ) . "'><a href='$l'>" . esc_html( $prev ) . "</a></li>";
+		} elseif ( ! empty( $prev ) && $currentPage == 1 ) {
+			$html .= "<li class='prev disabled'>" . esc_html( $prev ) . "</li>";
 		}
 		foreach ( $data as $datum ) {
 			if ( $datum == - 1 ) {
-				$html .= "<li class='disabled'>&hellip;</li>";
+				$html .= "<li class='hellip disabled'>&hellip;</li>";
 			} elseif ( $datum == $currentPage ) {
 				$html .= "<li class='page-$datum current'>$datum</li>";
 			} elseif ( $datum >= 1 ) {
@@ -45,7 +48,10 @@ class Paginate {
 			}
 		}
 		if ( ! empty( $next ) && $currentPage < $totalPages ) {
-			$html .= "<li class='next' title='" . __( 'Next', $WPlusPlusApidae->getTextDomain() ) . "'>" . esc_html( $next ) . "</li>";
+			$l    = esc_attr( str_replace( '%PAGE%', $currentPage + 1, $link ) );
+			$html .= "<li class='next' title='" . __( 'Next', $WPlusPlusApidae->getTextDomain() ) . "'><a href='$l'>" . esc_html( $next ) . "</a></li>";
+		} elseif ( ! empty( $next ) && $currentPage >= $totalPages ) {
+			$html .= "<li class='next disabled'>" . esc_html( $next ) . "</li>";
 		}
 		$html .= '</ul>';
 

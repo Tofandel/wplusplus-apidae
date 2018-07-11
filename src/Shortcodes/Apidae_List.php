@@ -160,51 +160,75 @@ class Apidae_List implements WP_Shortcode {
 		try {
 			$tpl = new Template( $f );
 		} catch ( \Exception $e ) {
-			error_log( $e->getMessage(), 'error_log' );
+			error_log( $e->getMessage() );
 
 			return WP_DEBUG ? $e->getMessage() : "";
 		}
 
 		$numPerPage = max( 1, intval( $atts['nb_result'] ) );
 
+		$inter = array(
+			'apicritere' => 'criteresQuery',
+			'apisearch'  => 'searchQuery',
+			'datedebut'  => 'dateDebut',
+			'datefin'    => 'dateFin'
+		);
+
+		$searchWords    = get_query_var( 'apisearch', '' );
 		$searchCriteres = get_query_var( 'apicritere', '' ) != '' ? explode( '/', get_query_var( 'apicritere', '' ) ) : array();
-		$full_query     = ( count( $searchCriteres ) > 0 ) ? array( 'apicritere' => implode( '/', $searchCriteres ) ) : array();
+		$page_query     = ( count( $searchCriteres ) > 0 ) ? array( 'apicritere' => implode( '/', $searchCriteres ) ) : array();
+
+		if ( ! empty( $searchWords ) ) {
+			$page_query['apisearch'] = $searchWords;
+		}
 
 		$dateDebut = get_query_var( 'datedebut', '' );
 		$dateFin   = get_query_var( 'datefin', '' );
-		if ( $dateDebut !== '' && self::checkDateFormat( $dateDebut ) ) {
-			$full_query['datedebut'] = $dateDebut;
+
+		if ( ! empty( $dateDebut ) && self::checkDateFormat( $dateDebut ) ) {
+			$page_query['datedebut'] = $dateDebut;
 		}
-		if ( $dateFin !== '' && self::checkDateFormat( $dateFin ) ) {
-			$full_query['datefin'] = $dateFin;
+		if ( ! empty( $dateFin ) && self::checkDateFormat( $dateFin ) ) {
+			$page_query['datefin'] = $dateFin;
 		}
 
 		$currentPage = max( 1, intval( get_query_var( 'page', 1 ) ) );
 
+		$url = '';
 		if ( $atts['paged'] == 'true' ) {
-			$urlNbPage                       = ( $currentPage > 1 ) ? $currentPage . '/' : '';
-			$_SESSION['wpp_apidae_url_list'] = count( $full_query ) > 0 ? add_query_arg( $full_query, get_page_link() . $urlNbPage ) : get_page_link() . $urlNbPage;
+			$url = '%PAGE%/';
+		}
+		$_SESSION['wpp_apidae_url_list'] = $urlScheme = add_query_arg( $page_query, get_page_link() . $url );
+		$url                             = add_query_arg( $page_query, get_page_link() );
+
+		$search_query = array();
+
+		foreach ( $page_query as $k => $v ) {
+			$search_query[ $inter[ $k ] ] = $v;
 		}
 
 		$json = json_decode( $atts['more_json'] ) ?: array();
 
-		$full_query = array_merge( array(
+		$full_query      = array_merge( array(
 			'selectionIds' => ! empty( $atts['selection_ids'] ) ? array_map( 'trim', explode( ',', $atts['selection_ids'] ) ) : array(),
 			'order'        => $atts['order'],
 			'searchFields' => $atts['search_fields'],
 			'asc'          => (bool) $atts['reverse_order'],
-			'locales'      => array( $atts['lang'] )
-		), $full_query, $json );
+			'locales'      => array( $atts['lang'] ),
+			'searchQuery'  => ''
+		), $json );
+		$prevSearchQuery = $full_query['searchQuery'];
 
-		$searchQuery = get_query_var( 'apisearch', '' );
-		if ( ! empty( $searchQuery ) ) {
-			if ( ! empty( $full_query['searchQuery'] ) ) {
-				$full_query['searchQuery'] .= ' ' . $searchQuery;
-			} else {
-				$full_query['searchQuery'] = $searchQuery;
-			}
+		if ( ! empty( $prevSearchQuery ) && ! empty( $searchWords ) ) {
+			$search_query['searchQuery'] = $prevSearchQuery . ' ' . $searchWords;
+		}
+		$prevSearchQuery = $full_query['criteresQuery'];
+
+		if ( ! empty( $prevSearchQuery ) && ! empty( $searchCriteres ) ) {
+			$search_query['searchQuery'] = $prevSearchQuery . ' ' . implode( ' ', $searchCriteres );
 		}
 
+		$full_query = array_merge( $full_query, $search_query );
 
 		if ( $currentPage > 1 && $atts['paged'] ) {
 			$first = intval( $currentPage - 1 ) * $numPerPage;
@@ -221,13 +245,23 @@ class Apidae_List implements WP_Shortcode {
 		$currentPage = min( $totalPages, $currentPage );
 
 		try {
+			global $tofandel_apidae;
 			$content = $tpl->render( array(
-				'apidae'      => $list,
-				'currentPage' => $currentPage,
-				'totalPages'  => $totalPages,
-				'url'         => remove_query_arg( 'page' )
+				'numFound'     => $numFound,
+				'apidae'       => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
+				'currentPage'  => $currentPage,
+				'totalPages'   => $totalPages,
+				'urlScheme'    => $urlScheme,
+				'url'          => $url,
+				'useMaps'      => $tofandel_apidae['maps_enable'],
+				'detailScheme' => '/apidae/%TYPE%/%COMMUNE%/%NOM%/%OID%-%DETAILID%',
+				'siteUrl'      => site_url(),
+				'pageQuery'    => $page_query,
+				'searchWords'  => $searchWords
 			) );
 		} catch ( \Exception $e ) {
+			error_log( $e->getMessage() );
+
 			return WP_DEBUG ? $e->getMessage() : '';
 		}
 

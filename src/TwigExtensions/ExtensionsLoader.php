@@ -15,6 +15,7 @@ class ExtensionsLoader extends \Twig_Extension {
 	 * @return \Twig_Function[]
 	 */
 	public function getFunctions() {
+		$functions                    = array();
 		$functions['pagination_data'] = new \Twig_Function( 'pagination_data', [
 			Paginate::class,
 			'PaginationDataFunction'
@@ -24,5 +25,16 @@ class ExtensionsLoader extends \Twig_Extension {
 		) );
 
 		return $functions;
+	}
+
+
+	/**
+	 * @return \Twig_Filter[]
+	 */
+	public function getFilters() {
+		$filters            = array();
+		$filters['slugify'] = new \Twig_Filter( 'slugify', 'wpp_slugify' );
+
+		return $filters;
 	}
 }
