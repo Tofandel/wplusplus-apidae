@@ -49,6 +49,7 @@ class WPlusPlusApidae extends WP_Plugin {
 			Apidae_List::__init__();
 			Apidae_Map::__init__();
 		}, 1 );
+		add_action( 'redux_not_loaded', '' );
 	}
 
 	/**

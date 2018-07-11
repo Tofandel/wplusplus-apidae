@@ -155,7 +155,6 @@ class Apidae_List implements WP_Shortcode {
 	 * @return string
 	 */
 	public static function shortcode( $atts, $content, $name ) {
-		global $WPlusPlusApidae;
 		$f = 'list/' . basename( $atts['template'] ) . '.twig';
 
 		try {
