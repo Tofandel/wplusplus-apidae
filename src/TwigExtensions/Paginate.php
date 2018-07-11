@@ -39,9 +39,8 @@ class Paginate {
 				$html .= "<li class='disabled'>&hellip;</li>";
 			} elseif ( $datum == $currentPage ) {
 				$html .= "<li class='page-$datum current'>$datum</li>";
-			}
-			if ( $datum >= 1 ) {
-				$l    = str_replace( '%PAGE%', $datum, $link );
+			} elseif ( $datum >= 1 ) {
+				$l    = esc_attr( str_replace( '%PAGE%', $datum, $link ) );
 				$html .= "<li class='page-$datum' title='" . sprintf( __( 'Go to page %d', $WPlusPlusApidae->getTextDomain() ), $datum ) . "'><a href='$l'>$datum</a></li>";
 			}
 		}
@@ -120,7 +119,7 @@ class Paginate {
 	/**
 	 * @inheritdoc
 	 */
-	public function getPaginationData( $totalPages, $currentPage, $omittedPagesIndicator = - 1 ) {
+	public function getPaginationData( $currentPage, $totalPages, $omittedPagesIndicator = - 1 ) {
 		$this->guardPaginationData( $totalPages, $currentPage, $omittedPagesIndicator );
 
 		// If the total number of pages is less than the maximum number of

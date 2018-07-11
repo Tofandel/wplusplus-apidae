@@ -9,8 +9,6 @@
 namespace Tofandel\Apidae\Objects;
 
 
-use Tofandel\WPlusPlusApidae;
-
 class ApidaeRequest {
 	/**
 	 * retourne le détail d'un objet touristique
@@ -161,7 +159,8 @@ class ApidaeRequest {
 	 * @return boolean
 	 */
 	static public function setCache( $md, $content ) {
-		$iCache = WPlusPlusApidae::getReduxOption( 'tofandel_apidae', 'cache_duration' );
+		global $tofandel_apidae;
+		$iCache = $tofandel_apidae['cache_duration'];
 		if ( $iCache == 0 ) {
 			return false;
 		} else {

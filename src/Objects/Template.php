@@ -38,6 +38,10 @@ class Template {
 	 * Template constructor.
 	 *
 	 * @param $file
+	 *
+	 * @throws \Twig_Error_Loader
+	 * @throws \Twig_Error_Runtime
+	 * @throws \Twig_Error_Syntax
 	 */
 	public function __construct( $file ) {
 		$this->template = static::$twig->load( $file );

@@ -19,7 +19,9 @@ class ExtensionsLoader extends \Twig_Extension {
 			Paginate::class,
 			'PaginationDataFunction'
 		] );
-		$functions['paginate']        = new \Twig_Function( 'paginate', [ Paginate::class, 'PaginateFunction' ] );
+		$functions['paginate']        = new \Twig_Function( 'paginate', [ Paginate::class, 'PaginateFunction' ], array(
+			'is_safe' => array( 'html' )
+		) );
 
 		return $functions;
 	}

@@ -49,7 +49,9 @@ class WPlusPlusApidae extends WP_Plugin {
 			Apidae_List::__init__();
 			Apidae_Map::__init__();
 		}, 1 );
-		add_action( 'redux_not_loaded', '' );
+		add_action( 'redux_not_loaded', function () {
+			self::getReduxOption( 'tofandel_apidae' );
+		} );
 	}
 
 	/**
@@ -114,6 +116,7 @@ class WPlusPlusApidae extends WP_Plugin {
 		$detail_titles = array();
 
 		if ( ! empty( $changed_values['list-template'] ) ) {
+			$this->deleteFolder( '/templates/cache' );
 			$this->deleteFolder( '/templates/list' );
 			foreach ( $options['list-template']['redux_repeater_data'] as $k => $data ) {
 				$title = wpp_slugify( $options['list-template']['list-name'][ $k ] );
@@ -128,6 +131,7 @@ class WPlusPlusApidae extends WP_Plugin {
 			}
 		}
 		if ( ! empty( $changed_values['detail-template'] ) ) {
+			$this->deleteFolder( '/templates/cache' );
 			$this->deleteFolder( '/templates/detail' );
 			foreach ( $options['detail-template']['redux_repeater_data'] as $k => $data ) {
 				$title = wpp_slugify( $options['detail-template']['detail-name'][ $k ] );
