@@ -88,7 +88,7 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * @return array
 	 */
 	public static function add_query_vars_filter( $vars ) {
-		$vars[] = "apicritere";
+		$vars[] = "apicategories";
 		$vars[] = "apisearch";
 		$vars[] = "datedebut";
 		$vars[] = "datefin";

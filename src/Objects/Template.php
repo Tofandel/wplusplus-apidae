@@ -27,8 +27,11 @@ class Template {
 		$loader       = new Twig_Loader_Filesystem( $WPlusPlusApidae->folder( 'templates' ) );
 		static::$twig = new Twig_Environment( $loader, array(
 			'cache' => $WPlusPlusApidae->folder( 'templates/cache' ),
-			'debug' => WP_DEBUG,
+			'debug' => (bool) WP_DEBUG,
 		) );
+		if ( WP_DEBUG ) {
+			static::$twig->addExtension( new \Twig_Extension_Debug() );
+		}
 		static::$twig->addExtension( new ExtensionsLoader() );
 	}
 

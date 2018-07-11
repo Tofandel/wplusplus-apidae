@@ -34,6 +34,11 @@ class ExtensionsLoader extends \Twig_Extension {
 	public function getFilters() {
 		$filters            = array();
 		$filters['slugify'] = new \Twig_Filter( 'slugify', 'wpp_slugify' );
+		$filters['t']       = new \Twig_Filter( 't', function ( $str ) {
+			global $WPlusPlusApidae;
+
+			return __( $str, $WPlusPlusApidae->getTextDomain() );
+		} );
 
 		return $filters;
 	}

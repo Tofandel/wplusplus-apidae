@@ -1,69 +1,90 @@
-{% block layout %}
-	{% block searchbar %}
-		<form action="{{ url }}" id="searchform" method="get">
+{% macro image_url(object, size, index) %}
+	{% if size == 'xsmall' %}
+		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'}) }}
+	{% elseif size == 'small' %}
+		{{ object.illustrations[index].traductionFichiers[0].urlFiche|replace({'http://': '//'}) }}
+	{% elseif size == 'medium' %}
+		{{ object.illustrations[index].traductionFichiers[0].urlDiaporama|replace({'http://': '//'}) }}
+	{% else %}
+		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'}) }}
+	{% endif %}
+{% endmacro image_url %}
+
+{% import _self as apidae %}
+
+<div class="apidae-list">
+	{% block layout %}
+	{% block search_form %}
+		{% autoescape 'html_attr' %}
+		<form action="{{ url }}" class="searchform" method="get">
 			<div>
 				{% block query_args %}
 					{% for key, value in pageQuery %}
 						<input type="hidden" name="{{ key }}" value="{{ value }}">
 					{% endfor %}
 				{% endblock %}
-				<input type="submit" value="" id="searchsubmit" class="button avia-font-entypo-fontello"><input
-						type="search" name="apisearch" value="{{ searchWords }}" placeholder="Rechercher">
+				{% block search_input %}
+					<input type="search" name="apisearch" value="{{ searchWords }}" placeholder="{{ 'Search'|t }}"
+						   class="searchinput"
+					><input type="submit" value="{{ 'Validate'|t }}" class="searchsubmit button">
+				{% endblock %}
 			</div>
 		</form>
-	{% endblock %}
-	{% block pagination %}{{ paginate(urlScheme, totalPages, currentPage, 7, '<<', '>>') }}{% endblock %}
-	{% for o in apidae %}
-		{% block loop %}
-			{% set detaillink = siteUrl ~ (detailScheme|replace({
-				'%TYPE%': o.type,
-				'%OID%': o.id,
-				'%NOM%': o.nom.libelleFr,
-				'%COMMUNE%': o.localisation.adresse.commune.nom}
-				)|lower|slugify(false)) %}
-			{% if useMaps %}
-				{% block marker %}
-					<script>
-						if (typeof markerNodes === 'undefined')
-							var markerNodes = [];
-						markerNodes.push({
-							'id': "{{ o.id }}",
-							'name': "{{ o.nom.libelleFr }}",
-							'addressLine1': "{{ o.localisation.adresse.adresse1 }}",
-							'addressLine2': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
-							'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
-							'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
-							'link': "{{ detaillink }}"
-						});
-					</script>
-				{% endblock %}
+		{% endautoescape %}
+	{% endblock search_form %}
+		{% if numResult > 0 %}
+		{% block pagination %}
+			{% if totalPages > 1 %}
+				{{ paginate(urlScheme, totalPages, currentPage, 7, '<<', '>>') }}
 			{% endif %}
-			<div class="apidae_cell av_one_third">
-				<div class="avia-image-container av-styling-no-styling avia-align-center">
-					<div class="avia-image-container-inner">
-						<a href="{{ detaillink }}">
-							<div class="img avia_image"
-								 style="background-image: url({{ o.illustrations[0].traductionFichiers[0].urlDiaporama|replace({'http://': 'https://'}) }})"></div>
-
-						</a>
-					</div>
-				</div>
-				<section class="av_textblock_section">
-					<div class="avia_textblock"><h3 class="title">{{ o.nom.libelleFr }}</h3>
-						<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
-						<p class="description">{{ o.presentation.descriptifCourt.libelleFr }}</p>
-						<div class="avia-button-wrap avia-button-left avia-builder-el-no-sibling"><a
-									href="{{ detaillink }}"
-									class="avia-button av-icon-on-hover avia-icon_select-yes-right-icon avia-color-custom avia-size-small avia-position-left"><span
-										class="avia_iconbox_title">Lire la suite</span><span
-										class="avia_button_icon avia_button_icon_right"
-										aria-hidden="true" data-av_icon=""
-										data-av_iconfont="entypo-fontello"></span></a>
-						</div>
-					</div>
-				</section>
-			</div>
 		{% endblock %}
-	{% endfor %}
-	{% block footer %}{{ block('pagination') }}{% endblock %}
-{% endblock %}
+	{% block loop %}
+		{% for o in searchResult %}
+		{% set link = siteUrl ~ (detailScheme|replace({
+			'%TYPE%': o.type,
+			'%OID%': o.id,
+			'%NOM%': o.nom.libelleFr,
+			'%COMMUNE%': o.localisation.adresse.commune.nom}
+			)|lower|slugify(false)) %}
+	{% block marker %}
+		{% autoescape 'js' %}
+		{% if useMaps %}
+		<script>
+			if (typeof markerNodes === 'undefined')
+				var markerNodes = [];
+			markerNodes.push({
+				'id': "{{ o.id|e('js') }}",
+				'name': "{{ o.nom.libelleFr|e('js') }}",
+				'addressLine1': "{{ o.localisation.adresse.adresse1|e('js') }}",
+				'addressLine2': "{{ o.localisation.adresse.codePostal|e('js') }}, {{ o.localisation.adresse.commune.nom|e('js') }}",
+				'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0]|e('js') }}",
+				'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1]|e('js') }}",
+				'link': "{{ link|e('js') }}"
+			});
+		</script>
+		{% endif %}
+		{% endautoescape %}
+	{% endblock %}
+		<div class="apidae-cell">
+			{% block single %}
+				<div class="image-container">
+					<a href="{{ link }}" class="image-container-inner">
+						<div class="img" style="background-image: url({{ apidae.image_url(o, 'medium', 0) }})"></div>
+					</a>
+				</div>
+				<section class="info">
+					<h3 class="title">{{ o.nom.libelleFr }}</h3>
+					<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
+					<p class="description">{{ o.presentation.descriptifCourt.libelleFr }}</p>
+					<div class="link"><a href="{{ link }}">{{ 'Read more'|t }}</a></div>
+				</section>
+			{% endblock %}
+		</div>
+		{% endfor %}
+	{% endblock %}
+		{% block footer %}{{ block('pagination') }}{% endblock %}
+		{% else %}
+		{% block no_result %}<h4>{{ 'No result found'|t }}</h4>{% endblock %}
+		{% endif %}
+	{% endblock %}
+</div>

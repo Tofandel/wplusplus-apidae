@@ -49,10 +49,10 @@ class Apidae_Map {
 				),
 				array(
 					'heading'          => esc_html__( 'Height', $WPlusPlusApidae->getTextDomain() ),
-					'description'      => 'Eg: 180px',
+					'description'      => 'Eg: 300px',
 					'param_name'       => 'height',
 					'type'             => 'textfield',
-					'std'              => '180px',
+					'std'              => '300px',
 					'edit_field_class' => 'vc_col-xs-4 vc_column wpb_el_type_textfield vc_wrapper-param-type-textfield vc_shortcode-param',
 					'admin_label'      => true
 				),

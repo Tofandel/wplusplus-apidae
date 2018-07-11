@@ -134,6 +134,13 @@ class Apidae_List implements WP_Shortcode {
 		);
 	}
 
+	private function tplTranslations() {
+		__( 'Read more' );
+		__( 'No result found' );
+		__( 'Search' );
+		__( 'Validate' );
+	}
+
 	/**
 	 * Fonction outil pour vérifier une date (format + date réelle)
 	 *
@@ -176,20 +183,19 @@ class Apidae_List implements WP_Shortcode {
 		$numPerPage = max( 1, intval( $atts['nb_result'] ) );
 
 		$inter = array(
-			'apicritere' => 'criteresQuery',
-			'apisearch'  => 'searchQuery',
-			'datedebut'  => 'dateDebut',
-			'datefin'    => 'dateFin'
+			'apisearch' => 'searchQuery',
+			'datedebut' => 'dateDebut',
+			'datefin'   => 'dateFin'
 		);
 
-		$searchWords    = get_query_var( 'apisearch', '' );
-		//$searchCriteres = get_query_var( 'apicritere', '' ) != '' ? explode( '/', get_query_var( 'apicritere', '' ) ) : array();
-		$searchCriteres = get_query_var( 'apicritere', '' );
+		$searchWords = get_query_var( 'apisearch', '' );
+		//$searchCategories = get_query_var( 'apicategories', '' ) != '' ? explode( '/', get_query_var( 'apicategories', '' ) ) : array();
+		$searchCategories = get_query_var( 'apicategories', '' );
 
 		$page_query = array();
 
-		if ( ! empty( $searchCriteres ) ) {
-			$page_query['apicritere'] = $searchCriteres; //implode( '/', $searchCriteres );
+		if ( ! empty( $searchCategories ) ) {
+			$page_query['apicategories'] = $searchCategories; //implode( '/', $searchCategories );
 		}
 
 		if ( ! empty( $searchWords ) ) {
@@ -218,7 +224,9 @@ class Apidae_List implements WP_Shortcode {
 		$search_query = array();
 
 		foreach ( $page_query as $k => $v ) {
-			$search_query[ $inter[ $k ] ] = $v;
+			if ( isset( $inter[ $k ] ) ) {
+				$search_query[ $inter[ $k ] ] = $v;
+			}
 		}
 
 		$json = json_decode( $atts['more_json'] ) ?: array();
@@ -234,13 +242,29 @@ class Apidae_List implements WP_Shortcode {
 		), $json );
 		$prevSearchQuery = $full_query['searchQuery'];
 
+		//If some searchQuery or critereQuery where defined in json we append them to what the user defined
 		if ( ! empty( $prevSearchQuery ) && ! empty( $searchWords ) ) {
 			$search_query['searchQuery'] = $prevSearchQuery . ' ' . $searchWords;
 		}
 		$prevSearchQuery = $full_query['criteresQuery'];
 
-		if ( ! empty( $prevSearchQuery ) && ! empty( $searchCriteres ) ) {
-			$search_query['criteresQuery'] = $prevSearchQuery . ' ' . $searchCriteres; //implode( ' ', $searchCriteres );
+		if ( ! empty( $prevSearchQuery ) && ! empty( $searchCategories ) ) {
+			$search_query['criteresQuery'] = $prevSearchQuery . ' ' . $searchCategories; //implode( ' ', $searchCriteres );
+		}
+
+		if ( $criteria = Apidae_Categories::getCriteria( $searchCategories ) ) {
+			foreach ( $criteria as $k => $val ) {
+				if ( empty( $val ) ) {
+					continue;
+				}
+				if ( ! empty( $full_query[ $k ] ) && is_string( $full_query[ $k ] ) ) {
+					$full_query[ $k ] .= ' ' . $val;
+				} elseif ( ! empty( $full_query[ $k ] ) && is_array( $full_query[ $k ] ) ) {
+					$full_query[ $k ] = array_merge( $full_query[ $k ], (array) $val );
+				} else {
+					$full_query[ $k ] = $val;
+				}
+			}
 		}
 
 		$full_query = array_merge( $full_query, $search_query );
@@ -262,8 +286,8 @@ class Apidae_List implements WP_Shortcode {
 		try {
 			global $tofandel_apidae;
 			$content = $tpl->render( array(
-				'numFound'     => $numFound,
-				'apidae'       => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
+				'numResult'    => $numFound,
+				'searchResult' => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
 				'currentPage'  => $currentPage,
 				'totalPages'   => $totalPages,
 				'urlScheme'    => $urlScheme,

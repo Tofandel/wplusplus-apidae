@@ -19,12 +19,7 @@ class Apidae_Categories implements WP_Shortcode {
 	protected function __init() {
 		global $WPlusPlusApidae, $tofandel_apidae;
 
-		$cats = array();
-
-		//TODO unique cats
-		foreach ( $tofandel_apidae['categories']['category-name'] as $i => $name ) {
-			$cats[ $name ] = wpp_slugify( $name );
-		}
+		$cats = array_reverse( self::getCategories() );
 
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
@@ -34,15 +29,49 @@ class Apidae_Categories implements WP_Shortcode {
 			'params'      => array(
 				array(
 					'type'        => 'multidropdown',
-					'heading'     => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
+					'heading'     => esc_html__( 'Categories', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'categories',
 					'value'       => $cats,
-					'admin_label' => true,
-					'always_save' => true
+					'admin_label' => true
 				)
 			)
 		);
 	}
+
+	public static function getCategories() {
+		static $cats;
+
+		if ( ! isset( $cats ) ) {
+			global $tofandel_apidae;
+
+			$cats = array();
+
+			//TODO unique cats
+			foreach ( $tofandel_apidae['categories']['category-name'] as $i => $name ) {
+				$cats[ wpp_slugify( $name ) ] = $name;
+			}
+		}
+
+		return $cats;
+	}
+
+
+	public static function getCriteria( $categorie_slug ) {
+		$cats = self::getCategories();
+
+		$i = array_search( $categorie_slug, array_keys( $cats ) );
+
+		if ( $i !== false ) {
+			global $tofandel_apidae;
+			if ( ! empty( $tofandel_apidae['categories']['category-query'][ $i ] ) ) {
+				return json_decode( $tofandel_apidae['categories']['category-query'][ $i ], true );
+			}
+		}
+
+		return false;
+	}
+
+
 
 	/**
 	 * @param array $atts
@@ -52,23 +81,21 @@ class Apidae_Categories implements WP_Shortcode {
 	 * @return string
 	 */
 	public static function shortcode( $atts, $content, $name ) {
-		global $tofandel_apidae;
+		global $WPlusPlusApidae;
 
 		$atts['categories'] = explode( ',', $atts['categories'] );
 
-		$cats = array();
-
-		//TODO unique cats
-		foreach ( $tofandel_apidae['categories']['category-name'] as $i => $name ) {
-			$cats[ wpp_slugify( $name ) ] = $name;
-		}
+		$cats = self::getCategories();
 
 		//TODO multiple categories
-		$current = get_query_var( 'apicritere', '' );
-		$content = '<ul class="categories"><li class="cat-all"><a href="' . get_page_link() . '"></a></li>';
+		$current = get_query_var( 'apicategories', '' );
+		$content = '<ul class="categories"><li class="cat-all' . ( empty( $current ) ? ' current' : '' ) . '"><a href="' . get_page_link() . '">' . __( 'All', $WPlusPlusApidae->getTextDomain() ) . '</a></li>';
+		$search  = get_query_var( 'apisearch' );
+		$args    = ! empty( $search ) ? array( 'apisearch' => $search ) : array();
 		foreach ( $atts['categories'] as $cat ) {
 			if ( ! empty( $cats[ $cat ] ) ) {
-				$content .= '<li class="cat-' . $cat . ' ' . ( $cat == $current ? ' current' : '' ) . '"><a href="' . add_query_arg( array( 'apicritere' => $cat ) ) . '"></a></li>';
+				$args['apicategories'] = $cat;
+				$content               .= '<li class="cat-' . $cat . ( $cat == $current ? ' current' : '' ) . '"><a href="' . add_query_arg( $args, get_page_link() ) . '">' . $cats[ $cat ] . '</a></li>';
 			}
 		}
 		$content .= "</ul>";
