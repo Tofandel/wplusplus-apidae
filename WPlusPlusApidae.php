@@ -2,6 +2,8 @@
 
 namespace Tofandel;
 
+use Tofandel\Apidae\Objects\Template;
+use Tofandel\Apidae\Shortcodes\Apidae_Categories;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
 use Tofandel\Apidae\Shortcodes\Apidae_Map;
 use Tofandel\Core\Objects\ReduxConfig;
@@ -48,6 +50,7 @@ class WPlusPlusApidae extends WP_Plugin {
 		add_action( 'init', function () {
 			Apidae_List::__init__();
 			Apidae_Map::__init__();
+			Apidae_Categories::__init__();
 		}, 1 );
 		add_action( 'redux_not_loaded', function () {
 			self::getReduxOption( 'tofandel_apidae' );
@@ -98,53 +101,9 @@ class WPlusPlusApidae extends WP_Plugin {
 	 */
 	public function actionsAndFilters() {
 		add_action( 'admin_head', [ $this, 'fix_logo' ] );
-		add_action( 'redux/options/tofandel_apidae/saved', [ $this, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/import', [ $this, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/reset', [ $this, 'delete_templates' ], 10, 0 );
-	}
-
-	public function delete_templates() {
-		$this->deleteFolder( '/templates/list' );
-		$this->deleteFolder( '/templates/detail' );
-	}
-
-	public function update_templates( $options, $changed_values = array() ) {
-		if ( empty( $changed_values ) ) {
-			return;
-		}
-		$list_titles   = array();
-		$detail_titles = array();
-
-		if ( ! empty( $changed_values['list-template'] ) ) {
-			$this->deleteFolder( '/templates/cache' );
-			$this->deleteFolder( '/templates/list' );
-			foreach ( $options['list-template']['redux_repeater_data'] as $k => $data ) {
-				$title = wpp_slugify( $options['list-template']['list-name'][ $k ] );
-				$i     = '';
-				while ( in_array( $title . $i, $list_titles ) ) {
-					$i ++;
-				}
-				$title         = $title . $i;
-				$list_titles[] = $title;
-				$this->mkdir( '/templates/list' );
-				$this->put_contents( '/templates/list/' . $title . '.twig', $options['list-template']['list-code'][ $k ] );
-			}
-		}
-		if ( ! empty( $changed_values['detail-template'] ) ) {
-			$this->deleteFolder( '/templates/cache' );
-			$this->deleteFolder( '/templates/detail' );
-			foreach ( $options['detail-template']['redux_repeater_data'] as $k => $data ) {
-				$title = wpp_slugify( $options['detail-template']['detail-name'][ $k ] );
-				$i     = '';
-				while ( in_array( $title . $i, $detail_titles ) ) {
-					$i ++;
-				}
-				$title           = $title . $i;
-				$detail_titles[] = $title;
-				$this->mkdir( '/templates/detail' );
-				$this->put_contents( '/templates/detail/' . $title . '.twig', $options['detail-template']['detail-code'][ $k ] );
-			}
-		}
+		add_action( 'redux/options/tofandel_apidae/saved', [ Template::class, 'update_templates' ], 10, 2 );
+		add_action( 'redux/options/tofandel_apidae/import', [ Template::class, 'update_templates' ], 10, 2 );
+		add_action( 'redux/options/tofandel_apidae/reset', [ Template::class, 'delete_templates' ], 10, 0 );
 	}
 
 	/**
@@ -153,13 +112,6 @@ class WPlusPlusApidae extends WP_Plugin {
 	public static function uninstall() {
 		parent::uninstall();
 		delete_option( 'tofandel_apidae' );
-
-		global $wpdb;
-		$table_name = $wpdb->prefix . "wp84apidaeplugin";
-		$sql        = "DROP TABLE $table_name;";
-		$wpdb->query( $sql );
-
-		//soft flush le plugin ne modifie pas le .htaccess
 		flush_rewrite_rules( true );
 	}
 
@@ -171,23 +123,7 @@ class WPlusPlusApidae extends WP_Plugin {
 	}
 
 	public function activate() {
-		global $wpdb;
-		$charset_collate = $wpdb->get_charset_collate();
-		$table_name      = $wpdb->prefix . "wp84apidaeplugin";
-		$sql             = "CREATE TABLE $table_name (
-          id mediumint(9) NOT NULL AUTO_INCREMENT,
-          confvalue text NOT NULL,
-          descript text NOT NULL,
-          typeconf varchar(10) NOT NULL,
-          PRIMARY KEY  (id),
-          KEY typeconf_idx (typeconf(10))
-        ) $charset_collate;";
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-		dbDelta( $sql );
 	}
-
-	const FAKEPAGE_URL = 'apiref';
-
 
 	public function fix_logo() {
 		echo '<style>.vc_element-icon.dashicons{font-size: 2.5em;background-image: none}.toplevel_page_wplusplus-apidae #redux-header{display: none}.toplevel_page_wplusplus-apidae .form-table>tbody>tr>th{width: 190px}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
@@ -289,6 +225,42 @@ class WPlusPlusApidae extends WP_Plugin {
 			)
 		) );
 		$r->setSection( array(
+			'title'  => __( 'Categories', $this->getTextDomain() ),
+			'icon'   => 'el el-th-list',
+			'fields' => array(
+				array(
+					'title'        => __( 'Categories', $this->getTextDomain() ),
+					'type'         => 'repeater',
+					'group_values' => true,
+					'id'           => 'categories',
+					'item_name'    => __( 'category', $this->getTextDomain() ),
+					'bind-title'   => 'category-name',
+					'fields'       => array(
+						array(
+							'title' => __( 'Category Name', $this->getTextDomain() ),
+							'type'  => 'text',
+							'id'    => 'category-name',
+						),
+						array(
+							'title'   => __( 'Query', $this->getTextDomain() ),
+							'type'    => 'ace_editor',
+							'id'      => 'category-query',
+							'mode'    => 'json',
+							'options' => array( 'minLines' => 6, 'maxLines' => 40 ),
+							'default' => '{' . "\n" .
+							             '    "criteresQuery":"",' . "\n" .
+							             '    "searchQuery":"",' . "\n" .
+							             '    "territoireIds":[],' . "\n" .
+							             '    "communeCodesInsee":[]' . "\n" .
+							             '}',
+							'desc'    => __( 'Fill the query fields that the selected category will modify during the request to apidae in JSON.<br>
+<a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches#communeCodesInsee" target="_blank" rel="noopener">Read the documentation</a> for the list of available query fields', $this->getTextDomain() ),
+						)
+					)
+				)
+			)
+		) );
+		$r->setSection( array(
 			'title'  => __( 'Object List Templates', $this->getTextDomain() ),
 			'icon'   => 'el el-file-edit',
 			'fields' => array(
@@ -296,16 +268,15 @@ class WPlusPlusApidae extends WP_Plugin {
 					'title'        => __( ' Object List Templates', $this->getTextDomain() ),
 					'id'           => 'list-template',
 					'type'         => 'repeater',
+					//'sortable'     => false,
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->getTextDomain() ),
-					'icon'         => 'el el-file-edit',
 					'bind-title'   => 'list-name',
 					'fields'       => array(
 						array(
-							'title'    => __( 'Template Name', $this->getTextDomain() ),
-							'id'       => 'list-name',
-							'type'     => 'text',
-							'validate' => 'unique_slug'
+							'title' => __( 'Template Name', $this->getTextDomain() ),
+							'id'    => 'list-name',
+							'type'  => 'text',
 						),
 						array(
 							'title'   => __( 'Template Code', $this->getTextDomain() ),
@@ -326,9 +297,9 @@ class WPlusPlusApidae extends WP_Plugin {
 					'title'        => __( 'Single Object Templates', $this->getTextDomain() ),
 					'id'           => 'detail-template',
 					'type'         => 'repeater',
+					//'sortable'     => false,
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->getTextDomain() ),
-					'icon'         => 'el el-file-edit',
 					'bind-title'   => 'detail-name',
 					'fields'       => array(
 						array(
@@ -368,10 +339,6 @@ class WPlusPlusApidae extends WP_Plugin {
 				)
 			)
 		) );
-
-
-		//$ext_path = __DIR__ . '/redux-extensions/';
-		//Redux::setExtensions($opt_name, $ext_path);
 	}
 }
 

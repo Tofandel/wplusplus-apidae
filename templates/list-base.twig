@@ -2,9 +2,11 @@
 	{% block searchbar %}
 		<form action="{{ url }}" id="searchform" method="get">
 			<div>
-				{% for key, value in pageQuery %}
-					<input type="hidden" name="{{ key }}" value="{{ value }}">
-				{% endfor %}
+				{% block query_args %}
+					{% for key, value in pageQuery %}
+						<input type="hidden" name="{{ key }}" value="{{ value }}">
+					{% endfor %}
+				{% endblock %}
 				<input type="submit" value="" id="searchsubmit" class="button avia-font-entypo-fontello"><input
 						type="search" name="apisearch" value="{{ searchWords }}" placeholder="Rechercher">
 			</div>
@@ -14,10 +16,10 @@
 	{% for o in apidae %}
 		{% block loop %}
 			{% set detaillink = siteUrl ~ (detailScheme|replace({
-				'%TYPE': o.type,
-				'%OID': o.id,
-				'%NOM': o.nom.libelleFr,
-				'%COMMUNE': o.localisation.addresse.commune.nom}
+				'%TYPE%': o.type,
+				'%OID%': o.id,
+				'%NOM%': o.nom.libelleFr,
+				'%COMMUNE%': o.localisation.adresse.commune.nom}
 				)|lower|slugify(false)) %}
 			{% if useMaps %}
 				{% block marker %}

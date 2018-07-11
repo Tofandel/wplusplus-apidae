@@ -22,7 +22,7 @@ class Apidae_List implements WP_Shortcode {
 		global $WPlusPlusApidae;
 
 		$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
-		$file_names = array( __( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
+		$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
 		foreach ( $templates as $template ) {
 			$slug                = basename( $template, '.twig' );
@@ -31,8 +31,8 @@ class Apidae_List implements WP_Shortcode {
 
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
-			'description' => __( 'Shortcode to create an apidae list', $WPlusPlusApidae->getTextDomain() ),
-			'name'        => __( 'Apidae List', $WPlusPlusApidae->getTextDomain() ),
+			'description' => esc_html__( 'Shortcode to create an apidae list', $WPlusPlusApidae->getTextDomain() ),
+			'name'        => esc_html__( 'Apidae List', $WPlusPlusApidae->getTextDomain() ),
 			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array(
 				array(
@@ -117,6 +117,14 @@ class Apidae_List implements WP_Shortcode {
 				),
 				array(
 					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
+					'type'        => 'textfield',
+					'heading'     => esc_html__( 'Detail link scheme', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'detail_scheme',
+					'description' => __( 'The link scheme to the detail template', $WPlusPlusApidae->getTextDomain() ),
+					'std'         => '/apidae/%TYPE%/%COMMUNE%/%NOM%/%OID%-%DETAILID%'
+				),
+				array(
+					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
 					'type'        => 'textarea',
 					'heading'     => esc_html__( 'More JSON', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'more_json',
@@ -175,8 +183,14 @@ class Apidae_List implements WP_Shortcode {
 		);
 
 		$searchWords    = get_query_var( 'apisearch', '' );
-		$searchCriteres = get_query_var( 'apicritere', '' ) != '' ? explode( '/', get_query_var( 'apicritere', '' ) ) : array();
-		$page_query     = ( count( $searchCriteres ) > 0 ) ? array( 'apicritere' => implode( '/', $searchCriteres ) ) : array();
+		//$searchCriteres = get_query_var( 'apicritere', '' ) != '' ? explode( '/', get_query_var( 'apicritere', '' ) ) : array();
+		$searchCriteres = get_query_var( 'apicritere', '' );
+
+		$page_query = array();
+
+		if ( ! empty( $searchCriteres ) ) {
+			$page_query['apicritere'] = $searchCriteres; //implode( '/', $searchCriteres );
+		}
 
 		if ( ! empty( $searchWords ) ) {
 			$page_query['apisearch'] = $searchWords;
@@ -210,12 +224,13 @@ class Apidae_List implements WP_Shortcode {
 		$json = json_decode( $atts['more_json'] ) ?: array();
 
 		$full_query      = array_merge( array(
-			'selectionIds' => ! empty( $atts['selection_ids'] ) ? array_map( 'trim', explode( ',', $atts['selection_ids'] ) ) : array(),
-			'order'        => $atts['order'],
-			'searchFields' => $atts['search_fields'],
-			'asc'          => (bool) $atts['reverse_order'],
-			'locales'      => array( $atts['lang'] ),
-			'searchQuery'  => ''
+			'selectionIds'  => ! empty( $atts['selection_ids'] ) ? array_map( 'trim', explode( ',', $atts['selection_ids'] ) ) : array(),
+			'order'         => $atts['order'],
+			'searchFields'  => $atts['search_fields'],
+			'asc'           => (bool) $atts['reverse_order'],
+			'locales'       => array( $atts['lang'] ),
+			'searchQuery'   => '',
+			'criteresQuery' => ''
 		), $json );
 		$prevSearchQuery = $full_query['searchQuery'];
 
@@ -225,7 +240,7 @@ class Apidae_List implements WP_Shortcode {
 		$prevSearchQuery = $full_query['criteresQuery'];
 
 		if ( ! empty( $prevSearchQuery ) && ! empty( $searchCriteres ) ) {
-			$search_query['searchQuery'] = $prevSearchQuery . ' ' . implode( ' ', $searchCriteres );
+			$search_query['criteresQuery'] = $prevSearchQuery . ' ' . $searchCriteres; //implode( ' ', $searchCriteres );
 		}
 
 		$full_query = array_merge( $full_query, $search_query );
