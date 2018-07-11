@@ -11,17 +11,18 @@ namespace Tofandel\Apidae\Shortcodes;
 
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
+use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 
-class Apidae_List {
+class Apidae_List implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
 	protected function __init() {
 		global $WPlusPlusApidae;
 
-		$templates  = glob( $WPlusPlusApidae->folder( 'templates/list/*.twig' ) );
-		$file_names = array();
+		$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
+		$file_names = array( __( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
 		foreach ( $templates as $template ) {
 			$slug                = basename( $template, '.twig' );
@@ -35,10 +36,12 @@ class Apidae_List {
 			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array(
 				array(
-					'type'       => 'dropdown',
-					'heading'    => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
-					'param_name' => 'template',
-					'value'      => $file_names,
+					'type'        => 'dropdown',
+					'heading'     => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'template',
+					'value'       => $file_names,
+					'admin_label' => true,
+					'always_save' => true
 				),
 				array(
 					'type'        => 'checkbox',
@@ -47,32 +50,35 @@ class Apidae_List {
 					'description' => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
-					'type'       => 'number',
-					'heading'    => esc_html__( 'Number of results per page', $WPlusPlusApidae->getTextDomain() ),
-					'param_name' => 'nb_result',
-					'std'        => 30,
-					'dependency' => array( 'element' => 'paged', 'value' => array( 'true', true ) ),
-					'extra'      => array( 'min' => 1, 'max' => 999 )
+					'type'        => 'number',
+					'heading'     => esc_html__( 'Number of results per page', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'nb_result',
+					'std'         => 30,
+					'dependency'  => array( 'element' => 'paged', 'value' => array( 'true', true ) ),
+					'extra'       => array( 'min' => 1, 'max' => 999 ),
+					'admin_label' => true
 				),
 				array(
 					'type'        => 'textfield',
 					'heading'     => esc_html__( 'Selection IDs', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'selection_ids',
-					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->getTextDomain() )
+					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->getTextDomain() ),
+					'admin_label' => true
 				),
 				array(
-					'type'       => 'wpp_dropdown',
-					'heading'    => esc_html__( 'Order by', $WPlusPlusApidae->getTextDomain() ),
-					'param_name' => 'order',
-					'value'      => array(
-						'NOM'            => __( 'Name', $WPlusPlusApidae->getTextDomain() ),
-						'IDENTIFIANT'    => __( 'Identifier', $WPlusPlusApidae->getTextDomain() ),
-						'RANDOM'         => __( 'Random', $WPlusPlusApidae->getTextDomain() ),
-						'DATE_OUVERTURE' => __( 'Date', $WPlusPlusApidae->getTextDomain() ),
-						'PERTINENCE'     => __( 'Pertinence', $WPlusPlusApidae->getTextDomain() ),
-						'DISTANCE'       => __( 'Distance', $WPlusPlusApidae->getTextDomain() ),
+					'type'        => 'dropdown',
+					'heading'     => esc_html__( 'Order by', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'order',
+					'value'       => array(
+						__( 'Name', $WPlusPlusApidae->getTextDomain() )       => 'NOM',
+						__( 'Identifier', $WPlusPlusApidae->getTextDomain() ) => 'IDENTIFIANT',
+						__( 'Random', $WPlusPlusApidae->getTextDomain() )     => 'RANDOM',
+						__( 'Date', $WPlusPlusApidae->getTextDomain() )       => 'DATE_OUVERTURE',
+						__( 'Pertinence', $WPlusPlusApidae->getTextDomain() ) => 'PERTINENCE',
+						__( 'Distance', $WPlusPlusApidae->getTextDomain() )   => 'DISTANCE',
 					),
-					"std"        => 'PERTINENCE'
+					"std"         => 'PERTINENCE',
+					'admin_label' => true
 				),
 				array(
 					'type'        => 'checkbox',
@@ -81,34 +87,36 @@ class Apidae_List {
 					'description' => __( 'If checked the ordering will be inverted.', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
-					'type'       => 'wpp_dropdown',
+					'type'       => 'dropdown',
 					'heading'    => esc_html__( 'Search Fields', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'search_fields',
 					'value'      => array(
-						'NOM'                      => __( 'Name', $WPlusPlusApidae->getTextDomain() ),
-						'NOM_DESCRIPTION'          => __( 'Name & description', $WPlusPlusApidae->getTextDomain() ),
-						'NOM_DESCRIPTION_CRITERES' => __( 'Name, description & criteria', $WPlusPlusApidae->getTextDomain() ),
+						__( 'Name', $WPlusPlusApidae->getTextDomain() )                         => 'NOM',
+						__( 'Name & description', $WPlusPlusApidae->getTextDomain() )           => 'NOM_DESCRIPTION',
+						__( 'Name, description & criteria', $WPlusPlusApidae->getTextDomain() ) => 'NOM_DESCRIPTION_CRITERES',
 					),
 					"std"        => 'NOM_DESCRIPTION_CRITERES'
 				),
 				array(
-					'type'       => 'multidropdown',
-					'heading'    => esc_html__( 'Lang', $WPlusPlusApidae->getTextDomain() ),
-					'param_name' => 'lang',
-					'value'      => array(
-						'fr'    => __( 'French', $WPlusPlusApidae->getTextDomain() ),
-						'en'    => __( 'English', $WPlusPlusApidae->getTextDomain() ),
-						'de'    => __( 'German', $WPlusPlusApidae->getTextDomain() ),
-						'nl'    => __( 'Dutch', $WPlusPlusApidae->getTextDomain() ),
-						'it'    => __( 'Italian', $WPlusPlusApidae->getTextDomain() ),
-						'es'    => __( 'Spanish', $WPlusPlusApidae->getTextDomain() ),
-						'ru'    => __( 'Russian', $WPlusPlusApidae->getTextDomain() ),
-						'zh'    => __( 'Chinese', $WPlusPlusApidae->getTextDomain() ),
-						'pt-br' => __( 'Portuguese (Brazil)', $WPlusPlusApidae->getTextDomain() ),
+					'type'        => 'multidropdown',
+					'heading'     => esc_html__( 'Lang', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'lang',
+					'value'       => array(
+						__( 'French', $WPlusPlusApidae->getTextDomain() )              => 'fr',
+						__( 'English', $WPlusPlusApidae->getTextDomain() )             => 'en',
+						__( 'German', $WPlusPlusApidae->getTextDomain() )              => 'de',
+						__( 'Dutch', $WPlusPlusApidae->getTextDomain() )               => 'nl',
+						__( 'Italian', $WPlusPlusApidae->getTextDomain() )             => 'it',
+						__( 'Spanish', $WPlusPlusApidae->getTextDomain() )             => 'es',
+						__( 'Russian', $WPlusPlusApidae->getTextDomain() )             => 'ru',
+						__( 'Chinese', $WPlusPlusApidae->getTextDomain() )             => 'zh',
+						__( 'Portuguese (Brazil)', $WPlusPlusApidae->getTextDomain() ) => 'pt-br',
 					),
-					"std"        => 'fr'
+					"std"         => 'fr',
+					'admin_label' => true
 				),
 				array(
+					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
 					'type'        => 'textarea',
 					'heading'     => esc_html__( 'More JSON', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'more_json',
@@ -148,12 +156,8 @@ class Apidae_List {
 	 */
 	public static function shortcode( $atts, $content, $name ) {
 		global $WPlusPlusApidae;
-		$f = $WPlusPlusApidae->folder( 'template/list/' . basename( $atts['template'] ) . '.twig' );
-		if ( ! file_exists( $f ) ) {
-			error_log( "Template " . $atts['template'] . " doesn't exist", 'error_log' );
+		$f = 'list/' . basename( $atts['template'] ) . '.twig';
 
-			return WP_DEBUG ? "Template " . $atts['template'] . " doesn't exist" : "";
-		}
 		try {
 			$tpl = new Template( $f );
 		} catch ( \Exception $e ) {
@@ -162,9 +166,7 @@ class Apidae_List {
 			return WP_DEBUG ? $e->getMessage() : "";
 		}
 
-		$currentPage = get_query_var( 'page', 1 );
-		$currentPage = $currentPage == 0 ? 1 : $currentPage;
-
+		$numPerPage = max( 1, intval( $atts['nb_result'] ) );
 
 		$searchCriteres = get_query_var( 'apicritere', '' ) != '' ? explode( '/', get_query_var( 'apicritere', '' ) ) : array();
 		$full_query     = ( count( $searchCriteres ) > 0 ) ? array( 'apicritere' => implode( '/', $searchCriteres ) ) : array();
@@ -178,7 +180,9 @@ class Apidae_List {
 			$full_query['datefin'] = $dateFin;
 		}
 
-		if ( $atts['paged'] ) {
+		$currentPage = max( 1, intval( get_query_var( 'page', 1 ) ) );
+
+		if ( $atts['paged'] == 'true' ) {
 			$urlNbPage                       = ( $currentPage > 1 ) ? $currentPage . '/' : '';
 			$_SESSION['wpp_apidae_url_list'] = count( $full_query ) > 0 ? add_query_arg( $full_query, get_page_link() . $urlNbPage ) : get_page_link() . $urlNbPage;
 		}
@@ -204,15 +208,29 @@ class Apidae_List {
 
 
 		if ( $currentPage > 1 && $atts['paged'] ) {
-			$first = intval( $currentPage - 1 ) * intval( $atts['nb_result'] );
+			$first = intval( $currentPage - 1 ) * $numPerPage;
 		} else {
 			$first = 0;
 		}
 
+		$numFound = 0;
+		$list     = ApidaeRequest::getList( $full_query, $numPerPage, $first );
+		if ( is_array( $list ) ) {
+			$numFound = $list['numFound'];
+		}
+		$totalPages  = ceil( $numFound / $numPerPage );
+		$currentPage = min( $totalPages, $currentPage );
 
-		ApidaeRequest::getList( $full_query, intval( $atts['nb_result'] ), $first );
-
-		$tpl->render();
+		try {
+			$content = $tpl->render( array(
+				'apidae'      => $list,
+				'currentPage' => $currentPage,
+				'totalPages'  => $totalPages,
+				'url'         => remove_query_arg( 'page' )
+			) );
+		} catch ( \Exception $e ) {
+			return WP_DEBUG ? $e->getMessage() : '';
+		}
 
 		return do_shortcode( $content );
 	}

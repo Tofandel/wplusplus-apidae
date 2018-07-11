@@ -101,8 +101,8 @@ class WPlusPlusApidae extends WP_Plugin {
 	}
 
 	public function delete_templates() {
-		$this->delete( '/templates/list' );
-		$this->delete( '/templates/detail' );
+		$this->deleteFolder( '/templates/list' );
+		$this->deleteFolder( '/templates/detail' );
 	}
 
 	public function update_templates( $options, $changed_values = array() ) {
@@ -113,9 +113,9 @@ class WPlusPlusApidae extends WP_Plugin {
 		$detail_titles = array();
 
 		if ( ! empty( $changed_values['list-template'] ) ) {
-			$this->delete( '/templates/list' );
-			foreach ( $changed_values['list-template']['redux_repeater_data'] as $k => $data ) {
-				$title = wpp_slugify( $changed_values['list-template']['list-name'][ $k ] );
+			$this->deleteFolder( '/templates/list' );
+			foreach ( $options['list-template']['redux_repeater_data'] as $k => $data ) {
+				$title = wpp_slugify( $options['list-template']['list-name'][ $k ] );
 				$i     = '';
 				while ( in_array( $title . $i, $list_titles ) ) {
 					$i ++;
@@ -123,13 +123,13 @@ class WPlusPlusApidae extends WP_Plugin {
 				$title         = $title . $i;
 				$list_titles[] = $title;
 				$this->mkdir( '/templates/list' );
-				$this->put_contents( '/templates/list/' . $title . '.twig', $changed_values['list-template']['list-code'][ $k ] );
+				$this->put_contents( '/templates/list/' . $title . '.twig', $options['list-template']['list-code'][ $k ] );
 			}
 		}
 		if ( ! empty( $changed_values['detail-template'] ) ) {
-			$this->delete( '/templates/detail' );
-			foreach ( $changed_values['detail-template']['redux_repeater_data'] as $k => $data ) {
-				$title = wpp_slugify( $changed_values['detail-template']['detail-name'][ $k ] );
+			$this->deleteFolder( '/templates/detail' );
+			foreach ( $options['detail-template']['redux_repeater_data'] as $k => $data ) {
+				$title = wpp_slugify( $options['detail-template']['detail-name'][ $k ] );
 				$i     = '';
 				while ( in_array( $title . $i, $detail_titles ) ) {
 					$i ++;
@@ -137,7 +137,7 @@ class WPlusPlusApidae extends WP_Plugin {
 				$title           = $title . $i;
 				$detail_titles[] = $title;
 				$this->mkdir( '/templates/detail' );
-				$this->put_contents( '/templates/detail/' . $title . '.twig', $changed_values['detail-template']['detail-code'][ $k ] );
+				$this->put_contents( '/templates/detail/' . $title . '.twig', $options['detail-template']['detail-code'][ $k ] );
 			}
 		}
 	}

@@ -96,11 +96,11 @@ class ApidaeRequest {
 
 		if ( array_key_exists( 'order', $query ) && $query['order'] === 'RANDOM' ) {
 			if ( array_key_exists( 'WP84randomSeed', $_SESSION ) ) {
-				$payload['randomSeed'] = $_SESSION['WP84randomSeed'];
+				$query['randomSeed'] = $_SESSION['WP84randomSeed'];
 			} else {
 				$seed                       = self::genRandomSeed();
 				$_SESSION['WP84randomSeed'] = $seed;
-				$payload['randomSeed']      = $seed;
+				$query['randomSeed']        = $seed;
 			}
 		}
 		$query   = array( 'query' => json_encode( $query ) );
