@@ -54,13 +54,13 @@
 			if (typeof markerNodes === 'undefined')
 				var markerNodes = [];
 			markerNodes.push({
-				'id': "{{ o.id|e('js') }}",
-				'name': "{{ o.nom.libelleFr|e('js') }}",
-				'addressLine1': "{{ o.localisation.adresse.adresse1|e('js') }}",
-				'addressLine2': "{{ o.localisation.adresse.codePostal|e('js') }}, {{ o.localisation.adresse.commune.nom|e('js') }}",
-				'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0]|e('js') }}",
-				'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1]|e('js') }}",
-				'link': "{{ link|e('js') }}"
+				'id': "{{ o.id }}",
+				'name': "{{ o.nom.libelleFr }}",
+				'addressLine1': "{{ o.localisation.adresse.adresse1 }}",
+				'addressLine2': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
+				'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
+				'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
+				'link': "{{ link }}"
 			});
 		</script>
 		{% endif %}

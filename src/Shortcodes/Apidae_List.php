@@ -34,8 +34,26 @@ class Apidae_List implements WP_Shortcode {
 		);
 	}
 
+	/**
+	 * ajout de variable(s) d'url query supplementaire(s) pour les pages de liste
+	 *
+	 * @param array $vars
+	 *
+	 * @return array
+	 */
+	public static function add_query_vars_filter( $vars ) {
+		$vars[] = "apicategories";
+		$vars[] = "apisearch";
+		$vars[] = "datedebut";
+		$vars[] = "datefin";
+
+		return $vars;
+	}
+
 	protected function __init() {
 		global $WPlusPlusApidae;
+
+		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
 
 		$file_names    = array();
 		$details_pages = array();

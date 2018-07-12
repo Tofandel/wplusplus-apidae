@@ -265,7 +265,8 @@ class Apidae_Map {
 		}
 
 		// Enqueue maps js
-		global $WPlusPlusApidae;
+		global $WPlusPlusApidae, $tofandel_apidae;
+		$WPlusPlusApidae->addScript( 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'] );
 		$WPlusPlusApidae->addScript( 'maps' );
 
 		$html = '<div class="apidea-google-maps" style="width:' . $atts['width'] . ';height:' . $atts['height'] . '" data-type="' . $atts['type'] . '" data-animation="' . $atts['marker_animation'] . '" data-zoom="' . $atts['zoom'] . '" data-disable-ui="' . ( $atts['disable_ui'] == 'true' ? 'true' : 'false' ) . '" data-scrollwheel="' . ( $atts['disable_scrollwheel'] == 'true' ? 'false' : 'true' ) . '" data-draggable="' . ( $atts['draggable'] == 'true' ? 'true' : 'false' ) . '" ' . ( ! empty( $map_style ) ? 'data-map-style="' . urlencode( $map_style ) . '"' : '' ) . '></div>';

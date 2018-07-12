@@ -4,6 +4,7 @@ namespace Tofandel;
 
 use Tofandel\Apidae\Objects\Template;
 use Tofandel\Apidae\Shortcodes\Apidae_Categories;
+use Tofandel\Apidae\Shortcodes\Apidae_Detail;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
 use Tofandel\Apidae\Shortcodes\Apidae_Map;
 use Tofandel\Core\Objects\ReduxConfig;
@@ -50,9 +51,8 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * @return void
 	 */
 	public function definitions() {
-		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
 		add_action( 'init', function () {
-			self::add_detail_rewrite();
+			Apidae_Detail::__init__();
 			Apidae_List::__init__();
 			Apidae_Map::__init__();
 			Apidae_Categories::__init__();
@@ -62,36 +62,6 @@ class WPlusPlusApidae extends WP_Plugin {
 		} );
 	}
 
-	/**
-	 * Ajout des règles de rewrite avec flush_rules si les donnees ne sont pas en base, plus demarrage de session.
-	 * @global $wp_rewrite
-	 */
-	public static function add_detail_rewrite() {
-		$redirectUrl = 'index.php?pagename=$matches[1]&apioid=$matches[3]';
-		add_rewrite_tag( '%apioid%', '([0-9]+)' );
-		$rule = '^/([^/]+)/?([^&]+)/id/([0-9]+)';
-		add_rewrite_rule( $rule, $redirectUrl, 'top' );
-		$rules = get_option( 'rewrite_rules' );
-		if ( ! isset( $rules[ $rule ] ) ) {
-			flush_rewrite_rules( true );
-		}
-	}
-
-	/**
-	 * ajout de variable(s) d'url query supplementaire(s) pour les pages de liste
-	 *
-	 * @param array $vars
-	 *
-	 * @return array
-	 */
-	public static function add_query_vars_filter( $vars ) {
-		$vars[] = "apicategories";
-		$vars[] = "apisearch";
-		$vars[] = "datedebut";
-		$vars[] = "datefin";
-
-		return $vars;
-	}
 
 	/**
 	 * @throws \ReflectionException

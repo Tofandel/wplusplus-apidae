@@ -18,8 +18,26 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_Detail implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
+	/**
+	 * Ajout des règles de rewrite avec flush_rules si les donnees ne sont pas en base, plus demarrage de session.
+	 * @global $wp_rewrite
+	 */
+	public static function add_detail_rewrite() {
+		$redirectUrl = 'index.php?pagename=$matches[1]&apioid=$matches[3]';
+		add_rewrite_tag( '%apioid%', '([0-9]+)' );
+		$rule = '^/([^/]+)/?([^&]+)/id/([0-9]+)';
+		add_rewrite_rule( $rule, $redirectUrl, 'top' );
+		$rules = get_option( 'rewrite_rules' );
+		if ( ! isset( $rules[ $rule ] ) ) {
+			flush_rewrite_rules( true );
+		}
+	}
+
+
 	protected function __init() {
 		global $WPlusPlusApidae;
+
+		self::add_detail_rewrite();
 
 		$file_names = array();
 		$langs      = array();

@@ -1,0 +1,53 @@
+{% macro image_url(object, size, index) %}
+	{% if size == 'xsmall' %}
+		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'}) }}
+	{% elseif size == 'small' %}
+		{{ object.illustrations[index].traductionFichiers[0].urlFiche|replace({'http://': '//'}) }}
+	{% elseif size == 'medium' %}
+		{{ object.illustrations[index].traductionFichiers[0].urlDiaporama|replace({'http://': '//'}) }}
+	{% else %}
+		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'}) }}
+	{% endif %}
+{% endmacro image_url %}
+
+{% import _self as apidae %}
+
+<div class="apidae-detail">
+	{% block marker %}
+		{% autoescape 'js' %}
+			{% if useMaps %}
+				<script>
+					if (typeof markerNodes === 'undefined')
+						var markerNodes = [];
+					markerNodes.push({
+						'id': "{{ o.id }}",
+						'name': "{{ o.nom.libelleFr }}",
+						'addressLine1': "{{ o.localisation.adresse.adresse1 }}",
+						'addressLine2': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
+						'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
+						'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
+						'link': "{{ link }}"
+					});
+				</script>
+			{% endif %}
+		{% endautoescape %}
+	{% endblock marker %}
+	{% block layout %}
+		{% if result != false %}
+			{% block single %}
+				<div class="image-container">
+					<img class="img" src="{{ apidae.image_url(o, 'large', 0) }}">
+				</div>
+				<section class="info">
+					<h3 class="title">{{ o.nom.libelleFr }}</h3>
+					<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
+					<p class="description">{{ o.presentation.descriptifDetaille.libelleFr }}</p>
+				</section>
+			{% endblock single %}
+		{% else %}
+			{% block no_result %}
+				<h4>{{ __('No result found') }}</h4>
+			{% endblock no_result %}
+		{% endif %}
+	{% endblock layout %}
+</div>
