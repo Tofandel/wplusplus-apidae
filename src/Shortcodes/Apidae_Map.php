@@ -35,7 +35,7 @@ class Apidae_Map {
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
 			'description' => __( 'Shortcode to create an apidae map', $WPlusPlusApidae->getTextDomain() ),
 			'name'        => __( 'Apidae Map', $WPlusPlusApidae->getTextDomain() ),
-			'icon'        => 'dashicons dashicons-location',
+			'icon'        => 'apidae dashicons dashicons-location',
 			//plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array_merge( $params, array(
 				array(
@@ -264,8 +264,9 @@ class Apidae_Map {
 			$map_style = preg_replace( '~\s+~', '', urldecode( base64_decode( $atts['json'] ) ) );
 		}
 
-		// Enqueue map js
-		//$WPlusPlusApidae->addScript('map');
+		// Enqueue maps js
+		global $WPlusPlusApidae;
+		$WPlusPlusApidae->addScript( 'maps' );
 
 		$html = '<div class="apidea-google-maps" style="width:' . $atts['width'] . ';height:' . $atts['height'] . '" data-type="' . $atts['type'] . '" data-animation="' . $atts['marker_animation'] . '" data-zoom="' . $atts['zoom'] . '" data-disable-ui="' . ( $atts['disable_ui'] == 'true' ? 'true' : 'false' ) . '" data-scrollwheel="' . ( $atts['disable_scrollwheel'] == 'true' ? 'false' : 'true' ) . '" data-draggable="' . ( $atts['draggable'] == 'true' ? 'true' : 'false' ) . '" ' . ( ! empty( $map_style ) ? 'data-map-style="' . urlencode( $map_style ) . '"' : '' ) . '></div>';
 

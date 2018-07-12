@@ -39,7 +39,7 @@ class Apidae_List implements WP_Shortcode {
 					continue;
 				}
 				/** @var \WP_Post $page */
-				if ( strpos( '[apidae_detail', $page->post_content ) !== false ) {
+				if ( strpos( $page->post_content, '[apidae_detail' ) !== false ) {
 					$details_pages[ $page->post_title ] = $page->ID;
 				}
 			}

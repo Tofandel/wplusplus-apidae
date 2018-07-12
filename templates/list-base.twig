@@ -42,7 +42,7 @@
 		{% endblock pagination %}
 	{% block loop %}
 		{% for o in searchResult %}
-		{% set link = siteUrl ~ detailPageSlug ~ (detailScheme|replace({
+		{% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|replace({
 			'%TYPE%': o.type,
 			'%NAME%': o.nom.libelleFr,
 			'%CITY%': o.localisation.adresse.commune.nom}

@@ -166,9 +166,14 @@ class WPlusPlusApidae extends WP_Plugin {
 		//Todo Doc
 		$r->setHelpTab( array(
 			array(
-				//'id'      => 'redux-help-tab-1',
-				//'title'   => __( 'Theme Information 1', 'admin_folder' ),
-				//'content' => __( '<p>This is the tab content, HTML is allowed.</p>', 'admin_folder' )
+				'id'      => 'list-template-help',
+				'title'   => __( 'List templates', $this->getTextDomain() ),
+				'content' => __( '<p>This is the tab content, HTML is allowed.</p>', $this->getTextDomain() )
+			),
+			array(
+				'id'      => 'detail-template-help',
+				'title'   => __( 'Detail templates', $this->getTextDomain() ),
+				'content' => __( '<p>This is the tab content, HTML is allowed.</p>', $this->getTextDomain() )
 			),
 		) );
 

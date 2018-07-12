@@ -25,7 +25,7 @@ class Apidae_Categories implements WP_Shortcode {
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
 			'description' => esc_html__( 'Shortcode to display the list of categories', $WPlusPlusApidae->getTextDomain() ),
 			'name'        => esc_html__( 'Apidae Categories', $WPlusPlusApidae->getTextDomain() ),
-			'icon'        => 'dashicons dashicons-category',
+			'icon'        => 'apidae dashicons dashicons-category',
 			'params'      => array(
 				array(
 					'type'        => 'multidropdown',
