@@ -14,6 +14,7 @@
 
 <div class="apidae-list">
 	{% block layout %}
+
 	{% block search_form %}
 		{% autoescape 'html_attr' %}
 		<form action="{{ url }}" class="searchform" method="get">
@@ -22,30 +23,30 @@
 					{% for key, value in pageQuery %}
 						<input type="hidden" name="{{ key }}" value="{{ value }}">
 					{% endfor %}
-				{% endblock %}
+				{% endblock query_args %}
 				{% block search_input %}
-					<input type="search" name="apisearch" value="{{ searchWords }}" placeholder="{{ 'Search'|t }}"
+					<input type="search" name="apisearch" value="{{ searchWords }}" placeholder="{{ __('Search') }}"
 						   class="searchinput"
-					><input type="submit" value="{{ 'Validate'|t }}" class="searchsubmit button">
-				{% endblock %}
+					><input type="submit" value="{{ __('Validate') }}" class="searchsubmit button">
+				{% endblock search_input %}
 			</div>
 		</form>
 		{% endautoescape %}
 	{% endblock search_form %}
+
 		{% if numResult > 0 %}
 		{% block pagination %}
 			{% if totalPages > 1 %}
 				{{ paginate(urlScheme, totalPages, currentPage, 7, '<<', '>>') }}
 			{% endif %}
-		{% endblock %}
+		{% endblock pagination %}
 	{% block loop %}
 		{% for o in searchResult %}
-		{% set link = siteUrl ~ (detailScheme|replace({
+		{% set link = siteUrl ~ detailPageSlug ~ (detailScheme|replace({
 			'%TYPE%': o.type,
-			'%OID%': o.id,
-			'%NOM%': o.nom.libelleFr,
-			'%COMMUNE%': o.localisation.adresse.commune.nom}
-			)|lower|slugify(false)) %}
+			'%NAME%': o.nom.libelleFr,
+			'%CITY%': o.localisation.adresse.commune.nom}
+			)|lower|slugify(false)) ~ '/id/' ~ o.id %}
 	{% block marker %}
 		{% autoescape 'js' %}
 		{% if useMaps %}
@@ -64,27 +65,31 @@
 		</script>
 		{% endif %}
 		{% endautoescape %}
-	{% endblock %}
+	{% endblock marker %}
 		<div class="apidae-cell">
 			{% block single %}
 				<div class="image-container">
 					<a href="{{ link }}" class="image-container-inner">
-						<div class="img" style="background-image: url({{ apidae.image_url(o, 'medium', 0) }})"></div>
+						<img class="img" src="{{ apidae.image_url(o, 'medium', 0) }}">
 					</a>
 				</div>
 				<section class="info">
 					<h3 class="title">{{ o.nom.libelleFr }}</h3>
 					<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
 					<p class="description">{{ o.presentation.descriptifCourt.libelleFr }}</p>
-					<div class="link"><a href="{{ link }}">{{ 'Read more'|t }}</a></div>
+					<div class="link"><a href="{{ link }}">{{ __('Read more') }}</a></div>
 				</section>
-			{% endblock %}
+			{% endblock single %}
 		</div>
 		{% endfor %}
-	{% endblock %}
-		{% block footer %}{{ block('pagination') }}{% endblock %}
+	{% endblock loop %}
+		{% block footer %}
+			{{ block('pagination') }}
+		{% endblock footer %}
 		{% else %}
-		{% block no_result %}<h4>{{ 'No result found'|t }}</h4>{% endblock %}
+	{% block no_result %}
+		<h4>{{ __('No result found') }}</h4>
+	{% endblock no_result %}
 		{% endif %}
-	{% endblock %}
+	{% endblock layout %}
 </div>

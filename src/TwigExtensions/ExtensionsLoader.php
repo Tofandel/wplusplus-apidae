@@ -23,8 +23,13 @@ class ExtensionsLoader extends \Twig_Extension {
 		$functions['paginate']        = new \Twig_Function( 'paginate', [ Paginate::class, 'PaginateFunction' ], array(
 			'is_safe' => array( 'html' )
 		) );
+		$functions['__']              = new \Twig_Function( '__', function ( $str ) {
+			global $WPlusPlusApidae;
 
-		return $functions;
+			return __( $str, $WPlusPlusApidae->getTextDomain() );
+		} );
+
+		return apply_filters( 'apidae_twig_functions', $functions );
 	}
 
 
@@ -34,12 +39,7 @@ class ExtensionsLoader extends \Twig_Extension {
 	public function getFilters() {
 		$filters            = array();
 		$filters['slugify'] = new \Twig_Filter( 'slugify', 'wpp_slugify' );
-		$filters['t']       = new \Twig_Filter( 't', function ( $str ) {
-			global $WPlusPlusApidae;
 
-			return __( $str, $WPlusPlusApidae->getTextDomain() );
-		} );
-
-		return $filters;
+		return apply_filters( 'apidae_twig_filters', $filters );
 	}
 }

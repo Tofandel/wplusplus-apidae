@@ -1,0 +1,26 @@
+.vc_element-icon.dashicons {
+	font-size: 2.5em;
+	background-image: none;
+}
+
+.vc_element-icon.dashicons.apidae {
+	color: #DF7B7B;
+}
+
+.toplevel_page_wplusplus-apidae #redux-header {
+	display: none;
+}
+
+.toplevel_page_wplusplus-apidae .form-table > tbody > tr > th {
+	width: 190px;
+}
+
+#adminmenu .wp-menu-image img {
+	box-sizing: border-box;
+	max-width: 100%
+}
+
+#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {
+	padding: 2px;
+	max-height: 100%;
+}

@@ -21,12 +21,28 @@ class Apidae_List implements WP_Shortcode {
 	protected function __init() {
 		global $WPlusPlusApidae;
 
-		$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
-		$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
+		$file_names    = array();
+		$details_pages = array();
+		if ( is_admin() ) {
+			$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
+			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
-		foreach ( $templates as $template ) {
-			$slug                = basename( $template, '.twig' );
-			$file_names[ $slug ] = $slug;
+			foreach ( $templates as $template ) {
+				$slug                = basename( $template, '.twig' );
+				$file_names[ $slug ] = $slug;
+			}
+
+			$pages = get_pages();
+
+			foreach ( $pages as $page ) {
+				if ( empty( $page->post_content ) ) {
+					continue;
+				}
+				/** @var \WP_Post $page */
+				if ( strpos( '[apidae_detail', $page->post_content ) !== false ) {
+					$details_pages[ $page->post_title ] = $page->ID;
+				}
+			}
 		}
 
 		static::$vc_params = array(
@@ -36,27 +52,39 @@ class Apidae_List implements WP_Shortcode {
 			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array(
 				array(
-					'type'        => 'dropdown',
-					'heading'     => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'template',
-					'value'       => $file_names,
-					'admin_label' => true,
-					'always_save' => true
+					'type'             => 'dropdown',
+					'heading'          => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'template',
+					'value'            => $file_names,
+					'admin_label'      => true,
+					'always_save'      => true,
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 				),
 				array(
-					'type'        => 'checkbox',
-					'heading'     => esc_html__( 'Paged', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'paged',
-					'description' => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->getTextDomain() ),
+					'type'             => 'dropdown',
+					'heading'          => esc_html__( 'Detail page', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'detail_id',
+					'value'            => $details_pages,
+					'admin_label'      => true,
+					'always_save'      => true,
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 				),
 				array(
-					'type'        => 'number',
-					'heading'     => esc_html__( 'Number of results per page', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'nb_result',
-					'std'         => 30,
-					'dependency'  => array( 'element' => 'paged', 'value' => array( 'true', true ) ),
-					'extra'       => array( 'min' => 1, 'max' => 999 ),
-					'admin_label' => true
+					'type'             => 'checkbox',
+					'heading'          => esc_html__( 'Paged', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'paged',
+					'description'      => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->getTextDomain() ),
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param vc_column-with-padding',
+				),
+				array(
+					'type'             => 'number',
+					'heading'          => esc_html__( 'Number of results per page', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'nb_result',
+					'std'              => 30,
+					'dependency'       => array( 'element' => 'paged', 'value' => array( 'true', true ) ),
+					'extra'            => array( 'min' => 1, 'max' => 999 ),
+					'admin_label'      => true,
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_number vc_wrapper-param-type-number vc_shortcode-param vc_column-with-padding',
 				),
 				array(
 					'type'        => 'textfield',
@@ -66,10 +94,10 @@ class Apidae_List implements WP_Shortcode {
 					'admin_label' => true
 				),
 				array(
-					'type'        => 'dropdown',
-					'heading'     => esc_html__( 'Order by', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'order',
-					'value'       => array(
+					'type'             => 'dropdown',
+					'heading'          => esc_html__( 'Order by', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'order',
+					'value'            => array(
 						__( 'Name', $WPlusPlusApidae->getTextDomain() )       => 'NOM',
 						__( 'Identifier', $WPlusPlusApidae->getTextDomain() ) => 'IDENTIFIANT',
 						__( 'Random', $WPlusPlusApidae->getTextDomain() )     => 'RANDOM',
@@ -77,14 +105,16 @@ class Apidae_List implements WP_Shortcode {
 						__( 'Pertinence', $WPlusPlusApidae->getTextDomain() ) => 'PERTINENCE',
 						__( 'Distance', $WPlusPlusApidae->getTextDomain() )   => 'DISTANCE',
 					),
-					"std"         => 'PERTINENCE',
-					'admin_label' => true
+					"std"              => 'PERTINENCE',
+					'admin_label'      => true,
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 				),
 				array(
-					'type'        => 'checkbox',
-					'heading'     => esc_html__( 'Reverse Order', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'reverse_order',
-					'description' => __( 'If checked the ordering will be inverted.', $WPlusPlusApidae->getTextDomain() ),
+					'type'             => 'checkbox',
+					'heading'          => esc_html__( 'Reverse Order', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'reverse_order',
+					'description'      => __( 'If checked the ordering will be inverted.', $WPlusPlusApidae->getTextDomain() ),
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param vc_column-with-padding'
 				),
 				array(
 					'type'       => 'dropdown',
@@ -121,7 +151,7 @@ class Apidae_List implements WP_Shortcode {
 					'heading'     => esc_html__( 'Detail link scheme', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'detail_scheme',
 					'description' => __( 'The link scheme to the detail template', $WPlusPlusApidae->getTextDomain() ),
-					'std'         => '/apidae/%TYPE%/%COMMUNE%/%NOM%/%OID%-%DETAILID%'
+					'std'         => '/%TYPE%/%CITY%/%NAME%'
 				),
 				array(
 					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
@@ -132,13 +162,6 @@ class Apidae_List implements WP_Shortcode {
 				),
 			)
 		);
-	}
-
-	private function tplTranslations() {
-		__( 'Read more' );
-		__( 'No result found' );
-		__( 'Search' );
-		__( 'Validate' );
 	}
 
 	/**
@@ -283,20 +306,29 @@ class Apidae_List implements WP_Shortcode {
 		$totalPages  = ceil( $numFound / $numPerPage );
 		$currentPage = min( $totalPages, $currentPage );
 
+		$detailSlug = '';
+		if ( ! empty( $atts['detail_id'] ) ) {
+			$p = get_post( $atts['detail_id'] );
+			if ( $p ) {
+				$detailSlug = $p->post_name;
+			}
+		}
+
 		try {
 			global $tofandel_apidae;
 			$content = $tpl->render( array(
-				'numResult'    => $numFound,
-				'searchResult' => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
-				'currentPage'  => $currentPage,
-				'totalPages'   => $totalPages,
-				'urlScheme'    => $urlScheme,
-				'url'          => $url,
-				'useMaps'      => $tofandel_apidae['maps_enable'],
-				'detailScheme' => '/apidae/%TYPE%/%COMMUNE%/%NOM%/%OID%-%DETAILID%',
-				'siteUrl'      => site_url(),
-				'pageQuery'    => $page_query,
-				'searchWords'  => $searchWords
+				'numResult'      => $numFound,
+				'searchResult'   => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
+				'currentPage'    => $currentPage,
+				'totalPages'     => $totalPages,
+				'urlScheme'      => $urlScheme,
+				'url'            => $url,
+				'useMaps'        => $tofandel_apidae['maps_enable'],
+				'detailPageSlug' => $detailSlug,
+				'detailScheme'   => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%TYPE%/%CITY%/%NAME%',
+				'siteUrl'        => site_url(),
+				'pageQuery'      => $page_query,
+				'searchWords'    => $searchWords
 			) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );

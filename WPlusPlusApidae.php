@@ -17,12 +17,6 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
 	return;
 }
 
-define( 'WP84APIDAE_VERSION', '1.0b' );
-define( 'WP84APIDAE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WP84APIDAE_PLUGIN_INC', plugin_dir_path( __FILE__ ) . DIRECTORY_SEPARATOR . 'inc' . DIRECTORY_SEPARATOR );
-define( 'WP84APIDAE_PLUGIN_JS', plugin_dir_path( __FILE__ ) . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR );
-define( 'WP84APIDAE_PLUGIN_CSS', plugin_dir_path( __FILE__ ) . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR );
-
 /**
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
@@ -36,6 +30,19 @@ define( 'WP84APIDAE_PLUGIN_CSS', plugin_dir_path( __FILE__ ) . DIRECTORY_SEPARAT
  * WC tested up to: 4.8
  */
 class WPlusPlusApidae extends WP_Plugin {
+	/**
+	 * Add actions and filters here
+	 */
+	public function actionsAndFilters() {
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue' ] );
+		add_action( 'redux/options/tofandel_apidae/saved', [ Template::class, 'update_templates' ], 10, 2 );
+		add_action( 'redux/options/tofandel_apidae/import', [ Template::class, 'update_templates' ], 10, 2 );
+		add_action( 'redux/options/tofandel_apidae/reset', [ Template::class, 'delete_templates' ], 10, 0 );
+	}
+
+	public function admin_enqueue() {
+		$this->addStyle( 'admin' );
+	}
 
 	/**
 	 * Add the tables and settings and any plugin variable specifics here
@@ -43,11 +50,9 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * @return void
 	 */
 	public function definitions() {
-
-		//add_shortcode( 'apidaelist', array( $this, 'apidaelist_shorttag' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
-		//add_filter( 'the_posts', array( $this, 'fakepage_WP84_detect' ), - 10 );
 		add_action( 'init', function () {
+			self::add_detail_rewrite();
 			Apidae_List::__init__();
 			Apidae_Map::__init__();
 			Apidae_Categories::__init__();
@@ -61,22 +66,14 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * Ajout des règles de rewrite avec flush_rules si les donnees ne sont pas en base, plus demarrage de session.
 	 * @global $wp_rewrite
 	 */
-	public static function add_wp84_rewrite() {
-		global $wp_rewrite;
-		$sFakePageUrl = 'index.php?pagename=$matches[1]&apidaeid=$matches[4]';
-		add_rewrite_tag( '%templatedetailid%', '([^&]+)' );
-		add_rewrite_tag( '%oid%', '([^&]+)' );
-		add_rewrite_tag( '%typeoi%', '([^&]+)' );
-		add_rewrite_tag( '%commune%', '([^&]+)' );
-		add_rewrite_tag( '%nom%', '([^&]+)' );
-		$rule = '^/apidae/([^/]+)/([^/]+)/([^/]+)/id/([0-9]+)';
-		add_rewrite_rule( $rule, $sFakePageUrl, 'top' );
+	public static function add_detail_rewrite() {
+		$redirectUrl = 'index.php?pagename=$matches[1]&apioid=$matches[3]';
+		add_rewrite_tag( '%apioid%', '([0-9]+)' );
+		$rule = '^/([^/]+)/?([^&]+)/id/([0-9]+)';
+		add_rewrite_rule( $rule, $redirectUrl, 'top' );
 		$rules = get_option( 'rewrite_rules' );
 		if ( ! isset( $rules[ $rule ] ) ) {
-			$wp_rewrite->flush_rules();
-		}
-		if ( ! session_id() ) {
-			session_start();
+			flush_rewrite_rules( true );
 		}
 	}
 
@@ -97,16 +94,6 @@ class WPlusPlusApidae extends WP_Plugin {
 	}
 
 	/**
-	 * Add actions and filters here
-	 */
-	public function actionsAndFilters() {
-		add_action( 'admin_head', [ $this, 'fix_logo' ] );
-		add_action( 'redux/options/tofandel_apidae/saved', [ Template::class, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/import', [ Template::class, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/reset', [ Template::class, 'delete_templates' ], 10, 0 );
-	}
-
-	/**
 	 * @throws \ReflectionException
 	 */
 	public static function uninstall() {
@@ -123,10 +110,6 @@ class WPlusPlusApidae extends WP_Plugin {
 	}
 
 	public function activate() {
-	}
-
-	public function fix_logo() {
-		echo '<style>.vc_element-icon.dashicons{font-size: 2.5em;background-image: none}.toplevel_page_wplusplus-apidae #redux-header{display: none}.toplevel_page_wplusplus-apidae .form-table>tbody>tr>th{width: 190px}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width: 100%}#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {padding: 2px;max-height: 100%}</style>';
 	}
 
 	/**
@@ -283,7 +266,8 @@ class WPlusPlusApidae extends WP_Plugin {
 							'id'      => 'list-code',
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
-							'options' => array( 'minLines' => 20, 'maxLines' => 400 )
+							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
+							'default' => file_get_contents( $this->file( 'templates/list-layout.twig' ) )
 						),
 					),
 				)

@@ -1,36 +1,47 @@
-{% extends list-base.twig %}
-{% import list-base.twig as apidae %}
+{% extends "list-base.twig" %}
+{% import "list-base.twig" as apidae %}
+
+{% block layout %}
+	{{ block('search_form') }}
+	{# block('query_args') #}
+	{# block('search_input') #}
+	{# endblock search_form #}
+
+	{% if numResult > 0 %}
+		{{ block('pagination') }}
+		{# endblock pagination #}
+
+		{{ block('loop') }}
+		{# block('marker') #}
+		{# block('single') #}
+		{# endblock loop #}
+
+		{{ block('footer') }}
+		{# block(''pagination'') #}
+		{# endblock footer #}
+	{% else %}
+		{{ block('no_result') }}
+	{% endif %}
+{% endblock %}
 
 {% block single %}
 	<div class="apidae-cell">
 		<div class="image-container">
 			<a href="{{ link }}" class="image-container-inner">
-				<div class="img" style="background-image: url({{ apidae.image_url(o, 'medium', 0) }})"></div>
+				<img class="img" src="{{ apidae.image_url(o, 'medium', 0) }}">
 			</a>
 		</div>
 		<section class="info">
 			<h3 class="title">{{ o.nom.libelleFr }}</h3>
 			<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
 			<p class="description">{{ o.presentation.descriptifCourt.libelleFr }}</p>
-			<div class="link"><a href="{{ link }}">{{ 'Read more'|t }}</a></div>
+			<div class="link"><a href="{{ link }}">{{ __('Read more') }}</a></div>
 		</section>
 	</div>
 {% endblock %}
-{% block layout %}
-	{{ block(search_form) }}
-	{# block(query_args) #}
-	{# block(search_input) #}
-	{# endblock search_form #}
-	{% if numResult > 0 %}
-		{{ block(pagination) }}
-		{{ block(loop) }}
-		{# block(marker) #}
-		{# block(single) #}
-		{# endblock loop #}
-		{{ block(footer) }}
-		{# block('pagination') #}
-		{# endblock footer #}
-	{% else %}
-		{% block(no_result) %}
-	{% endif %}
-{% endblock %}
+
+{% block search_input %}
+	<input type="search" name="apisearch" value="{{ searchWords }}" placeholder="{{ __('Search') }}"
+		   class="searchinput"
+	><input type="submit" value="{{ __('Validate') }}" class="searchsubmit button">
+{% endblock search_input %}
