@@ -33,7 +33,7 @@
 		{% endautoescape %}
 	{% endblock marker %}
 	{% block layout %}
-		{% if result != false %}
+	{% if o != false %}
 			{% block single %}
 				<div class="image-container">
 					<img class="img" src="{{ apidae.image_url(o, 'large', 0) }}">
@@ -43,9 +43,26 @@
 					<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
 					<p class="description">{{ o.presentation.descriptifDetaille.libelleFr }}</p>
 				</section>
-			{% endblock single %}
+	{% set coms = o.informations.moyensCommunication|orderBy('type.ordre')|groupBy('type.libelleFr') %}
+	{% autoescape 'html' %}
+	{% for com in coms %}
+	{% if com.type.id is iterable %}
+		{% for %}
 		{% else %}
-			{% block no_result %}
+			<article class="iconbox iconbox_left communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
+				<div class="iconbox_content">
+					<header class="entry-content-header"><h3 class="iconbox_content_title">{{ com.type.libelleFr }}</h3>
+					</header>
+					<div class="iconbox_content_container"><p style="text-align: left;">{{ com.coordonnees.fr }}</p>
+					</div>
+				</div>
+			</article>
+			{% endif %}
+		{% endfor %}
+		{% endautoescape %}
+		{% endblock single %}
+	{% else %}
+		{% block no_result %}
 				<h4>{{ __('No result found') }}</h4>
 			{% endblock no_result %}
 		{% endif %}

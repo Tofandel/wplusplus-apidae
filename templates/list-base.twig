@@ -42,11 +42,7 @@
 		{% endblock pagination %}
 	{% block loop %}
 		{% for o in searchResult %}
-		{% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|replace({
-			'%TYPE%': o.type,
-			'%NAME%': o.nom.libelleFr,
-			'%CITY%': o.localisation.adresse.commune.nom}
-			)|lower|slugify(false)) ~ '/id/' ~ o.id %}
+		{% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
 	{% block marker %}
 		{% autoescape 'js' %}
 		{% if useMaps %}

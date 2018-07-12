@@ -25,7 +25,7 @@ class Apidae_Detail implements WP_Shortcode {
 	public static function add_detail_rewrite() {
 		$redirectUrl = 'index.php?pagename=$matches[1]&apioid=$matches[3]';
 		add_rewrite_tag( '%apioid%', '([0-9]+)' );
-		$rule = '^/([^/]+)/?([^&]+)/id/([0-9]+)';
+		$rule = '^([^/]+)/?(.+)/id/([0-9]+)';
 		add_rewrite_rule( $rule, $redirectUrl, 'top' );
 		$rules = get_option( 'rewrite_rules' );
 		if ( ! isset( $rules[ $rule ] ) ) {
@@ -120,7 +120,7 @@ class Apidae_Detail implements WP_Shortcode {
 			$content = $tpl->render( array(
 				'referer' => wp_get_referer(),
 				'siteUrl' => site_url(),
-				'object'  => $object
+				'o'       => $object
 			) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );

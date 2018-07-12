@@ -177,7 +177,7 @@ class Apidae_List implements WP_Shortcode {
 					'heading'     => esc_html__( 'Detail link scheme', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'detail_scheme',
 					'description' => __( 'The link scheme to the detail template', $WPlusPlusApidae->getTextDomain() ),
-					'std'         => '/%TYPE%/%CITY%/%NAME%'
+					'std'         => '/%type%/%nom.libelleFr%/%localisation.adresse.commune.nom%'
 				),
 				array(
 					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
@@ -188,6 +188,24 @@ class Apidae_List implements WP_Shortcode {
 				),
 			)
 		);
+	}
+
+	public static function applyScheme( $scheme, $object ) {
+		$object = (array) $object;
+
+		return preg_replace_callback( '#%([^%]*)%#', function ( $var ) use ( $object ) {
+			$path = array_reverse( explode( '.', $var[1] ) );
+			$v    = $object;
+			while ( $k = array_pop( $path ) ) {
+				if ( isset( $v[ $k ] ) ) {
+					$v = $v[ $k ];
+				} else {
+					return "";
+				}
+			}
+
+			return (string) $v;
+		}, $scheme );
 	}
 
 	/**

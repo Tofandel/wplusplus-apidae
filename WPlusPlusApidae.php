@@ -242,7 +242,7 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
 							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
-							'default' => file_get_contents( $this->file( 'templates/list-layout.twig' ) )
+							'default' => @file_get_contents( $this->file( 'templates/list-layout.twig' ) )
 						),
 					),
 				)
@@ -271,7 +271,8 @@ class WPlusPlusApidae extends WP_Plugin {
 							'id'      => 'detail-code',
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
-							'options' => array( 'minLines' => 20, 'maxLines' => 400 )
+							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
+							'default' => @file_get_contents( $this->file( 'templates/detail-layout.twig' ) )
 						),
 					),
 				)
