@@ -18,12 +18,30 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_List implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
+	public static function getLangs() {
+		global $WPlusPlusApidae;
+
+		return array(
+			__( 'French', $WPlusPlusApidae->getTextDomain() )              => 'fr',
+			__( 'English', $WPlusPlusApidae->getTextDomain() )             => 'en',
+			__( 'German', $WPlusPlusApidae->getTextDomain() )              => 'de',
+			__( 'Dutch', $WPlusPlusApidae->getTextDomain() )               => 'nl',
+			__( 'Italian', $WPlusPlusApidae->getTextDomain() )             => 'it',
+			__( 'Spanish', $WPlusPlusApidae->getTextDomain() )             => 'es',
+			__( 'Russian', $WPlusPlusApidae->getTextDomain() )             => 'ru',
+			__( 'Chinese', $WPlusPlusApidae->getTextDomain() )             => 'zh',
+			__( 'Portuguese (Brazil)', $WPlusPlusApidae->getTextDomain() ) => 'pt-br',
+		);
+	}
+
 	protected function __init() {
 		global $WPlusPlusApidae;
 
 		$file_names    = array();
 		$details_pages = array();
+		$langs         = array();
 		if ( is_admin() ) {
+			$langs      = self::getLangs();
 			$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
 			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
@@ -129,19 +147,9 @@ class Apidae_List implements WP_Shortcode {
 				),
 				array(
 					'type'        => 'multidropdown',
-					'heading'     => esc_html__( 'Lang', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'lang',
-					'value'       => array(
-						__( 'French', $WPlusPlusApidae->getTextDomain() )              => 'fr',
-						__( 'English', $WPlusPlusApidae->getTextDomain() )             => 'en',
-						__( 'German', $WPlusPlusApidae->getTextDomain() )              => 'de',
-						__( 'Dutch', $WPlusPlusApidae->getTextDomain() )               => 'nl',
-						__( 'Italian', $WPlusPlusApidae->getTextDomain() )             => 'it',
-						__( 'Spanish', $WPlusPlusApidae->getTextDomain() )             => 'es',
-						__( 'Russian', $WPlusPlusApidae->getTextDomain() )             => 'ru',
-						__( 'Chinese', $WPlusPlusApidae->getTextDomain() )             => 'zh',
-						__( 'Portuguese (Brazil)', $WPlusPlusApidae->getTextDomain() ) => 'pt-br',
-					),
+					'heading'     => esc_html__( 'Languages', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'langs',
+					'value'       => $langs,
 					"std"         => 'fr',
 					'admin_label' => true
 				),
@@ -259,7 +267,7 @@ class Apidae_List implements WP_Shortcode {
 			'order'         => $atts['order'],
 			'searchFields'  => $atts['search_fields'],
 			'asc'           => (bool) $atts['reverse_order'],
-			'locales'       => array( $atts['lang'] ),
+			'locales'       => array( $atts['langs'] ),
 			'searchQuery'   => '',
 			'criteresQuery' => ''
 		), $json );

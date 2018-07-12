@@ -22,11 +22,13 @@ class Template {
 	 */
 	static $twig;
 
+	const CACHE_FOLDER = WP_CONTENT_DIR . '/cache/twig';
+
 	public static function __init__() {
 		global $WPlusPlusApidae;
 		$loader       = new Twig_Loader_Filesystem( $WPlusPlusApidae->folder( 'templates' ) );
 		static::$twig = new Twig_Environment( $loader, array(
-			'cache' => $WPlusPlusApidae->folder( 'templates/cache' ),
+			'cache' => self::CACHE_FOLDER,
 			'debug' => (bool) WP_DEBUG,
 		) );
 		if ( WP_DEBUG ) {
@@ -62,6 +64,7 @@ class Template {
 		global $WPlusPlusApidae;
 		$WPlusPlusApidae->deleteFolder( '/templates/list' );
 		$WPlusPlusApidae->deleteFolder( '/templates/detail' );
+		$WPlusPlusApidae->deleteFolder( self::CACHE_FOLDER );
 	}
 
 	public static function update_templates( $options, $changed_values = array() ) {
@@ -74,8 +77,8 @@ class Template {
 		$detail_titles = array();
 
 		if ( ! empty( $changed_values['list-template'] ) ) {
-			$WPlusPlusApidae->deleteFolder( '/templates/cache' );
 			$WPlusPlusApidae->deleteFolder( '/templates/list' );
+			$WPlusPlusApidae->deleteFolder( self::CACHE_FOLDER );
 			foreach ( $options['list-template']['redux_repeater_data'] as $k => $data ) {
 				$title = wpp_slugify( $options['list-template']['list-name'][ $k ] );
 				$i     = '';
@@ -89,8 +92,8 @@ class Template {
 			}
 		}
 		if ( ! empty( $changed_values['detail-template'] ) ) {
-			$WPlusPlusApidae->deleteFolder( '/templates/cache' );
 			$WPlusPlusApidae->deleteFolder( '/templates/detail' );
+			$WPlusPlusApidae->deleteFolder( self::CACHE_FOLDER );
 			foreach ( $options['detail-template']['redux_repeater_data'] as $k => $data ) {
 				$title = wpp_slugify( $options['detail-template']['detail-name'][ $k ] );
 				$i     = '';

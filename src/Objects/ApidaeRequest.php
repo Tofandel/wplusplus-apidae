@@ -14,19 +14,30 @@ class ApidaeRequest {
 	 * retourne le détail d'un objet touristique
 	 *
 	 * @param int $id identifiant de l'objet
-	 * @param array $fields champs retournés
-	 * @param string $locale langues demandées
+	 * @param array|false $query
 	 *
 	 * @return array|false
 	 */
-	public static function getSingleObject( $id, $fields, $locale ) {
+	public static function getSingleObject( $id, $query ) {
 		global $tofandel_apidae;
 
-		$query = array( 'projetId' => $tofandel_apidae['project_id'], 'apiKey' => $tofandel_apidae['api_key'] );
-		if ( $fields != '' ) {
-			$query['responseFields'] = $fields;
+		$default_fields = array(
+			'id',
+			'nom',
+			'informations',
+			'presentation.descriptifCourt',
+			'presentation.descriptifDetaille',
+			'@informationsObjetTouristique'
+		);
+
+		$query['projetId'] = $tofandel_apidae['project_id'];
+		$query['apiKey']   = $tofandel_apidae['api_key'];
+		if ( empty( $query['responseFields'] ) ) {
+			$query['responseFields'] = $default_fields;
 		}
-		$query['locales'] = $locale;
+
+		$query = apply_filters( 'apidae_single_request_query', $query );
+
 		$url              = sprintf( 'https://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/%d/?', $id ) . http_build_query( $query );
 		$md               = md5( $url );
 		$cache            = self::getCache( $md );
@@ -61,20 +72,6 @@ class ApidaeRequest {
 	}
 
 	/**
-	 * retourne une chaine de caractère aléatoire de 8 caractères de longueur dans les chiffres et lettres minuscules
-	 * @return string
-	 */
-	public static function genRandomSeed() {
-		$sAR  = 'abcdefghijklmnopqrstuvwxyz0123456789';
-		$sRet = '';
-		for ( $i = 0; $i < 9; $i ++ ) {
-			$sRet .= $sAR[ rand( 0, 35 ) ];
-		}
-
-		return $sRet;
-	}
-
-	/**
 	 * Exécute une requête de recherche Apidae
 	 *
 	 * @param array $query tableau de paramètres
@@ -94,15 +91,8 @@ class ApidaeRequest {
 		);
 		$query     = array_merge( $query, $def_query );
 
-		if ( array_key_exists( 'order', $query ) && $query['order'] === 'RANDOM' ) {
-			if ( array_key_exists( 'WP84randomSeed', $_SESSION ) ) {
-				$query['randomSeed'] = $_SESSION['WP84randomSeed'];
-			} else {
-				$seed                       = self::genRandomSeed();
-				$_SESSION['WP84randomSeed'] = $seed;
-				$query['randomSeed']        = $seed;
-			}
-		}
+		$query = apply_filters( 'apidae_list_request_query', $query );
+
 		$query   = array( 'query' => json_encode( $query ) );
 		$url     = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?' . http_build_query( $query );
 		$md      = md5( $url );
@@ -124,12 +114,10 @@ class ApidaeRequest {
 
 		if ( $isValid === true ) {
 			if ( is_array( $rep ) ) {
+				$rep['numFound'] = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
 				if ( $cache === false ) {
 					self::setCache( $md, $rep );
 				}
-				$rep['numFound'] = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
-
-				//$nbPages= $numFound>0?ceil($numFound/$cnt):0;
 				return $rep;
 			} else {
 				return false;
