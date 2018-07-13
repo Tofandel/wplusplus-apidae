@@ -60,21 +60,21 @@ add_action( 'tgmpa_register',
 
 			// This is an example of how to include a plugin bundled with a theme.
 			array(
-				'name'               => 'W++ Core',
+				'name'             => 'W++ Core',
 				// The plugin name.
-				'slug'               => 'wplusplus-core',
+				'slug'             => 'wplusplus-core',
 				// The plugin slug (typically the folder name).
+				'source'           => 'https://github.com/Tofandel/wplusplus-core/archive/v1.2-beta.zip',
 				// The plugin source.
-				'required'           => true,
+				'required'         => true,
 				// If false, the plugin is only 'recommended' instead of required.
-				'version'            => '1.2',
+				'version'          => '1.2',
 				// E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-				'force_activation'   => true,
+				'force_activation' => true,
 				// If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
 				'force_deactivation' => false,
 				// If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
 				//'external_url'       => 'https://github.com/tofandel/wplusplus-core',
-				'source'             => 'https://github.com/tofandel/wplusplus-core'
 				// If set, overrides default API URL and points to an external URL.
 				//'is_callable'        => '',
 				// If set, this callable will be be checked for availability to determine if a plugin is active.
