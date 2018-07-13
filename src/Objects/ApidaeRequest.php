@@ -21,19 +21,17 @@ class ApidaeRequest {
 	public static function getSingleObject( $id, $query ) {
 		global $tofandel_apidae;
 
-		$default_fields = array(
-			'id',
-			'nom',
-			'informations',
-			'presentation.descriptifCourt',
-			'presentation.descriptifDetaille',
-			'@informationsObjetTouristique'
-		);
+		$default_fields = '@all';
 
 		$query['projetId'] = $tofandel_apidae['project_id'];
 		$query['apiKey']   = $tofandel_apidae['api_key'];
 		if ( empty( $query['responseFields'] ) ) {
 			$query['responseFields'] = $default_fields;
+		}
+
+		if ( is_array( $query['responseFields'] ) ) {
+			//Even if the doc says otherwise the api doesn't take this argument as an array
+			$query['responseFields'] = implode( ',', $query['responseFields'] );
 		}
 
 		$query = apply_filters( 'apidae_single_request_query', $query );

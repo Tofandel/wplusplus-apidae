@@ -117,11 +117,11 @@ class Apidae_Detail implements WP_Shortcode {
 		}
 
 		try {
-			$content = $tpl->render( array(
+			$content = $tpl->render( apply_filters( 'apidae_single_twig_vars', array(
 				'referer' => wp_get_referer(),
 				'siteUrl' => site_url(),
 				'o'       => $object
-			) );
+			) ) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );
 

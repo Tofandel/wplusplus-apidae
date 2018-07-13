@@ -360,7 +360,7 @@ class Apidae_List implements WP_Shortcode {
 
 		try {
 			global $tofandel_apidae;
-			$content = $tpl->render( array(
+			$content = $tpl->render( apply_filters( 'apidae_list_twig_vars', array(
 				'numResult'      => $numFound,
 				'searchResult'   => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
 				'currentPage'    => $currentPage,
@@ -373,7 +373,7 @@ class Apidae_List implements WP_Shortcode {
 				'siteUrl'        => site_url(),
 				'pageQuery'      => $page_query,
 				'searchWords'    => $searchWords
-			) );
+			) ) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );
 

@@ -1,16 +1,58 @@
 {% macro image_url(object, size, index) %}
 	{% if size == 'xsmall' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'}) }}
+		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'})|e('html_attr') }}
 	{% elseif size == 'small' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlFiche|replace({'http://': '//'}) }}
+		{{ object.illustrations[index].traductionFichiers[0].urlFiche|replace({'http://': '//'})|e('html_attr') }}
 	{% elseif size == 'medium' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlDiaporama|replace({'http://': '//'}) }}
+		{{ object.illustrations[index].traductionFichiers[0].urlDiaporama|replace({'http://': '//'})|e('html_attr') }}
 	{% else %}
-		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'}) }}
+		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'})|e('html_attr') }}
 	{% endif %}
 {% endmacro image_url %}
 
+{% macro diaporama(o, size) %}
+	{% import _self as apidae %}
+	{% if o.illustrations|length > 1 %}
+		<ul class="diaporama">
+			{% for index, images in o.illustrations %}
+				<li class="slide"><img src="{{ apidae.image_url(o, size, index) }}"
+									   alt="{{ images.traductionFichiers[0].fileName }}"
+									   width="{{ images.traductionFichiers[0].largeur }}"
+									   height="{{ images.traductionFichiers[0].hauteur }}"></li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<img src="{{ apidae.image_url(o, size, index) }}" alt="{{ images.traductionFichiers[0].fileName }}"
+			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
+	{% endif %}
+{% endmacro diaporama %}
+
+{% macro com_link(com_id, link, text) %}
+	{% set text = text|default(link) %}
+	{% set corres = { 201: 'tel:', 202: 'fax:', 204: 'mailto:', 205: '', 207: ''} %}
+	{% for id, prefix in corres %}
+		{% if id == com_id %}
+			{% if prefix is empty %}
+				{% set link = '<a href="' ~ prefix ~ link|replace({' ': ''})|e('html_attr') ~ '" rel="noopener" target="_blank">' ~ text ~ '</a>' %}
+			{% else %}
+				{% set link = '<a href="' ~ prefix ~ link|replace({' ': ''})|e('html_attr') ~ '">' ~ text ~ '</a>' %}
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	{{ link|raw }}
+{% endmacro com_link %}
+
 {% import _self as apidae %}
+
+{{ enqueue_script('jquery-ui-tabs') }}
+{{ enqueue_style('jquery-ui-css', '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css', false,"1.9.0") }}
+
+<script>
+	jQuery(document).ready(function ($) {
+		$(".tabs").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+		$(".tabs li").removeClass("ui-corner-top").addClass("ui-corner-left");
+	});
+</script>
 
 <div class="apidae-detail">
 	{% block marker %}
@@ -33,36 +75,114 @@
 		{% endautoescape %}
 	{% endblock marker %}
 	{% block layout %}
-	{% if o != false %}
+		{% if o != false %}
 			{% block single %}
-				<div class="image-container">
-					<img class="img" src="{{ apidae.image_url(o, 'large', 0) }}">
-				</div>
-				<section class="info">
-					<h3 class="title">{{ o.nom.libelleFr }}</h3>
-					<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
-					<p class="description">{{ o.presentation.descriptifDetaille.libelleFr }}</p>
-				</section>
-	{% set coms = o.informations.moyensCommunication|orderBy('type.ordre')|groupBy('type.libelleFr') %}
-	{% autoescape 'html' %}
-	{% for com in coms %}
-	{% if com.type.id is iterable %}
-		{% for %}
-		{% else %}
-			<article class="iconbox iconbox_left communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
-				<div class="iconbox_content">
-					<header class="entry-content-header"><h3 class="iconbox_content_title">{{ com.type.libelleFr }}</h3>
-					</header>
-					<div class="iconbox_content_container"><p style="text-align: left;">{{ com.coordonnees.fr }}</p>
+				{% autoescape 'html' %}
+					<h2 class="title">{{ o.nom.libelleFr }}</h2>
+					<h3 class="commune">{{ o.localisation.adresse.commune.nom }}</h3>
+					<div class="image-container">
+						{{ apidae.diaporama(o, 'large') }}
 					</div>
-				</div>
-			</article>
-			{% endif %}
-		{% endfor %}
-		{% endautoescape %}
-		{% endblock single %}
-	{% else %}
-		{% block no_result %}
+					<div class="tabs">
+						<ul>
+							<li><a href="#description">Description</a></li>
+							<li><a href="#tarifs-reservation">Tarifs et Reservation</a></li>
+							<li><a href="#moyencommunication">Informations de Contact</a></li>
+							<li><a href="#prestations">Prestations</a></li>
+						</ul>
+						<section id="description">
+							{% set desc = o.presentation.descriptifDetaille.libelleFr|default(o.presentation.descriptifCourt.libelleFr) %}
+							<p class="description">{{ desc|nl2br }}</p>
+						</section>
+						<section id="tarifs-reservation">
+							<h3>Ouverture</h3>
+							{{ o.ouverture.periodeEnClair.libelleFr }}
+							<h3>Tarifs</h3>
+							{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
+							<h3>Modes de paiement acceptés</h3>
+							<ul class="modepaiement">
+								{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
+									<li>{{ pay.libelleFr }}</li>
+								{% endfor %}
+							</ul>
+							{% if o.reservation.organismes is not empty %}
+								<h3>Reservation</h3>
+								{% for organisme in o.reservation.organismes %}
+									{% set organisme = organisme.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
+									{% for com in organisme %}
+										{% if com.type.id is iterable %}
+											<div class="communication communication-mode-{{ com.type.id.0 }}">
+												<h5>{{ com.type.libelleFr.0 }}</h5>
+												{% for key, val in com.type.id %}
+													<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
+												{% endfor %}
+											</div>
+										{% else %}
+											<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
+												<h5>{{ com.type.libelleFr }}</h5>
+												<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
+											</div>
+										{% endif %}
+									{% endfor %}
+								{% endfor %}
+							{% endif %}
+						</section>
+						<section id="moyencommunication">
+							<h3>Informations de Contact</h3>
+							{% set coms = o.informations.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
+							{% for com in coms %}
+								{% if com.type.id is iterable %}
+									<div class="communication communication-mode-{{ com.type.id.0 }}">
+										<h5>{{ com.type.libelleFr.0 }}</h5>
+										{% for key, val in com.type.id %}
+											<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
+										{% endfor %}
+									</div>
+								{% else %}
+									<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
+										<h5>{{ com.type.libelleFr }}</h5>
+										<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
+									</div>
+								{% endif %}
+							{% endfor %}
+						</section>
+						<section id="prestations">
+							<h3>Prestations</h3>
+							<ul>
+								{% set presta_types = {"equipements": "Equipements", "services": "Services", "conforts": "Conforts", "languesparlees": "Langues Parlées"} %}
+								{% for key, label in presta_types %}
+									{% if attribute(o.prestations, key) is iterable and attribute(o.prestations, key) is not empty %}
+										<li><h5>{{ label }}</h5>
+											<ul>
+												{% for presta in attribute(o.prestations, key)|orderBy('ordre')|groupBy('familleCritere.id') %}
+													{% if presta.id is iterable %}
+														<li>{% if presta.familleCritere.libelleFr.0 is not empty %}
+																<strong>{{ presta.familleCritere.libelleFr.0 }}
+																:</strong>{% endif %}
+															{% for key, val in presta.id %}
+																{{ attribute(presta.libelleFr, key) }}{% if not loop.last %},{% endif %}
+															{% endfor %}
+														</li>
+													{% else %}
+														<li>
+															{% if presta.familleCritere.libelleFr is not empty %}
+																<strong>{{ presta.familleCritere.libelleFr }} :</strong>
+															{% endif %}
+															{{ presta.libelleFr }}
+														</li>
+													{% endif %}
+												{% endfor %}
+											</ul>
+										</li>
+									{% endif %}
+								{% endfor %}
+							</ul>
+						</section>
+					</div>
+				{% endautoescape %}
+			{% endblock single %}
+		{% else %}
+			{% block no_result %}
 				<h4>{{ __('No result found') }}</h4>
 			{% endblock no_result %}
 		{% endif %}

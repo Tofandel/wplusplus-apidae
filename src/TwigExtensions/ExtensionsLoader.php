@@ -30,6 +30,8 @@ class ExtensionsLoader extends \Twig_Extension {
 
 			return __( $str, $WPlusPlusApidae->getTextDomain() );
 		} );
+		$functions['enqueue_script']  = new \Twig_Function( 'enqueue_script', 'wp_enqueue_script' );
+		$functions['enqueue_style']   = new \Twig_Function( 'enqueue_style', 'wp_enqueue_style' );
 
 		return apply_filters( 'apidae_twig_functions', $functions );
 	}
@@ -43,8 +45,11 @@ class ExtensionsLoader extends \Twig_Extension {
 		$filters['slugify']     = new \Twig_Filter( 'slugify', 'wpp_slugify' );
 		$filters['applyScheme'] = new \Twig_Filter( 'applyScheme', [ Apidae_List::class, 'applyScheme' ] );
 		$filters['orderBy']     = new \Twig_Filter( 'orderBy', function ( $array, $path ) {
+			if ( empty( $array ) ) {
+				return array();
+			}
 			if ( ! is_array( $array ) ) {
-				throw new \Exception( 'This filter can only be used on array' );
+				throw new \Exception( 'The "orderBy" filter can only be used on array (' . gettype( $array ) . ' given)' );
 			}
 			$path = explode( '.', $path );
 			$c    = count( $path );
@@ -75,8 +80,11 @@ class ExtensionsLoader extends \Twig_Extension {
 			return $array;
 		} );
 		$filters['groupBy']     = new \Twig_Filter( 'groupBy', function ( $array, $path ) {
+			if ( empty( $array ) ) {
+				return array();
+			}
 			if ( ! is_array( $array ) ) {
-				throw new \Exception( 'This filter can only be used on array' );
+				throw new \Exception( 'The "groupBy" filter can only be used on array (' . gettype( $array ) . ' given)' );
 			}
 			$new_array = array();
 			$path      = explode( '.', $path );
