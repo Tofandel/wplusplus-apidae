@@ -17,9 +17,11 @@ class Apidae_Categories implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
 	protected function __init() {
-		global $WPlusPlusApidae, $tofandel_apidae;
+		global $WPlusPlusApidae, $pagenow;
 
-		$cats = array_reverse( self::getCategories() );
+		if ( $pagenow == 'post.php' ) {
+			$cats = array_reverse( self::getCategories() );
+		}
 
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),

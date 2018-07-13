@@ -35,13 +35,14 @@ class Apidae_Detail implements WP_Shortcode {
 
 
 	protected function __init() {
-		global $WPlusPlusApidae;
+		global $WPlusPlusApidae, $pagenow;
 
 		self::add_detail_rewrite();
 
 		$file_names = array();
 		$langs      = array();
-		if ( is_admin() ) {
+
+		if ( $pagenow == 'post.php' ) {
 			$langs      = Apidae_List::getLangs();
 			$templates  = glob( $WPlusPlusApidae->file( 'templates/detail/*.twig' ) );
 			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );

@@ -51,14 +51,15 @@ class Apidae_List implements WP_Shortcode {
 	}
 
 	protected function __init() {
-		global $WPlusPlusApidae;
+		global $WPlusPlusApidae, $pagenow;
 
 		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
 
 		$file_names    = array();
 		$details_pages = array();
 		$langs         = array();
-		if ( is_admin() ) {
+
+		if ( $pagenow == 'post.php' ) {
 			$langs      = self::getLangs();
 			$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
 			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
