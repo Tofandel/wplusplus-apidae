@@ -19,6 +19,7 @@ class Apidae_Categories implements WP_Shortcode {
 	protected function __init() {
 		global $WPlusPlusApidae, $pagenow;
 
+		$cats = array();
 		if ( $pagenow == 'post.php' ) {
 			$cats = array_reverse( self::getCategories() );
 		}
