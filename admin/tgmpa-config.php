@@ -73,7 +73,8 @@ add_action( 'tgmpa_register',
 				// If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
 				'force_deactivation' => false,
 				// If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-				'external_url'       => 'https://github.com/tofandel/wplusplus-core',
+				//'external_url'       => 'https://github.com/tofandel/wplusplus-core',
+				'source'             => 'https://github.com/tofandel/wplusplus-core'
 				// If set, overrides default API URL and points to an external URL.
 				//'is_callable'        => '',
 				// If set, this callable will be be checked for availability to determine if a plugin is active.
