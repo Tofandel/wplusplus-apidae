@@ -1,0 +1,29 @@
+{
+  "name": "W++ Apidae",
+  "version": "1.0.1",
+  "download_url": "https://github.com/Tofandel/wplusplus-apidae",
+  "homepage": "",
+  "requires": "4.8",
+  "tested": "4.9.7",
+  "last_updated": "2018-07-13 23:17:00",
+  "upgrade_notice": "Here's why you should upgrade...",
+  "author": "Adrien Foulon <tofandel@tukan.hu>",
+  "author_homepage": "https://tukangroup.com/about-us/#adrien-foulon",
+  "sections": {
+    "description": "A Wordpress Plugin to integrate Apidae with twig templates and shortcodes",
+    "installation": "",
+    "changelog": ""
+  },
+  "icons": {
+    "1x": "",
+    "2x": ""
+  },
+  "banners": {
+    "low": "",
+    "high": ""
+  },
+  "rating": 100,
+  "num_ratings": 600,
+  "downloaded": 100000,
+  "active_installs": 30000
+}

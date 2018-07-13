@@ -46,9 +46,11 @@ class Apidae_Categories implements WP_Shortcode {
 
 			$cats = array();
 
-			//TODO unique cats
-			foreach ( $tofandel_apidae['categories']['category-name'] as $i => $name ) {
-				$cats[ wpp_slugify( $name ) ] = $name;
+			if ( isset( $tofandel_apidae['categories']['category-name'] ) ) {
+				//TODO unique cats
+				foreach ( $tofandel_apidae['categories']['category-name'] as $i => $name ) {
+					$cats[ wpp_slugify( $name ) ] = $name;
+				}
 			}
 		}
 
