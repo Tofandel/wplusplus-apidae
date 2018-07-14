@@ -22,7 +22,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with worpress simply by creating Twig templates
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wplusplusapidae
