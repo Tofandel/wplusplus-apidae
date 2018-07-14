@@ -20,7 +20,8 @@ class Apidae_Categories implements WP_Shortcode {
 		global $WPlusPlusApidae, $pagenow;
 
 		$cats = array();
-		if ( $pagenow == 'post.php' ) {
+
+		if ( $pagenow == "post-new.php" || $pagenow == "post.php" ) {
 			$cats = array_reverse( self::getCategories() );
 		}
 

@@ -59,7 +59,8 @@ class Apidae_List implements WP_Shortcode {
 		$details_pages = array();
 		$langs         = array();
 
-		if ( $pagenow == 'post.php' ) {
+
+		if ( $pagenow == "post-new.php" || $pagenow == "post.php" ) {
 			$langs      = self::getLangs();
 			$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
 			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
