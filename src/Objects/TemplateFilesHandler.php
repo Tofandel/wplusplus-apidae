@@ -16,7 +16,7 @@ class TemplateFilesHandler {
 
 	public static function __init__() {
 		add_action( 'redux/options/tofandel_apidae/saved', [ self::class, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/import', [ self::class, 'update_templates' ], 10, 2 );
+		//add_action( 'redux/options/tofandel_apidae/import', [ self::class, 'update_templates' ], 10, 2 );
 		add_action( 'redux/options/tofandel_apidae/reset', [ self::class, 'delete_templates' ], 10, 0 );
 	}
 
@@ -24,17 +24,14 @@ class TemplateFilesHandler {
 
 	public static function delete_templates() {
 		global $WPlusPlusApidae;
-		$WPlusPlusApidae->deleteFolder( '/templates/list' );
-		$WPlusPlusApidae->deleteFolder( '/templates/detail' );
-		$WPlusPlusApidae->deleteFolder( self::CACHE_FOLDER );
+		$WPlusPlusApidae->delete_dir( '/templates/list' );
+		$WPlusPlusApidae->delete_dir( '/templates/detail' );
+		$WPlusPlusApidae->delete_dir( self::CACHE_FOLDER );
 	}
 
 	public static function update_templates( $options, $changed_values = array() ) {
 		if ( empty( $changed_values ) ) {
 			return;
-		}
-		if ( is_a( $options, \reduxCorePanel::class ) ) {
-			$options = $changed_values;
 		}
 		global $WPlusPlusApidae;
 
@@ -42,10 +39,10 @@ class TemplateFilesHandler {
 		$detail_titles = array();
 
 		if ( ! empty( $changed_values['list-template'] ) ) {
-			$WPlusPlusApidae->deleteFolder( '/templates/list' );
-			$WPlusPlusApidae->deleteFolder( self::CACHE_FOLDER );
-			foreach ( $options['list-template']['redux_repeater_data'] as $k => $data ) {
-				$title = wpp_slugify( $options['list-template']['list-name'][ $k ] );
+			$WPlusPlusApidae->delete_dir( '/templates/list' );
+			$WPlusPlusApidae->delete_dir( self::CACHE_FOLDER );
+			foreach ( $changed_values['list-template']['redux_repeater_data'] as $k => $data ) {
+				$title = wpp_slugify( $changed_values['list-template']['list-name'][ $k ] );
 				$i     = '';
 				while ( in_array( $title . $i, $list_titles ) ) {
 					$i ++;
@@ -53,14 +50,14 @@ class TemplateFilesHandler {
 				$title         = $title . $i;
 				$list_titles[] = $title;
 				$WPlusPlusApidae->mkdir( '/templates/list' );
-				$WPlusPlusApidae->put_contents( '/templates/list/' . $title . '.twig', $options['list-template']['list-code'][ $k ] );
+				$WPlusPlusApidae->put_contents( '/templates/list/' . $title . '.twig', $changed_values['list-template']['list-code'][ $k ] );
 			}
 		}
 		if ( ! empty( $changed_values['detail-template'] ) ) {
-			$WPlusPlusApidae->deleteFolder( '/templates/detail' );
-			$WPlusPlusApidae->deleteFolder( self::CACHE_FOLDER );
-			foreach ( $options['detail-template']['redux_repeater_data'] as $k => $data ) {
-				$title = wpp_slugify( $options['detail-template']['detail-name'][ $k ] );
+			$WPlusPlusApidae->delete_dir( '/templates/detail' );
+			$WPlusPlusApidae->delete_dir( self::CACHE_FOLDER );
+			foreach ( $changed_values['detail-template']['redux_repeater_data'] as $k => $data ) {
+				$title = wpp_slugify( $changed_values['detail-template']['detail-name'][ $k ] );
 				$i     = '';
 				while ( in_array( $title . $i, $detail_titles ) ) {
 					$i ++;
