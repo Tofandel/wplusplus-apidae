@@ -2,7 +2,7 @@
 
 namespace Tofandel;
 
-use Tofandel\Apidae\Objects\Template;
+use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Apidae\Shortcodes\Apidae_Categories;
 use Tofandel\Apidae\Shortcodes\Apidae_Detail;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
@@ -36,9 +36,6 @@ class WPlusPlusApidae extends WP_Plugin {
 	 */
 	public function actionsAndFilters() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue' ] );
-		add_action( 'redux/options/tofandel_apidae/saved', [ Template::class, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/import', [ Template::class, 'update_templates' ], 10, 2 );
-		add_action( 'redux/options/tofandel_apidae/reset', [ Template::class, 'delete_templates' ], 10, 0 );
 	}
 
 	public function admin_enqueue() {
@@ -49,8 +46,10 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * Add the tables and settings and any plugin variable specifics here
 	 *
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function definitions() {
+		TemplateFilesHandler::__init__();
 		add_action( 'init', function () {
 			Apidae_Detail::__init__();
 			Apidae_List::__init__();
@@ -171,7 +170,7 @@ class WPlusPlusApidae extends WP_Plugin {
 					'desc'     => __( 'In minutes, 0 = no cache', $this->getTextDomain() ),
 					'validate' => 'numeric',
 					'default'  => 1440
-				),
+				),/*
 				array(
 					'title'   => __( 'More request parameters', $this->getTextDomain() ),
 					'desc'    => __( 'Checkout <a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches" rel="noopener" target="_blank">the apidae documentation</a> for more information', $this->getTextDomain() ),
@@ -179,7 +178,7 @@ class WPlusPlusApidae extends WP_Plugin {
 					'type'    => 'ace_editor',
 					'mode'    => 'json',
 					'default' => '{}'
-				)
+				)*/
 			)
 		) );
 		$r->setSection( array(
