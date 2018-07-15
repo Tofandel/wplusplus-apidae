@@ -25,13 +25,15 @@ class TemplateFilesHandler {
 		add_action( 'redux/options/tofandel_apidae/settings/change', [ self::class, 'update_templates' ], 10, 2 );
 	}
 
-	const CACHE_FOLDER = WP_CONTENT_DIR . '/cache/twig';
+	const CACHE_DIR = WP_CONTENT_DIR . '/cache/twig/';
+	const LIST_TPL_DIR = WP_CONTENT_DIR . '/templates/list/';
+	const DETAIL_TPL_DIR = WP_CONTENT_DIR . '/templates/detail/';
 
 	public static function delete_templates() {
 		global $WPlusPlusApidae;
-		$WPlusPlusApidae->delete_dir( '/templates/list' );
-		$WPlusPlusApidae->delete_dir( '/templates/detail' );
-		$WPlusPlusApidae->delete_dir( self::CACHE_FOLDER );
+		$WPlusPlusApidae->delete_dir( self::LIST_TPL_DIR );
+		$WPlusPlusApidae->delete_dir( self::DETAIL_TPL_DIR );
+		$WPlusPlusApidae->delete_dir( self::CACHE_DIR );
 		//Prevent the template from being recreated from old values
 		remove_action( 'redux/options/tofandel_apidae/settings/change', [ self::class, 'update_templates' ], 10 );
 	}
@@ -46,8 +48,8 @@ class TemplateFilesHandler {
 		$detail_titles = array();
 
 		if ( ! empty( $changed_values['list-template'] ) ) {
-			$WPlusPlusApidae->delete_dir( '/templates/list' );
-			$WPlusPlusApidae->delete_dir( self::CACHE_FOLDER );
+			$WPlusPlusApidae->delete_dir( self::LIST_TPL_DIR );
+			$WPlusPlusApidae->delete_dir( self::CACHE_DIR );
 			if ( ! empty( $options['list-template']['redux_repeater_data'] ) ) {
 				foreach ( $options['list-template']['redux_repeater_data'] as $k => $data ) {
 					$title = wpp_slugify( $options['list-template']['list-name'][ $k ] );
@@ -57,14 +59,14 @@ class TemplateFilesHandler {
 					}
 					$title         = $title . $i;
 					$list_titles[] = $title;
-					$WPlusPlusApidae->mkdir( '/templates/list' );
-					$WPlusPlusApidae->put_contents( '/templates/list/' . $title . '.twig', $options['list-template']['list-code'][ $k ] );
+					$WPlusPlusApidae->mkdir( self::LIST_TPL_DIR );
+					$WPlusPlusApidae->put_contents( self::LIST_TPL_DIR . $title . '.twig', $options['list-template']['list-code'][ $k ] );
 				}
 			}
 		}
 		if ( ! empty( $changed_values['detail-template'] ) ) {
-			$WPlusPlusApidae->delete_dir( '/templates/detail' );
-			$WPlusPlusApidae->delete_dir( self::CACHE_FOLDER );
+			$WPlusPlusApidae->delete_dir( self::LIST_TPL_DIR );
+			$WPlusPlusApidae->delete_dir( self::CACHE_DIR );
 			if ( ! empty( $options['detail-template']['redux_repeater_data'] ) ) {
 				foreach ( $options['detail-template']['redux_repeater_data'] as $k => $data ) {
 					$title = wpp_slugify( $options['detail-template']['detail-name'][ $k ] );
@@ -74,8 +76,8 @@ class TemplateFilesHandler {
 					}
 					$title           = $title . $i;
 					$detail_titles[] = $title;
-					$WPlusPlusApidae->mkdir( '/templates/detail' );
-					$WPlusPlusApidae->put_contents( '/templates/detail/' . $title . '.twig', $options['detail-template']['detail-code'][ $k ] );
+					$WPlusPlusApidae->mkdir( self::DETAIL_TPL_DIR );
+					$WPlusPlusApidae->put_contents( self::DETAIL_TPL_DIR . $title . '.twig', $options['detail-template']['detail-code'][ $k ] );
 				}
 			}
 		}
