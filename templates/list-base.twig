@@ -1,16 +1,4 @@
-{% macro image_url(object, size, index) %}
-	{% if size == 'xsmall' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'})|e('html_attr') }}
-	{% elseif size == 'small' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlFiche|replace({'http://': '//'})|e('html_attr') }}
-	{% elseif size == 'medium' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlDiaporama|replace({'http://': '//'})|e('html_attr') }}
-	{% else %}
-		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'})|e('html_attr') }}
-	{% endif %}
-{% endmacro image_url %}
-
-{% import _self as apidae %}
+{% import "macros.twig" as apidae %}
 
 <div class="apidae-list">
 	{% block layout %}

@@ -22,7 +22,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with worpress simply by creating Twig templates
- * Version: 1.0.5
+ * Version: 1.1
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wplusplusapidae
@@ -241,7 +241,7 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
 							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
-							'default' => @file_get_contents( $this->file( 'templates/list-layout.twig' ) )
+							'default' => $this->get_contents( 'templates/list-layout.twig' )
 						),
 					),
 				)
@@ -271,7 +271,7 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'    => 'ace_editor',
 							'mode'    => 'twig',
 							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
-							'default' => @file_get_contents( $this->file( 'templates/detail-layout.twig' ) )
+							'default' => $this->get_contents( 'templates/list-layout.twig' )
 						),
 					),
 				)

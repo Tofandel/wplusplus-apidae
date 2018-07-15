@@ -1,48 +1,8 @@
-{% macro image_url(object, size, index) %}
-	{% set index = index|default(0) %}
-	{% if size == 'xsmall' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'})|e('html_attr') }}
-	{% elseif size == 'small' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlFiche|replace({'http://': '//'})|e('html_attr') }}
-	{% elseif size == 'medium' %}
-		{{ object.illustrations[index].traductionFichiers[0].urlDiaporama|replace({'http://': '//'})|e('html_attr') }}
-	{% else %}
-		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'})|e('html_attr') }}
-	{% endif %}
-{% endmacro image_url %}
+{# macro image_url(object, size, index) Displays the image's url index being the image number (defaults to 0)  #}
+{# macro diaporama(object, size) Displays a simple ul>li markup for a diaporama from the object #}
+{# macro com_link(type_id, link, text) Makes a link from the contact info based on their type_id #}
 
-{% macro diaporama(o, size) %}
-	{% import _self as apidae %}
-	{% if o.illustrations|length > 1 %}
-		<ul class="diaporama">
-			{% for index, images in o.illustrations %}
-				<li class="slide"><img src="{{ apidae.image_url(o, size, index) }}"
-									   alt="{{ images.traductionFichiers[0].fileName }}"
-									   width="{{ images.traductionFichiers[0].largeur }}"
-									   height="{{ images.traductionFichiers[0].hauteur }}"></li>
-			{% endfor %}
-		</ul>
-	{% else %}
-		<img src="{{ apidae.image_url(o, size, 0) }}" alt="{{ images.traductionFichiers[0].fileName }}"
-			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
-	{% endif %}
-{% endmacro diaporama %}
-
-{% macro com_link(com_id, link, text) %}
-	{% set text = text|default(link) %}
-	{% set corres = { 201: 'tel:', 202: 'fax:', 204: 'mailto:', 205: '', 207: ''} %}
-	{% for id, prefix in corres %}
-		{% if id == com_id %}
-			{% if prefix is empty %}
-				{% set link = '<a href="' ~ prefix ~ link|replace({' ': ''})|e('html_attr') ~ '" rel="noopener" target="_blank">' ~ text ~ '</a>' %}
-			{% else %}
-				{% set link = '<a href="' ~ prefix ~ link|replace({' ': ''})|e('html_attr') ~ '">' ~ text ~ '</a>' %}
-			{% endif %}
-		{% endif %}
-	{% endfor %}
-	{{ link|raw }}
-{% endmacro com_link %}
-
+{% extends "detail-base.twig" %}
 {% import "macros.twig" as apidae %}
 
 {% block scripts %}
@@ -169,55 +129,8 @@
 	prestations: "Prestations"
 } %}
 
-<div class="apidae-detail">
-	{% block marker %}
-		{% autoescape 'js' %}
-			{% if useMaps %}
-				<script>
-					if (typeof markerNodes === 'undefined')
-						var markerNodes = [];
-					markerNodes.push({
-						'id': "{{ o.id }}",
-						'name': "{{ o.nom.libelleFr }}",
-						'addressLine1': "{{ o.localisation.adresse.adresse1 }}",
-						'addressLine2': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
-						'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
-						'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
-						'link': "{{ link }}"
-					});
-				</script>
-			{% endif %}
-		{% endautoescape %}
-	{% endblock marker %}
-	{% block layout %}
-		{% autoescape 'html' %}
-			{% block title %}
-				<h2 class="title">{{ o.nom.libelleFr }}</h2>
-			{% endblock title %}
-			{% block images %}
-				<div class="image-container">
-					{{ apidae.diaporama(o, 'large') }}
-				</div>
-			{% endblock images %}
-			{% block tabs %}
-				<div class="tabs">
-					{% set sections = {} %}
-					<ul>
-						{% for key, label in tabs %}
-							{% set block = block(key) %}
-							{% if block is not empty %}
-								{% set sections = sections|merge({ (key): block}) %}
-								<li><a href="#{{ key }}">{{ label }}</a></li>
-							{% endif %}
-						{% endfor %}
-					</ul>
-					{% for key, block in sections %}
-						<section id="{{ key }}">
-							{{ block|raw }}
-						</section>
-					{% endfor %}
-				</div>
-			{% endblock tabs %}
-		{% endautoescape %}
-	{% endblock layout %}
-</div>
+{% block layout %}
+	{{ block('title') }}
+	{{ block('images') }}
+	{{ block('tabs') }}
+{% endblock layout %}

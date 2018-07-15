@@ -1,5 +1,9 @@
+{# macro image_url(object, size, index) Displays the image's url index being the image number (defaults to 0)  #}
+{# macro diaporama(object, size) Displays a simple ul>li markup for a diaporama from the object #}
+{# macro com_link(type_id, link, text) Makes a link from the contact info based on their type_id #}
+
 {% extends "list-base.twig" %}
-{% import "list-base.twig" as apidae %}
+{% import "macros.twig" as apidae %}
 
 {% block layout %}
 	{{ block('search_form') }}
