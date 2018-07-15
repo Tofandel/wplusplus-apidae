@@ -92,7 +92,7 @@ class Apidae_List implements WP_Shortcode {
 						'tab'  => 3
 					), admin_url( 'admin.php' ) ) ) . '" target="_blank">', '</a>' ),
 				'type'       => 'warning',
-				'param_name' => false
+				'param_name' => 'template'
 			)
 		) : array(
 			array(
@@ -115,7 +115,7 @@ class Apidae_List implements WP_Shortcode {
 						'tab'  => 4
 					), admin_url( 'admin.php' ) ) ) . '" target="_blank">', '</a>' ),
 				'type'       => 'warning',
-				'param_name' => false
+				'param_name' => 'detail_id'
 			) : array(
 				'type'             => 'dropdown',
 				'heading'          => esc_html__( 'Detail page', $WPlusPlusApidae->getTextDomain() ),
