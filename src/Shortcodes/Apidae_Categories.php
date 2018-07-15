@@ -21,7 +21,7 @@ class Apidae_Categories implements WP_Shortcode {
 
 		$cats = array();
 
-		if ( $pagenow == "post-new.php" || $pagenow == "post.php" ) {
+		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
 			$cats = array_reverse( self::getCategories() );
 		}
 

@@ -60,7 +60,7 @@ class Apidae_List implements WP_Shortcode {
 		$langs         = array();
 
 
-		if ( $pagenow == "post-new.php" || $pagenow == "post.php" ) {
+		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
 			$langs      = self::getLangs();
 			$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
 			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
@@ -83,30 +83,55 @@ class Apidae_List implements WP_Shortcode {
 			}
 		}
 
+		$params = empty( $file_names ) ? array(
+			array(
+				'heading'    => esc_html__( 'No template created', $WPlusPlusApidae->getTextDomain() ),
+				'message'    => sprintf( esc_html__( 'Click %shere%s to create one', $WPlusPlusApidae->getTextDomain() ),
+					'<a href="' . esc_url( add_query_arg( array(
+						'page' => 'wplusplus-apidae',
+						'tab'  => 3
+					), admin_url( 'admin.php' ) ) ) . '" target="_blank">', '</a>' ),
+				'type'       => 'warning',
+				'param_name' => false
+			)
+		) : array(
+			array(
+				'type'             => 'dropdown',
+				'heading'          => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
+				'param_name'       => 'template',
+				'value'            => $file_names,
+				'admin_label'      => true,
+				'always_save'      => true,
+				'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
+			)
+		);
+
+		$params[1] = empty( $details_pages ) ?
+			array(
+				'heading'    => esc_html__( 'No detail page found', $WPlusPlusApidae->getTextDomain() ),
+				'message'    => sprintf( esc_html__( 'Click %shere%s to create one', $WPlusPlusApidae->getTextDomain() ),
+					'<a href="' . esc_url( add_query_arg( array(
+						'page' => 'wplusplus-apidae',
+						'tab'  => 4
+					), admin_url( 'admin.php' ) ) ) . '" target="_blank">', '</a>' ),
+				'type'       => 'warning',
+				'param_name' => false
+			) : array(
+				'type'             => 'dropdown',
+				'heading'          => esc_html__( 'Detail page', $WPlusPlusApidae->getTextDomain() ),
+				'param_name'       => 'detail_id',
+				'value'            => $details_pages,
+				'admin_label'      => true,
+				'always_save'      => true,
+				'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
+			);
+
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
 			'description' => esc_html__( 'Shortcode to create an apidae list', $WPlusPlusApidae->getTextDomain() ),
 			'name'        => esc_html__( 'Apidae List', $WPlusPlusApidae->getTextDomain() ),
 			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
-			'params'      => array(
-				array(
-					'type'             => 'dropdown',
-					'heading'          => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'       => 'template',
-					'value'            => $file_names,
-					'admin_label'      => true,
-					'always_save'      => true,
-					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
-				),
-				array(
-					'type'             => 'dropdown',
-					'heading'          => esc_html__( 'Detail page', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'       => 'detail_id',
-					'value'            => $details_pages,
-					'admin_label'      => true,
-					'always_save'      => true,
-					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
-				),
+			'params'      => array_merge( $params, array(
 				array(
 					'type'             => 'checkbox',
 					'heading'          => esc_html__( 'Paged', $WPlusPlusApidae->getTextDomain() ),
@@ -188,7 +213,7 @@ class Apidae_List implements WP_Shortcode {
 					'param_name'  => 'more_json',
 					'description' => __( 'Additional configuration in JSON (ex: {"territoires": [95938, 156922]})<br><strong style="color:red">This will override any already present parameters!</strong>', $WPlusPlusApidae->getTextDomain() )
 				),
-			)
+			) )
 		);
 	}
 

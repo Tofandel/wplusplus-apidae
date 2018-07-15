@@ -24,7 +24,7 @@ class Apidae_Map {
 				'message'    => sprintf( esc_html__( 'Click %shere%s to set an API key', $WPlusPlusApidae->getTextDomain() ),
 					'<a href="' . esc_url( add_query_arg( array(
 						'page' => 'wplusplus-apidae',
-						'tab'  => 4
+						'tab'  => 5
 					), admin_url( 'admin.php' ) ) ) . '" target="_blank">', '</a>' ),
 				'type'       => 'warning',
 				'param_name' => false
