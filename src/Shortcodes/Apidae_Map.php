@@ -77,8 +77,9 @@ class Apidae_Map {
 						esc_html__( 'Satellite', $WPlusPlusApidae->getTextDomain() ) => 'satellite',
 						esc_html__( 'Hybrid', $WPlusPlusApidae->getTextDomain() )    => 'hybrid',
 						esc_html__( 'Terrain', $WPlusPlusApidae->getTextDomain() )   => 'terrain',
-						esc_html__( 'Panorama', $WPlusPlusApidae->getTextDomain() )  => 'panorama'
+						//esc_html__( 'Panorama', $WPlusPlusApidae->getTextDomain() )  => 'panorama'
 					),
+					'std'              => 'roadmap',
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param',
 					'admin_label'      => true
 				),
@@ -87,7 +88,7 @@ class Apidae_Map {
 					'param_name'       => 'marker_animation',
 					'type'             => 'dropdown',
 					'value'            => array(
-						esc_html__( 'None', $WPlusPlusApidae->getTextDomain() )   => '',
+						esc_html__( 'None', $WPlusPlusApidae->getTextDomain() )   => 'none',
 						esc_html__( 'Drop', $WPlusPlusApidae->getTextDomain() )   => 'drop',
 						esc_html__( 'Bounce', $WPlusPlusApidae->getTextDomain() ) => 'bounce'
 					),
@@ -247,15 +248,8 @@ class Apidae_Map {
 		$atts['width']  = ( ! preg_match( '~(px|%)$~', $atts['width'] ) ? $atts['width'] . 'px' : $atts['width'] );
 		$atts['height'] = ( ! preg_match( '~(px|%)$~', $atts['height'] ) ? $atts['height'] . 'px' : $atts['height'] );
 
-		// Custom color
-		$custom_color = ( ! in_array( $atts['color_scheme'], array(
-			'default',
-			'preset',
-			'json'
-		) ) ? true : false );
-
 		$map_style = '';
-		if ( $custom_color ) {
+		if ( $atts['color_scheme'] == 'custom-color' ) {
 			$hue       = $atts['hue'];
 			$map_style = '[{"featureType":"water","elementType":"geometry","stylers":[{"color":"' . $hue . '"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"},{"lightness":-37}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"' . $hue . '"},{"weight":2},{"gamma":0.84}]},{"elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"weight":0.6},{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]}]';
 		} else if ( $atts['color_scheme'] == 'preset' ) {
@@ -266,10 +260,10 @@ class Apidae_Map {
 
 		// Enqueue maps js
 		global $WPlusPlusApidae, $tofandel_apidae;
-		$WPlusPlusApidae->addScript( 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'] );
-		$WPlusPlusApidae->addScript( 'maps' );
+		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ) );
+		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( 'maps' ) );
 
-		$html = '<div class="apidea-google-maps" style="width:' . $atts['width'] . ';height:' . $atts['height'] . '" data-type="' . $atts['type'] . '" data-animation="' . $atts['marker_animation'] . '" data-zoom="' . $atts['zoom'] . '" data-disable-ui="' . ( $atts['disable_ui'] == 'true' ? 'true' : 'false' ) . '" data-scrollwheel="' . ( $atts['disable_scrollwheel'] == 'true' ? 'false' : 'true' ) . '" data-draggable="' . ( $atts['draggable'] == 'true' ? 'true' : 'false' ) . '" ' . ( ! empty( $map_style ) ? 'data-map-style="' . urlencode( $map_style ) . '"' : '' ) . '></div>';
+		$html = '<div class="apidae-google-maps" style="width:' . $atts['width'] . ';height:' . $atts['height'] . '" data-type="' . $atts['type'] . '" data-animation="' . $atts['marker_animation'] . '" data-zoom="' . $atts['zoom'] . '" data-disable-ui="' . ( $atts['disable_ui'] == 'true' ? 'true' : 'false' ) . '" data-scrollwheel="' . ( $atts['disable_scrollwheel'] == 'true' ? 'false' : 'true' ) . '" data-draggable="' . ( $atts['draggable'] == 'true' ? 'true' : 'false' ) . '" ' . ( ! empty( $map_style ) ? 'data-map-style="' . urlencode( $map_style ) . '"' : '' ) . '></div>';
 
 		return $html;
 	}

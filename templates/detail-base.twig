@@ -169,7 +169,7 @@
 	prestations: "Prestations"
 } %}
 
-<div class="apidae-detail">
+<div class="apidae-detail" id="apidae-{{ o.id }}">
 	{% block marker %}
 		{% autoescape 'js' %}
 			{% if useMaps %}
@@ -177,10 +177,10 @@
 					if (typeof markerNodes === 'undefined')
 						var markerNodes = [];
 					markerNodes.push({
-						'id': "{{ o.id }}",
+						'id': "apidae-{{ o.id }}",
 						'name': "{{ o.nom.libelleFr }}",
-						'addressLine1': "{{ o.localisation.adresse.adresse1 }}",
-						'addressLine2': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
+						'addressLine1': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
+						'addressLine2': "{{ o.localisation.adresse.adresse1 }}",
 						'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
 						'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
 						'link': "{{ link }}"
