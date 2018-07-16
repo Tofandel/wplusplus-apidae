@@ -24,7 +24,7 @@ class Template {
 
 	public static function __init__() {
 		global $WPlusPlusApidae;
-		$loader       = new Twig_Loader_Filesystem( $WPlusPlusApidae->folder( 'templates' ) );
+		$loader       = new Twig_Loader_Filesystem( $WPlusPlusApidae->folder( TemplateFilesHandler::TPL_DIR ) );
 		static::$twig = new Twig_Environment( $loader, array(
 			'cache' => TemplateFilesHandler::CACHE_DIR,
 			'debug' => (bool) WP_DEBUG,

@@ -25,9 +25,10 @@ class TemplateFilesHandler {
 		add_action( 'redux/options/tofandel_apidae/settings/change', [ self::class, 'update_templates' ], 10, 2 );
 	}
 
+	const TPL_DIR = WP_CONTENT_DIR . '/templates/';
 	const CACHE_DIR = WP_CONTENT_DIR . '/cache/twig/';
-	const LIST_TPL_DIR = WP_CONTENT_DIR . '/templates/list/';
-	const DETAIL_TPL_DIR = WP_CONTENT_DIR . '/templates/detail/';
+	const LIST_TPL_DIR = self::TPL_DIR . 'list/';
+	const DETAIL_TPL_DIR = self::TPL_DIR . 'detail/';
 
 	public static function delete_templates() {
 		global $WPlusPlusApidae;
