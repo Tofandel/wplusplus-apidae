@@ -22,7 +22,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with worpress simply by creating Twig templates
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wplusplusapidae
@@ -76,6 +76,10 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * Can be used if options needs to be added or if previous database entries need to be modified
 	 */
 	protected function upgrade( $last_version ) {
+		global $tofandel_apidae;
+		//We regenerate the templates
+		TemplateFilesHandler::saveTemplate( $tofandel_apidae, 'list' );
+		TemplateFilesHandler::saveTemplate( $tofandel_apidae, 'detail' );
 	}
 
 	public function activate() {
@@ -236,12 +240,13 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'  => 'text',
 						),
 						array(
-							'title'   => __( 'Template Code', $this->getTextDomain() ),
-							'id'      => 'list-code',
-							'type'    => 'ace_editor',
-							'mode'    => 'twig',
-							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
-							'default' => $this->get_contents( 'templates/list-layout.twig' )
+							'title'             => __( 'Template Code', $this->getTextDomain() ),
+							'id'                => 'list-code',
+							'type'              => 'ace_editor',
+							'mode'              => 'twig',
+							'options'           => array( 'minLines' => 20, 'maxLines' => 400 ),
+							'default'           => $this->get_contents( 'templates/list-layout.twig' ),
+							'validate_callback' => [ TemplateFilesHandler::class, 'templateValidation' ]
 						),
 					),
 				)
@@ -266,12 +271,13 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'  => 'text',
 						),
 						array(
-							'title'   => __( 'Template Code', $this->getTextDomain() ),
-							'id'      => 'detail-code',
-							'type'    => 'ace_editor',
-							'mode'    => 'twig',
-							'options' => array( 'minLines' => 20, 'maxLines' => 400 ),
-							'default' => $this->get_contents( 'templates/list-layout.twig' )
+							'title'             => __( 'Template Code', $this->getTextDomain() ),
+							'id'                => 'detail-code',
+							'type'              => 'ace_editor',
+							'mode'              => 'twig',
+							'options'           => array( 'minLines' => 20, 'maxLines' => 400 ),
+							'default'           => $this->get_contents( 'templates/list-layout.twig' ),
+							'validate_callback' => [ TemplateFilesHandler::class, 'templateValidation' ]
 						),
 					),
 				)

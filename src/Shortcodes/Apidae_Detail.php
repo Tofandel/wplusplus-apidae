@@ -11,6 +11,7 @@ namespace Tofandel\Apidae\Shortcodes;
 
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
+use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -107,7 +108,7 @@ class Apidae_Detail implements WP_Shortcode {
 			return "";
 		}
 
-		$f = 'detail/' . basename( $atts['template'] ) . '.twig';
+		$f = TemplateFilesHandler::DETAIL_DIR . basename( $atts['template'] ) . '.twig';
 
 		try {
 			$tpl = new Template( $f );

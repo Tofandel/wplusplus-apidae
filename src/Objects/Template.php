@@ -12,7 +12,9 @@ namespace Tofandel\Apidae\Objects;
 use Tofandel\Apidae\TwigExtensions\ExtensionsLoader;
 use Tofandel\Core\Traits\StaticInitializable;
 use Twig_Environment;
+use Twig_Error_Syntax;
 use Twig_Loader_Filesystem;
+use Twig_Source;
 
 class Template {
 	use StaticInitializable;
@@ -58,6 +60,25 @@ class Template {
 	 */
 	public function render( $variables = array() ) {
 		return $this->template->render( $variables );
+	}
+
+	/**
+	 * Returns false if tpl is valid else returns the error message
+	 *
+	 * @param $template
+	 *
+	 * @return false|string
+	 */
+	public static function check( $template, $name ) {
+		try {
+			static::$twig->parse( static::$twig->tokenize( new Twig_Source( $template, $name ) ) );
+
+			return false;
+			// the $template is valid
+		} catch ( Twig_Error_Syntax $e ) {
+			return $e->getMessage();
+			// $template contains one or more syntax errors
+		}
 	}
 }
 

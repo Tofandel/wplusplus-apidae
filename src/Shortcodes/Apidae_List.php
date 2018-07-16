@@ -11,6 +11,7 @@ namespace Tofandel\Apidae\Shortcodes;
 
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
+use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -264,7 +265,7 @@ class Apidae_List implements WP_Shortcode {
 	 * @return string
 	 */
 	public static function shortcode( $atts, $content, $name ) {
-		$f = 'list/' . basename( $atts['template'] ) . '.twig';
+		$f = TemplateFilesHandler::LIST_DIR . basename( $atts['template'] ) . '.twig';
 
 		try {
 			$tpl = new Template( $f );
