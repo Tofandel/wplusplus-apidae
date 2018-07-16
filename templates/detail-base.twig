@@ -65,29 +65,41 @@
 
 	{% block localisation %}
 		<h3>Addresse</h3>
-		{{ o.localisation.adresse.adresse1 }}
-		{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}
-		{% if useMaps %}
-			<h3>Carte</h3>
-			[apidae_map]
-		{% endif %}
+		<p>{{ o.localisation.adresse.adresse1 }}</p>
+		<p>{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}</p>
+		{% block map %}
+			{% if useMaps %}
+				<h3>Carte</h3>
+				[apidae_map height="350px" zoom="8" marker_animation="none" color_scheme="preset" preset="retro"]
+			{% endif %}
+		{% endblock %}
 	{% endblock localisation %}
 
 	{% block tarifs_reservation %}
-		<h3>Ouverture</h3>
-		{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
-		<h3>Tarifs</h3>
-		{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
-		<h3>Modes de paiement acceptés</h3>
-		<ul class="modepaiement">
-			{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
-				<li>{{ pay.libelleFr }}</li>
-			{% endfor %}
-		</ul>
+		{% if o.ouverture.periodeEnClair.libelleFr is not empty %}
+			<h3>Ouverture</h3>
+			{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
+		{% endif %}
+		{% if o.descriptionTarif.tarifsEnClair.libelleFr is not empty %}
+			<h3>Tarifs</h3>
+			{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
+		{% endif %}
+		{% if o.descriptionTarif.modesPaiement is not empty %}
+			<h3>Modes de paiement acceptés</h3>
+			<ul class="modepaiement">
+				{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
+					<li>{{ pay.libelleFr }}</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
 		{% if o.reservation.organismes is not empty %}
-			<h3>Reservation</h3>
+			{% set not_displayed = true %}
 			{% for organisme in o.reservation.organismes %}
 				{% set organisme = organisme.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
+				{% if not_displayed and organisme is not empty %}
+					<h3>Reservation</h3>
+					{% set not_displayed = false %}
+				{% endif %}
 				{% for com in organisme %}
 					{% if com.type.id is iterable %}
 						<div class="communication communication-mode-{{ com.type.id.0 }}">
@@ -130,7 +142,6 @@
 	{% block prestations %}
 		<h3>Prestations</h3>
 		<ul>
-			{% set presta_types = {"equipements": "Equipements", "services": "Services", "conforts": "Conforts", "languesparlees": "Langues Parlées"} %}
 			{% for key, label in presta_types %}
 				{% if attribute(o.prestations, key) is iterable and attribute(o.prestations, key) is not empty %}
 					<li><h5>{{ label }}</h5>
@@ -168,6 +179,11 @@
 	moyencommunication: "Informations de Contact",
 	prestations: "Prestations"
 } %}
+{% set presta_types = {
+	equipements: "Equipements",
+	services: "Services",
+	conforts: "Conforts",
+	languesparlees: "Langues Parlées"} %}
 
 <div class="apidae-detail" id="apidae-{{ o.id }}">
 	{% block marker %}
@@ -191,12 +207,17 @@
 	{% endblock marker %}
 	{% block layout %}
 		{% autoescape 'html' %}
+			{% block return %}
+				{% if referer is not empty %}
+					<a class="retlink" href="{{ referer }}">{{ __('< Retour') }}</a>
+				{% endif %}
+			{% endblock %}
 			{% block title %}
 				<h2 class="title">{{ o.nom.libelleFr }}</h2>
 			{% endblock title %}
 			{% block images %}
 				<div class="image-container">
-					{{ apidae.diaporama(o, 'large') }}
+					{{ apidae.diaporama(o, 'medium') }}
 				</div>
 			{% endblock images %}
 			{% block tabs %}

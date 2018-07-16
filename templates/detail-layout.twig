@@ -16,6 +16,25 @@
 	</script>
 {% endblock %}
 
+{% set tabs = {
+	description: "Description",
+	localisation: "Localisation",
+	tarifs_reservation: "Tarifs et Reservation",
+	moyencommunication: "Informations de Contact",
+	prestations: "Prestations"
+} %}
+{% set presta_types = {
+	equipements: "Equipements",
+	services: "Services",
+	conforts: "Conforts",
+	languesparlees: "Langues Parlées"} %}
+
+{% block images %}
+	<div class="image-container">
+		{{ apidae.avia_diaporama(o, 'medium') }}
+	</div>
+{% endblock images %}
+
 {% block description %}
 	{% set desc = o.presentation.descriptifDetaille.libelleFr|default(o.presentation.descriptifCourt.libelleFr) %}
 	<p class="description">{{ desc|nl2br }}</p>
@@ -32,20 +51,30 @@
 {% endblock localisation %}
 
 {% block tarifs_reservation %}
-	<h3>Ouverture</h3>
-	{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
-	<h3>Tarifs</h3>
-	{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
-	<h3>Modes de paiement acceptés</h3>
-	<ul class="modepaiement">
-		{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
-			<li>{{ pay.libelleFr }}</li>
-		{% endfor %}
-	</ul>
+	{% if o.ouverture.periodeEnClair.libelleFr is not empty %}
+		<h3>Ouverture</h3>
+		{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
+	{% endif %}
+	{% if o.descriptionTarif.tarifsEnClair.libelleFr is not empty %}
+		<h3>Tarifs</h3>
+		{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
+	{% endif %}
+	{% if o.descriptionTarif.modesPaiement is not empty %}
+		<h3>Modes de paiement acceptés</h3>
+		<ul class="modepaiement">
+			{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
+				<li>{{ pay.libelleFr }}</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
 	{% if o.reservation.organismes is not empty %}
-		<h3>Reservation</h3>
+		{% set not_displayed = true %}
 		{% for organisme in o.reservation.organismes %}
 			{% set organisme = organisme.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
+			{% if not_displayed and organisme is not empty %}
+				<h3>Reservation</h3>
+				{% set not_displayed = false %}
+			{% endif %}
 			{% for com in organisme %}
 				{% if com.type.id is iterable %}
 					<div class="communication communication-mode-{{ com.type.id.0 }}">
@@ -118,15 +147,14 @@
 	</ul>
 {% endblock prestations %}
 
-{% set tabs = {
-	description: "Description",
-	localisation: "Localisation",
-	tarifs_reservation: "Tarifs et Reservation",
-	moyencommunication: "Informations de Contact",
-	prestations: "Prestations"
-} %}
+{% block images %}
+	<div class="image-container">
+		{{ apidae.diaporama(o, 'medium') }}
+	</div>
+{% endblock images %}
 
 {% block layout %}
+	{{ block('return') }}
 	{{ block('title') }}
 	{{ block('images') }}
 	{{ block('tabs') }}

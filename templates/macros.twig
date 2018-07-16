@@ -27,6 +27,45 @@
 			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
 	{% endif %}
 {% endmacro diaporama %}
+{% macro avia_diaporama(o, size) %}
+	{% import _self as apidae %}
+	{% if o.illustrations|length > 1 %}
+		<div id="apidae_slider" class="avia-fullwidth-slider main_color avia-shadow fullsize">
+			<div data-size="no scaling" data-lightbox_size="large" data-animation="slide" data-conditional_play=""
+				 data-ids="754,746,734" data-video_counter="0" data-autoplay="true" data-bg_slider="false"
+				 data-slide_height=""
+				 data-handle="av_slideshow_full" data-interval="5" data-class=" image_no_stretch" data-css_id=""
+				 data-scroll_down="" data-control_layout="av-control-default" data-custom_markup=""
+				 data-perma_caption=""
+				 data-autoplay_stopper="" data-image_attachment="" data-min_height="600px" data-src=""
+				 data-position="top left"
+				 data-repeat="no-repeat" data-attach="scroll" data-stretch="image_no_stretch"
+				 class="avia-slideshow av-control-default avia-slideshow-no scaling av_slideshow_full image_no_stretch avia-slide-slider">
+				<ul class="avia-slideshow-inner" style="padding-bottom: 120.66365007541%;">
+					{% for index, images in o.illustrations %}
+						<li class="slide"><img src="{{ apidae.image_url(o, size, index) }}"
+											   alt="{{ images.traductionFichiers[0].fileName }}"
+											   width="{{ images.traductionFichiers[0].largeur }}"
+											   height="{{ images.traductionFichiers[0].hauteur }}"></li>
+					{% endfor %}
+				</ul>
+				<div class="avia-slideshow-arrows avia-slideshow-controls">
+					<a href="#prev" class="prev-slide" aria-hidden="true" data-av_icon=""
+					   data-av_iconfont="entypo-fontello">Précédent</a><a
+							href="#next" class="next-slide" aria-hidden="true" data-av_icon=""
+							data-av_iconfont="entypo-fontello">Suivant</a>
+				</div>
+				<div class="avia-slideshow-dots avia-slideshow-controls">
+					{% for images in o.illustrations %}<a href="#{{ loop.index }}"
+														  class="goto-slide">{{ loop.index }}</a>{% endfor %}
+				</div>
+			</div>
+		</div>
+	{% else %}
+		<img src="{{ apidae.image_url(o, size, 0) }}" alt="{{ images.traductionFichiers[0].fileName }}"
+			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
+	{% endif %}
+{% endmacro avia_diaporama %}
 
 {% macro com_link(com_id, link, text) %}
 	{% set text = text|default(link) %}
