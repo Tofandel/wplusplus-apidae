@@ -119,10 +119,12 @@ class Apidae_Detail implements WP_Shortcode {
 		}
 
 		try {
+			global $tofandel_apidae;
 			$content = $tpl->render( apply_filters( 'apidae_single_twig_vars', array(
 				'referer' => wp_get_referer(),
 				'siteUrl' => site_url(),
-				'o'       => $object
+				'o'       => $object,
+				'useMaps' => $tofandel_apidae['maps_enable']
 			) ) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );

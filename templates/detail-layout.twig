@@ -16,110 +16,107 @@
 	</script>
 {% endblock %}
 
-{% if false %}
-	{# we wrap the blocks in if false so they are declared but not displayed #}
-	{% block description %}
-		{% set desc = o.presentation.descriptifDetaille.libelleFr|default(o.presentation.descriptifCourt.libelleFr) %}
-		<p class="description">{{ desc|nl2br }}</p>
-	{% endblock description %}
+{% block description %}
+	{% set desc = o.presentation.descriptifDetaille.libelleFr|default(o.presentation.descriptifCourt.libelleFr) %}
+	<p class="description">{{ desc|nl2br }}</p>
+{% endblock description %}
 
-	{% block localisation %}
-		<h3>Addresse</h3>
-		{{ o.localisation.adresse.adresse1 }}
-		{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}
-		{% if useMaps %}
-			<h3>Carte</h3>
-			[apidae_map]
-		{% endif %}
-	{% endblock localisation %}
+{% block localisation %}
+	<h3>Addresse</h3>
+	{{ o.localisation.adresse.adresse1 }}
+	{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}
+	{% if useMaps %}
+		<h3>Carte</h3>
+		[apidae_map]
+	{% endif %}
+{% endblock localisation %}
 
-	{% block tarifs_reservation %}
-		<h3>Ouverture</h3>
-		{{ o.ouverture.periodeEnClair.libelleFr }}
-		<h3>Tarifs</h3>
-		{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
-		<h3>Modes de paiement acceptés</h3>
-		<ul class="modepaiement">
-			{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
-				<li>{{ pay.libelleFr }}</li>
-			{% endfor %}
-		</ul>
-		{% if o.reservation.organismes is not empty %}
-			<h3>Reservation</h3>
-			{% for organisme in o.reservation.organismes %}
-				{% set organisme = organisme.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
-				{% for com in organisme %}
-					{% if com.type.id is iterable %}
-						<div class="communication communication-mode-{{ com.type.id.0 }}">
-							<h5>{{ com.type.libelleFr.0 }}</h5>
-							{% for key, val in com.type.id %}
-								<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
-							{% endfor %}
-						</div>
-					{% else %}
-						<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
-							<h5>{{ com.type.libelleFr }}</h5>
-							<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
-						</div>
-					{% endif %}
-				{% endfor %}
-			{% endfor %}
-		{% endif %}
-	{% endblock tarifs_reservation %}
-
-	{% block moyencommunication %}
-		<h3>Informations de Contact</h3>
-		{% set coms = o.informations.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
-		{% for com in coms %}
-			{% if com.type.id is iterable %}
-				<div class="communication communication-mode-{{ com.type.id.0 }}">
-					<h5>{{ com.type.libelleFr.0 }}</h5>
-					{% for key, val in com.type.id %}
-						<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
-					{% endfor %}
-				</div>
-			{% else %}
-				<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
-					<h5>{{ com.type.libelleFr }}</h5>
-					<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
-				</div>
-			{% endif %}
+{% block tarifs_reservation %}
+	<h3>Ouverture</h3>
+	{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
+	<h3>Tarifs</h3>
+	{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
+	<h3>Modes de paiement acceptés</h3>
+	<ul class="modepaiement">
+		{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
+			<li>{{ pay.libelleFr }}</li>
 		{% endfor %}
-	{% endblock moyencommunication %}
-
-	{% block prestations %}
-		<h3>Prestations</h3>
-		<ul>
-			{% set presta_types = {"equipements": "Equipements", "services": "Services", "conforts": "Conforts", "languesparlees": "Langues Parlées"} %}
-			{% for key, label in presta_types %}
-				{% if attribute(o.prestations, key) is iterable and attribute(o.prestations, key) is not empty %}
-					<li><h5>{{ label }}</h5>
-						<ul>
-							{% for presta in attribute(o.prestations, key)|orderBy('ordre')|groupBy('familleCritere.id') %}
-								{% if presta.id is iterable %}
-									<li>{% if presta.familleCritere.libelleFr.0 is not empty %}
-											<strong>{{ presta.familleCritere.libelleFr.0 }}
-											:</strong>{% endif %}
-										{% for key, val in presta.id %}
-											{{ attribute(presta.libelleFr, key) }}{% if not loop.last %},{% endif %}
-										{% endfor %}
-									</li>
-								{% else %}
-									<li>
-										{% if presta.familleCritere.libelleFr is not empty %}
-											<strong>{{ presta.familleCritere.libelleFr }} :</strong>
-										{% endif %}
-										{{ presta.libelleFr }}
-									</li>
-								{% endif %}
-							{% endfor %}
-						</ul>
-					</li>
+	</ul>
+	{% if o.reservation.organismes is not empty %}
+		<h3>Reservation</h3>
+		{% for organisme in o.reservation.organismes %}
+			{% set organisme = organisme.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
+			{% for com in organisme %}
+				{% if com.type.id is iterable %}
+					<div class="communication communication-mode-{{ com.type.id.0 }}">
+						<h5>{{ com.type.libelleFr.0 }}</h5>
+						{% for key, val in com.type.id %}
+							<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
+						<h5>{{ com.type.libelleFr }}</h5>
+						<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
+					</div>
 				{% endif %}
 			{% endfor %}
-		</ul>
-	{% endblock prestations %}
-{% endif %}
+		{% endfor %}
+	{% endif %}
+{% endblock tarifs_reservation %}
+
+{% block moyencommunication %}
+	<h3>Informations de Contact</h3>
+	{% set coms = o.informations.moyensCommunication|orderBy('type.ordre')|groupBy('type.id') %}
+	{% for com in coms %}
+		{% if com.type.id is iterable %}
+			<div class="communication communication-mode-{{ com.type.id.0 }}">
+				<h5>{{ com.type.libelleFr.0 }}</h5>
+				{% for key, val in com.type.id %}
+					<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
+				<h5>{{ com.type.libelleFr }}</h5>
+				<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
+			</div>
+		{% endif %}
+	{% endfor %}
+{% endblock moyencommunication %}
+
+{% block prestations %}
+	<h3>Prestations</h3>
+	<ul>
+		{% set presta_types = {"equipements": "Equipements", "services": "Services", "conforts": "Conforts", "languesparlees": "Langues Parlées"} %}
+		{% for key, label in presta_types %}
+			{% if attribute(o.prestations, key) is iterable and attribute(o.prestations, key) is not empty %}
+				<li><h5>{{ label }}</h5>
+					<ul>
+						{% for presta in attribute(o.prestations, key)|orderBy('ordre')|groupBy('familleCritere.id') %}
+							{% if presta.id is iterable %}
+								<li>{% if presta.familleCritere.libelleFr.0 is not empty %}
+										<strong>{{ presta.familleCritere.libelleFr.0 }}
+										:</strong>{% endif %}
+									{% for key, val in presta.id %}
+										{{ attribute(presta.libelleFr, key) }}{% if not loop.last %},{% endif %}
+									{% endfor %}
+								</li>
+							{% else %}
+								<li>
+									{% if presta.familleCritere.libelleFr is not empty %}
+										<strong>{{ presta.familleCritere.libelleFr }} :</strong>
+									{% endif %}
+									{{ presta.libelleFr }}
+								</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+{% endblock prestations %}
 
 {% set tabs = {
 	description: "Description",

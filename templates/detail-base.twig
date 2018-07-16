@@ -75,7 +75,7 @@
 
 	{% block tarifs_reservation %}
 		<h3>Ouverture</h3>
-		{{ o.ouverture.periodeEnClair.libelleFr }}
+		{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
 		<h3>Tarifs</h3>
 		{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
 		<h3>Modes de paiement acceptés</h3>
