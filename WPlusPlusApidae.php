@@ -276,7 +276,7 @@ class WPlusPlusApidae extends WP_Plugin {
 							'type'              => 'ace_editor',
 							'mode'              => 'twig',
 							'options'           => array( 'minLines' => 20, 'maxLines' => 400 ),
-							'default'           => $this->get_contents( 'templates/list-layout.twig' ),
+							'default'           => $this->get_contents( 'templates/detail-layout.twig' ),
 							'validate_callback' => [ TemplateFilesHandler::class, 'templateValidation' ]
 						),
 					),

@@ -35,13 +35,13 @@ class Paginate {
 			$l    = esc_attr( str_replace( '%PAGE%', $currentPage - 1, $link ) );
 			$html .= "<li class='prev' title='" . __( 'Previous', $WPlusPlusApidae->getTextDomain() ) . "'><a href='$l'>" . esc_html( $prev ) . "</a></li>";
 		} elseif ( ! empty( $prev ) && $currentPage == 1 ) {
-			$html .= "<li class='prev disabled'>" . esc_html( $prev ) . "</li>";
+			$html .= "<li class='prev disabled'><span class='a-placeholder'>" . esc_html( $prev ) . "</span></li>";
 		}
 		foreach ( $data as $datum ) {
 			if ( $datum == - 1 ) {
 				$html .= "<li class='hellip disabled'>&hellip;</li>";
 			} elseif ( $datum == $currentPage ) {
-				$html .= "<li class='page-$datum current'>$datum</li>";
+				$html .= "<li class='page-$datum current'><span class='a-placeholder'>$datum</span></li>";
 			} elseif ( $datum >= 1 ) {
 				$l    = esc_attr( str_replace( '%PAGE%', $datum, $link ) );
 				$html .= "<li class='page-$datum' title='" . sprintf( __( 'Go to page %d', $WPlusPlusApidae->getTextDomain() ), $datum ) . "'><a href='$l'>$datum</a></li>";
@@ -51,7 +51,7 @@ class Paginate {
 			$l    = esc_attr( str_replace( '%PAGE%', $currentPage + 1, $link ) );
 			$html .= "<li class='next' title='" . __( 'Next', $WPlusPlusApidae->getTextDomain() ) . "'><a href='$l'>" . esc_html( $next ) . "</a></li>";
 		} elseif ( ! empty( $next ) && $currentPage >= $totalPages ) {
-			$html .= "<li class='next disabled'>" . esc_html( $next ) . "</li>";
+			$html .= "<li class='next disabled'><span class='a-placeholder'>" . esc_html( $next ) . "</span></li>";
 		}
 		$html .= '</ul>';
 
