@@ -1,4 +1,4 @@
-{% macro image_url(object, size, index) %}
+{% macro image_url(object, size, index) %}{% spaceless %}
 	{% set index = index|default(0) %}
 	{% if size == 'xsmall' %}
 		{{ object.illustrations[index].traductionFichiers[0].urlListe|replace({'http://': '//'})|e('html_attr') }}
@@ -9,7 +9,7 @@
 	{% else %}
 		{{ object.illustrations[index].traductionFichiers[0].url|replace({'http://': '//'})|e('html_attr') }}
 	{% endif %}
-{% endmacro image_url %}
+{% endspaceless %}{% endmacro image_url %}
 
 {% macro diaporama(o, size) %}
 	{% import _self as apidae %}
@@ -27,6 +27,7 @@
 			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
 	{% endif %}
 {% endmacro diaporama %}
+
 {% macro avia_diaporama(o, size) %}
 	{% import _self as apidae %}
 	{% if o.illustrations|length > 1 %}
