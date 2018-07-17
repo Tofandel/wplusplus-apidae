@@ -147,6 +147,7 @@
 	services: "Services",
 	conforts: "Conforts",
 	languesparlees: "Langues Parlées"}) %}
+{% set dir_link = "https://www.google.com/maps/dir//" ~ o.localisation.adresse.adresse1 ~","~ o.localisation.adresse.codePostal ~","~ o.localisation.adresse.commune.nom ~ "/@" ~ o.localisation.geolocalisation.geoJson.coordinates[1] ~","~ o.localisation.geolocalisation.geoJson.coordinates[0] ~"z/" %}
 
 <div class="apidae-detail" id="apidae-{{ o.id }}">
 	{% block marker %}
@@ -162,7 +163,7 @@
 						'addressLine2': "{{ o.localisation.adresse.adresse1 }}",
 						'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
 						'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
-						'link': "https://www.google.com/maps/dir//{{ o.localisation.adresse.adresse1 }}, {{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}/@{{ o.localisation.geolocalisation.geoJson.coordinates[1] }},{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}z/"
+						'link': "{{ dir_link }}",
 						'icon': "{{ map_icon }}"
 					});
 				</script>

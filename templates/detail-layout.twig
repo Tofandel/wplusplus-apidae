@@ -43,12 +43,14 @@
 
 {% block localisation %}
 	<h3>Addresse</h3>
-	{{ o.localisation.adresse.adresse1 }}
-	{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}
-	{% if useMaps %}
-		<h3>Carte</h3>
-		[apidae_map]
-	{% endif %}
+	<p>{{ o.localisation.adresse.adresse1 }}</p>
+	<p>{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}</p>
+	{% block map %}
+		{% if useMaps %}
+			<h3>Carte</h3>
+			[apidae_map height="350px" zoom="8" marker_animation="none" color_scheme="preset" preset="retro"]
+		{% endif %}
+	{% endblock %}
 {% endblock localisation %}
 
 {% block tarifs_reservation %}
@@ -116,36 +118,43 @@
 {% endblock moyencommunication %}
 
 {% block prestations %}
-	<h3>Prestations</h3>
-	<ul>
-		{% set presta_types = {"equipements": "Equipements", "services": "Services", "conforts": "Conforts", "languesparlees": "Langues Parlées"} %}
-		{% for key, label in presta_types %}
-			{% if attribute(o.prestations, key) is iterable and attribute(o.prestations, key) is not empty %}
-				<li><h5>{{ label }}</h5>
-					<ul>
-						{% for presta in attribute(o.prestations, key)|orderBy('ordre')|groupBy('familleCritere.id') %}
-							{% if presta.id is iterable %}
-								<li>{% if presta.familleCritere.libelleFr.0 is not empty %}
-										<strong>{{ presta.familleCritere.libelleFr.0 }}
-										:</strong>{% endif %}
-									{% for key, val in presta.id %}
-										{{ attribute(presta.libelleFr, key) }}{% if not loop.last %},{% endif %}
-									{% endfor %}
-								</li>
-							{% else %}
-								<li>
-									{% if presta.familleCritere.libelleFr is not empty %}
-										<strong>{{ presta.familleCritere.libelleFr }} :</strong>
-									{% endif %}
-									{{ presta.libelleFr }}
-								</li>
-							{% endif %}
-						{% endfor %}
-					</ul>
-				</li>
-			{% endif %}
-		{% endfor %}
-	</ul>
+	{% set prestations = {} %}
+	{% for key, label in presta_types %}
+		{% if attribute(o.prestations, key) is not empty %}
+			{% set prestations = {(key): attribute(o.prestations, key)}|merge(prestations) %}
+		{% endif %}
+	{% endfor %}
+	{% if prestations is not empty %}
+		<h3>Prestations</h3>
+		<ul>
+			{% for key, label in presta_types %}
+				{% if attribute(o.prestations, key) is iterable and attribute(o.prestations, key) is not empty %}
+					<li><h5>{{ label }}</h5>
+						<ul>
+							{% for presta in attribute(o.prestations, key)|orderBy('ordre')|groupBy('familleCritere.id') %}
+								{% if presta.id is iterable %}
+									<li>{% if presta.familleCritere.libelleFr.0 is not empty %}
+											<strong>{{ presta.familleCritere.libelleFr.0 }}
+											:</strong>{% endif %}
+										{% for key, val in presta.id %}
+											{{ attribute(presta.libelleFr, key) }}{% if not loop.last %},{% endif %}
+										{% endfor %}
+									</li>
+								{% else %}
+									<li>
+										{% if presta.familleCritere.libelleFr is not empty %}
+											<strong>{{ presta.familleCritere.libelleFr }} :</strong>
+										{% endif %}
+										{{ presta.libelleFr }}
+									</li>
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+	{% endif %}
 {% endblock prestations %}
 
 {% block images %}
