@@ -8,14 +8,21 @@
 
 namespace Tofandel\Apidae\Shortcodes;
 
-
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
 use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
-
+/**
+ * Shortcode Apidae_Detail
+ * @package Tofandel\Apidae\Shortcodes
+ *
+ * @required-param  string  'template'    The slug of the detail template
+ *
+ * @param           string  'more_json'   If you need to modify the query sent to Apidae you can do this here in json format
+ * @param           string  'langs'       Comma separated list of languages that you want to receive in the template (defaults to 'fr')
+ */
 class Apidae_Detail implements WP_Shortcode {
 	use WP_VC_Shortcode;
 

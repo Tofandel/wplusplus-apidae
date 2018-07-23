@@ -15,7 +15,23 @@ use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
-
+/**
+ * Shortcode Apidae_List
+ * @package Tofandel\Apidae\Shortcodes
+ *
+ * @required-param  string  'template'      The slug of the list template
+ * @required-param  int     'detail_id'     The ID of the detail page
+ *
+ * @param           bool    'paged'         Whether the list should be paginated or not (defaults to 'true')
+ * @param           int     'nb_result'     The number of result per page (defaults to '30')
+ * @param           int     'selection_ids' Comma separated list of apidae selection's id
+ * @param           string  'more_json'     If you need to modify the query sent to Apidae you can do this here in json format
+ * @param           string  'order'         How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
+ * @param           bool    'reverse_order' Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
+ * @param           string  'langs'         Comma separated list of languages that you want to receive in the template (defaults to 'fr')
+ * @param           string  'search_fields' Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
+ * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelleFr%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
+ */
 class Apidae_List implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
@@ -139,6 +155,7 @@ class Apidae_List implements WP_Shortcode {
 					'param_name'       => 'paged',
 					'description'      => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->getTextDomain() ),
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param vc_column-with-padding',
+					'std'              => 'true'
 				),
 				array(
 					'type'             => 'number',

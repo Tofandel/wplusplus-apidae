@@ -12,7 +12,14 @@ namespace Tofandel\Apidae\Shortcodes;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
-
+/**
+ * Shortcode Apidae_Categories
+ * @package Tofandel\Apidae\Shortcodes
+ *
+ * @required-param  string  'categories'    Comma separated list of the Apidae categories slug you want displayed (you have to create them first in the apidae options)
+ *
+ * @param           bool    'all_link'      Whether to display the 'All' link or not (defaults to true)
+ */
 class Apidae_Categories implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
@@ -37,6 +44,12 @@ class Apidae_Categories implements WP_Shortcode {
 					'param_name'  => 'categories',
 					'value'       => $cats,
 					'admin_label' => true
+				),
+				array(
+					'type'       => 'checkbox',
+					'heading'    => esc_html__( 'Show the "All" link', $WPlusPlusApidae->getTextDomain() ),
+					'param_name' => 'all_link',
+					'std'        => 'true'
 				)
 			)
 		);
@@ -78,7 +91,6 @@ class Apidae_Categories implements WP_Shortcode {
 	}
 
 
-
 	/**
 	 * @param array $atts
 	 * @param string $content
@@ -95,9 +107,12 @@ class Apidae_Categories implements WP_Shortcode {
 
 		//TODO multiple categories
 		$current = get_query_var( 'apicategories', '' );
-		$content = '<ul class="categories"><li class="cat-all' . ( empty( $current ) ? ' current' : '' ) . '"><a href="' . get_page_link() . '">' . __( 'All', $WPlusPlusApidae->getTextDomain() ) . '</a></li>';
-		$search  = get_query_var( 'apisearch' );
-		$args    = ! empty( $search ) ? array( 'apisearch' => $search ) : array();
+		$content = '<ul class="categories">';
+		if ( $atts['all_link'] == 'true' ) {
+			$content .= '<li class="cat-all' . ( empty( $current ) ? ' current' : '' ) . '"><a href="' . get_page_link() . '">' . __( 'All', $WPlusPlusApidae->getTextDomain() ) . '</a></li>';
+		}
+		$search = get_query_var( 'apisearch' );
+		$args   = ! empty( $search ) ? array( 'apisearch' => $search ) : array();
 		foreach ( $atts['categories'] as $cat ) {
 			if ( ! empty( $cats[ $cat ] ) ) {
 				$args['apicategories'] = $cat;

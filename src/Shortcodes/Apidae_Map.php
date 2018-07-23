@@ -11,7 +11,16 @@ namespace Tofandel\Apidae\Shortcodes;
 
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
-
+/**
+ * Shortcode Apidae_Map
+ * @package Tofandel\Apidae\Shortcodes
+ *
+ * @param   string  'width'     The width of the map element (defaults to '100%')
+ * @param   string  'height'    The height of the map element (defaults to '300px')
+ * @param   int     'zoom'      The zoom level between 1 and 21, leave blank for auto
+ * @param   string  'type'      The type of the map (available: 'roadmap','satellite','hybrid','terrain') (defaults to 'roadmap')
+ * @param   string  'marker_animation'  The marker animation on map load (available: 'none','bounce','drop') (defaults to 'drop')
+ */
 class Apidae_Map {
 	use WP_VC_Shortcode;
 
@@ -60,7 +69,7 @@ class Apidae_Map {
 					'heading'          => esc_html__( 'Zoom', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'       => 'zoom',
 					'type'             => 'number',
-					'std'              => 12,
+					'std'              => '',
 					'extra'            => array(
 						'min' => 1,
 						'max' => 21

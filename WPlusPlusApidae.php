@@ -10,7 +10,9 @@ use Tofandel\Apidae\Shortcodes\Apidae_Map;
 use Tofandel\Core\Objects\ReduxConfig;
 use Tofandel\Core\Objects\WP_Plugin;
 
-require_once __DIR__ . '/admin/tgmpa-config.php';
+if ( is_admin() && ! wp_doing_ajax() ) {
+	require_once __DIR__ . '/admin/tgmpa-config.php';
+}
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -31,6 +33,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * WC tested up to: 4.8
  */
 class WPlusPlusApidae extends WP_Plugin {
+	protected $redux_opt_name = 'tofandel_apidae';
 	/**
 	 * Add actions and filters here
 	 */
@@ -61,12 +64,7 @@ class WPlusPlusApidae extends WP_Plugin {
 		} );
 	}
 
-
-	/**
-	 * @throws \ReflectionException
-	 */
-	public static function uninstall() {
-		parent::uninstall();
+	public function uninstall() {
 		delete_option( 'tofandel_apidae' );
 		flush_rewrite_rules( true );
 	}
