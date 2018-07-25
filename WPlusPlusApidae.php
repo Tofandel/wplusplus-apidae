@@ -34,6 +34,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  */
 class WPlusPlusApidae extends WP_Plugin {
 	protected $redux_opt_name = 'tofandel_apidae';
+
 	/**
 	 * Add actions and filters here
 	 */

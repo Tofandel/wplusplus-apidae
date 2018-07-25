@@ -10,6 +10,32 @@ namespace Tofandel\Apidae\Objects;
 
 
 class ApidaeRequest {
+	public static function getSelections() {
+		global $tofandel_apidae;
+
+		$query['projetId'] = $tofandel_apidae['project_id'];
+		$query['apiKey']   = $tofandel_apidae['api_key'];
+		$query             = array( 'query' => json_encode( $query ) );
+		$url               = 'https://api.apidae-tourisme.com/api/v002/referentiel/selections/?query=' . http_build_query( $query );
+		$md                = md5( $url );
+		$cache             = self::getCache( $md );
+		$isValid           = true;
+		if ( $cache === false ) {
+			$ch = curl_init();
+			curl_setopt( $ch, CURLOPT_URL, $url );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+			curl_setopt( $ch, CURLOPT_TIMEOUT, 15 );
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+			$rep     = curl_exec( $ch );
+			$isValid = ! curl_errno( $ch );
+			curl_close( $ch );
+			$rep = json_decode( $rep, true );
+		} else {
+			$rep = $cache;
+		}
+	}
+
+
 	/**
 	 * retourne le détail d'un objet touristique
 	 *
@@ -29,17 +55,20 @@ class ApidaeRequest {
 			$query['responseFields'] = $default_fields;
 		}
 
-		if ( is_array( $query['responseFields'] ) ) {
-			//Even if the doc says otherwise the api doesn't take this argument as an array
-			$query['responseFields'] = implode( ',', $query['responseFields'] );
+
+		foreach ( $query as $key => $querum ) {
+			if ( is_array( $querum ) ) {
+				//Even if the doc says otherwise the api doesn't take this argument as an array because we send them in GET
+				$query[ $key ] = implode( ',', $querum );
+			}
 		}
 
 		$query = apply_filters( 'apidae_single_request_query', $query );
 
-		$url              = sprintf( 'https://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/%d/?', $id ) . http_build_query( $query );
-		$md               = md5( $url );
-		$cache            = self::getCache( $md );
-		$isValid          = true;
+		$url     = sprintf( 'https://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/%d/?', $id ) . http_build_query( $query );
+		$md      = md5( $url );
+		$cache   = self::getCache( $md );
+		$isValid = true;
 		if ( $cache === false ) {
 			$ch = curl_init();
 			curl_setopt( $ch, CURLOPT_URL, $url );
@@ -116,6 +145,7 @@ class ApidaeRequest {
 				if ( $cache === false ) {
 					self::setCache( $md, $rep );
 				}
+
 				return $rep;
 			} else {
 				return false;
