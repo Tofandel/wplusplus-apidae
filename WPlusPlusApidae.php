@@ -60,13 +60,9 @@ class WPlusPlusApidae extends WP_Plugin {
 			Apidae_Map::__init__();
 			Apidae_Categories::__init__();
 		}, 1 );
-		add_action( 'redux_not_loaded', function () {
-			self::getReduxOption( 'tofandel_apidae' );
-		} );
 	}
 
 	public function uninstall() {
-		delete_option( 'tofandel_apidae' );
 		flush_rewrite_rules( true );
 	}
 
@@ -81,58 +77,24 @@ class WPlusPlusApidae extends WP_Plugin {
 		TemplateFilesHandler::saveTemplate( $tofandel_apidae, 'detail' );
 	}
 
-	public function activate() {
+	public function activated() {
 	}
 
 	/**
 	 * Add redux framework menus, sub-menus and settings page in this function
 	 */
 	public function reduxOptions() {
-		$r = new ReduxConfig( "tofandel_apidae", array(
-			'show_custom_fonts'   => false,
-			'show_options_object' => false,
-			'display_name'        => 'Apidae',
-			'page_slug'           => 'wplusplus-apidae',
-			'page_title'          => 'Apidae Options',
-			'menu_type'           => 'menu',
-			'menu_title'          => 'Apidae',
-			'menu_icon'           => plugins_url( 'admin/logo.svg', $this->file ),
-			'allow_sub_menu'      => true,
-			'page_priority'       => '39',
-			'customizer'          => true,
-			'hints'               => array(
-				'icon'          => 'el el-question-sign',
-				'icon_position' => 'right',
-				'icon_color'    => '#071f49',
-				'icon_size'     => 'normal',
-				'tip_style'     => array(
-					'color'   => 'light',
-					'shadow'  => '1',
-					'rounded' => '1',
-					'style'   => 'bootstrap',
-				),
-				'tip_position'  => array(
-					'my' => 'top left',
-					'at' => 'bottom right',
-				),
-				'tip_effect'    => array(
-					'show' => array(
-						'effect'   => 'fade',
-						'duration' => '400',
-						'event'    => 'mouseover',
-					),
-					'hide' => array(
-						'effect'   => 'fade',
-						'duration' => '400',
-						'event'    => 'mouseleave unfocus',
-					),
-				),
-			),
-			'compiler'            => true,
-			'page_permissions'    => 'manage_options',
-			'save_defaults'       => true,
-			'show_import_export'  => true,
-			'open_expanded'       => false,
+		$r = new ReduxConfig( $this, array(
+			'display_name'     => 'Apidae',
+			'page_slug'        => $this->slug,
+			'page_title'       => 'Apidae Options',
+			'menu_type'        => 'menu',
+			'menu_title'       => 'Apidae',
+			'menu_icon'        => plugins_url( 'admin/logo.svg', $this->file ),
+			'allow_sub_menu'   => true,
+			'page_priority'    => '39',
+			'compiler'         => false,
+			'page_permissions' => 'manage_options'
 		) );
 
 		//Todo Doc
@@ -247,6 +209,14 @@ class WPlusPlusApidae extends WP_Plugin {
 							'default'           => $this->get_contents( 'templates/list-layout.twig' ),
 							'validate_callback' => [ TemplateFilesHandler::class, 'templateValidation' ]
 						),
+						array(
+							'title'   => __( 'More request parameters', $this->getTextDomain() ),
+							'desc'    => __( 'Checkout <a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches" rel="noopener" target="_blank">the apidae documentation</a> for more information', $this->getTextDomain() ),
+							'id'      => 'more_json',
+							'type'    => 'ace_editor',
+							'mode'    => 'json',
+							'default' => '{}'
+						)
 					),
 				)
 			)
