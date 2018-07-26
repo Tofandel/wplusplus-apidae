@@ -27,7 +27,9 @@
 				panorama: false,
 				scrollwheel: true,
 				draggable: true,
-				mapStyle: null
+				mapStyle: null,
+				animationDuration: 2000,
+				clusterImagePath: WPlusPlusApidae.maps.clusterImagePath || false
 			}, settings);
 
 			var map,
@@ -83,11 +85,22 @@
 			//Render markers
 			var render = function () {
 				//clearMarkers();
+				var time = settings['animationDuration'] / markerNodes.length;
 				for (var i = 0; i < markerNodes.length; i++) {
 					if (settings['animation'] == '' || settings['animation'] == 'none') {
 						addMarker(markerNodes[i]);
 					} else {
-						addMarkerWithTimeout(markerNodes[i], i * 200);
+						addMarkerWithTimeout(markerNodes[i], i * time);
+					}
+				}
+				if (settings['useClusters'] == true) {
+					if (settings['animation'] != 'none' && settings['animation'] != '') {
+						setTimeout(function () {
+							new MarkerClusterer(map, markers, {imagePath: settings['clusterImagePath']});
+						}, settings['animationDuration'] + 100); //We add a little margin to make sur all markers are added
+					}
+					else {
+						new MarkerClusterer(map, markers, {imagePath: settings['clusterImagePath']});
 					}
 				}
 			};

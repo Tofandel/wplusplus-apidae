@@ -194,7 +194,7 @@ class ApidaeRequest {
 	/**
 	 * vide le cache
 	 */
-	static public function emptyCache() {
+	static public function clearCache() {
 		global $wpdb;
 		$wpdb->query( $wpdb->prepare(
 			"DELETE FROM {$wpdb->options}

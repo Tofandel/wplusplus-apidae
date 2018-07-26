@@ -74,7 +74,7 @@ class Apidae_Map {
 						'min' => 1,
 						'max' => 21
 					),
-					'edit_field_class' => 'vc_col-xs-4 vc_column wpb_el_type_textfield vc_wrapper-param-type-textfield vc_shortcode-param',
+					'edit_field_class' => 'vc_col-xs-4 vc_column wpb_el_type_number vc_wrapper-param-type-number vc_shortcode-param',
 					'admin_label'      => true
 				),
 				array(
@@ -105,6 +105,41 @@ class Apidae_Map {
 					'admin_label'      => true,
 					'save_always'      => true,
 					'std'              => 'drop'
+				),
+				array(
+					'heading'          => esc_html__( 'Marker Animation', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'animation_duration',
+					'type'             => 'number',
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_number vc_wrapper-param-type-number vc_shortcode-param',
+					'save_always'      => true,
+					'std'              => '2000'
+				),
+				array(
+					'heading'          => esc_html__( 'Disable UI', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'disable_ui',
+					'type'             => 'checkbox',
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param'
+				),
+				array(
+					'heading'          => esc_html__( 'Disable Scroll Wheel', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'disable_scrollwheel',
+					'type'             => 'checkbox',
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param'
+				),
+				array(
+					'heading'          => esc_html__( 'Draggable', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'draggable',
+					'type'             => 'checkbox',
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param',
+					'std'              => 'true',
+					'always_save'      => true
+				),
+				array(
+					'heading'          => esc_html__( 'Use Clusters', $WPlusPlusApidae->getTextDomain() ),
+					'description'      => '<a href="https://developers.google.com/maps/documentation/javascript/marker-clustering">' . __( 'Example', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'       => 'use_clusters',
+					'type'             => 'checkbox',
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param'
 				),
 				array(
 					'heading'          => esc_html__( 'Scheme', $WPlusPlusApidae->getTextDomain() ),
@@ -176,26 +211,6 @@ class Apidae_Map {
 					),
 					'group'       => esc_html__( 'Color', $WPlusPlusApidae->getTextDomain() )
 				),
-				array(
-					'heading'          => esc_html__( 'Disable UI', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'       => 'disable_ui',
-					'type'             => 'checkbox',
-					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_luv_switch vc_wrapper-param-type-luv_switch vc_shortcode-param'
-				),
-				array(
-					'heading'          => esc_html__( 'Disable Scroll Wheel', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'       => 'disable_scrollwheel',
-					'type'             => 'checkbox',
-					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_luv_switch vc_wrapper-param-type-luv_switch vc_shortcode-param'
-				),
-				array(
-					'heading'          => esc_html__( 'Draggable', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'       => 'draggable',
-					'type'             => 'checkbox',
-					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_luv_switch vc_wrapper-param-type-luv_switch vc_shortcode-param',
-					'std'              => 'true',
-					'always_save'      => true
-				)
 			) )
 		);
 	}
@@ -269,10 +284,23 @@ class Apidae_Map {
 
 		// Enqueue maps js
 		global $WPlusPlusApidae, $tofandel_apidae;
-		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ) );
+		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ), $atts['use_clusters'] ? array( 'clusterImagePath' => $WPlusPlusApidae->file( 'images\clusters\m' ) ) : false );
+		if ( $atts['use_clusters'] ) {
+			$WPlusPlusApidae->addScript( 'markerclusterer' );
+		}
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( 'maps' ) );
 
-		$html = '<div class="apidae-google-maps" style="width:' . $atts['width'] . ';height:' . $atts['height'] . '" data-type="' . $atts['type'] . '" data-animation="' . $atts['marker_animation'] . '" data-zoom="' . $atts['zoom'] . '" data-disable-ui="' . ( $atts['disable_ui'] == 'true' ? 'true' : 'false' ) . '" data-scrollwheel="' . ( $atts['disable_scrollwheel'] == 'true' ? 'false' : 'true' ) . '" data-draggable="' . ( $atts['draggable'] == 'true' ? 'true' : 'false' ) . '" ' . ( ! empty( $map_style ) ? 'data-map-style="' . urlencode( $map_style ) . '"' : '' ) . '></div>';
+		$atts['draggable']           = ( $atts['draggable'] == 'true' ? 'true' : 'false' );
+		$atts['disable_ui']          = ( $atts['disable_ui'] == 'true' ? 'true' : 'false' );
+		$atts['disable_scrollwheel'] = ( $atts['disable_scrollwheel'] == 'true' ? 'true' : 'false' );
+		$map_style                   = urlencode( $map_style );
+
+		$html = <<<HTML
+<div class="apidae-google-maps" style="width:{$atts['width']};height:{$atts['height']}" data-type="{$atts['type']}"
+data-animation="{$atts['marker_animation']}" data-animation-duration="{$atts['animation_duration']}" data-zoom="{$atts['zoom']}"
+data-disable-ui="{$atts['disable_ui']}" data-scrollwheel="{$atts['disable_scrollwheel']}" data-draggable="{$atts['draggable']}"
+data-map-style="{$map_style}"></div>
+HTML;
 
 		return $html;
 	}

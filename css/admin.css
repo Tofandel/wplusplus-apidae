@@ -7,11 +7,11 @@
 	color: #DF7B7B;
 }
 
-.toplevel_page_wplusplus-apidae #redux-header {
+.toplevel_page_WPlusPlusApidae #redux-header {
 	display: none;
 }
 
-.toplevel_page_wplusplus-apidae .form-table > tbody > tr > th {
+.toplevel_page_WPlusPlusApidae .form-table > tbody > tr > th {
 	width: 190px;
 }
 
@@ -20,7 +20,7 @@
 	max-width: 100%
 }
 
-#adminmenu .toplevel_page_wplusplus-apidae .wp-menu-image img {
+#adminmenu .toplevel_page_WPlusPlusApidae .wp-menu-image img {
 	padding: 2px;
 	max-height: 100%;
 }

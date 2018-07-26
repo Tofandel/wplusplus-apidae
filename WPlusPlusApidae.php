@@ -3,6 +3,7 @@
 namespace Tofandel;
 
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
+use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Shortcodes\Apidae_Categories;
 use Tofandel\Apidae\Shortcodes\Apidae_Detail;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
@@ -85,12 +86,12 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	 */
 	public function reduxOptions() {
 		$r = new ReduxConfig( $this, array(
-			'display_name'     => 'Apidae',
+			'display_name'     => __( 'Apidae', $this->text_domain ),
 			'page_slug'        => $this->slug,
-			'page_title'       => 'Apidae Options',
+			'page_title'       => __( 'Apidae Options', $this->text_domain ),
 			'menu_type'        => 'menu',
-			'menu_title'       => 'Apidae',
-			'menu_icon'        => plugins_url( 'admin/logo.svg', $this->file ),
+			'menu_title'       => __( 'Apidae', $this->text_domain ),
+			'menu_icon'        => plugins_url( 'logo.svg', $this->file ),
 			'allow_sub_menu'   => true,
 			'page_priority'    => '39',
 			'compiler'         => false,
@@ -135,15 +136,13 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'desc'     => __( 'In minutes, 0 = no cache', $this->getTextDomain() ),
 					'validate' => 'numeric',
 					'default'  => 1440
-				),/*
+				),
 				array(
-					'title'   => __( 'More request parameters', $this->getTextDomain() ),
-					'desc'    => __( 'Checkout <a href="http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-de-diffusion/format-des-recherches" rel="noopener" target="_blank">the apidae documentation</a> for more information', $this->getTextDomain() ),
-					'id'      => 'more_json',
-					'type'    => 'ace_editor',
-					'mode'    => 'json',
-					'default' => '{}'
-				)*/
+					'title'    => __( 'Clear the cache', $this->getTextDomain() ),
+					'id'       => 'clear_cache',
+					'type'     => 'action_button',
+					'function' => [ ApidaeRequest::class, 'clearCache' ],
+				)
 			)
 		) );
 		$r->setSection( array(
