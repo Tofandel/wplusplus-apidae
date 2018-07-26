@@ -6,15 +6,15 @@
  * Time: 17:56
  */
 
-namespace Tofandel\Apidae\Objects;
+namespace Tofandel\Apidae\Modules;
 
 
-use Tofandel\Core\Traits\StaticInitializable;
+use Tofandel\Core\Interfaces\SubModule;
 
-class TemplateFilesHandler {
-	use StaticInitializable;
+class TemplateFilesHandler implements SubModule {
+	use \Tofandel\Core\Traits\SubModule;
 
-	public static function __init__() {
+	public function actionsAndFilters() {
 		add_action( 'redux/options/tofandel_apidae/saved', [ self::class, 'add_settings_change_action' ], 10, 0 );
 		add_action( 'redux/options/tofandel_apidae/import', [ self::class, 'add_settings_change_action' ], 10, 0 );
 		add_action( 'redux/options/tofandel_apidae/reset', [ self::class, 'delete_templates' ], 10, 0 );
@@ -93,4 +93,17 @@ class TemplateFilesHandler {
 		return $return;
 	}
 
+	/**
+	 * Called function on plugin activation
+	 */
+	public function activated() {
+	}
+
+	/**
+	 * Called when the plugin is updated
+	 *
+	 * @param $last_version
+	 */
+	public function upgrade( $last_version ) {
+	}
 }

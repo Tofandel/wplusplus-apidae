@@ -2,16 +2,17 @@
 
 namespace Tofandel;
 
-use Tofandel\Apidae\Objects\TemplateFilesHandler;
+use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Shortcodes\Apidae_Categories;
 use Tofandel\Apidae\Shortcodes\Apidae_Detail;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
 use Tofandel\Apidae\Shortcodes\Apidae_Map;
+use Tofandel\Core\Interfaces\WP_Plugin as WP_Plugin_Interface;
 use Tofandel\Core\Objects\ReduxConfig;
 use Tofandel\Core\Objects\WP_Plugin;
 
 if ( is_admin() && ! wp_doing_ajax() ) {
-	require_once __DIR__ . '/admin/tgmpa-config.php';
+	require_once __DIR__ . '/plugins/tgmpa-config.php';
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -30,9 +31,8 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Text Domain: wplusplusapidae
  * Domain Path: /languages/
  * Download Url: https://github.com/Tofandel/wplusplus-apidae/
- * WC tested up to: 4.8
  */
-class WPlusPlusApidae extends WP_Plugin {
+class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	protected $redux_opt_name = 'tofandel_apidae';
 
 	/**
@@ -53,13 +53,13 @@ class WPlusPlusApidae extends WP_Plugin {
 	 * @throws \Exception
 	 */
 	public function definitions() {
-		TemplateFilesHandler::__init__();
-		add_action( 'init', function () {
-			Apidae_Detail::__init__();
-			Apidae_List::__init__();
-			Apidae_Map::__init__();
-			Apidae_Categories::__init__();
-		}, 1 );
+		$this->setSubModule( new TemplateFilesHandler( $this ) );
+		$this->setShortcodes( array(
+			Apidae_Detail::class,
+			Apidae_List::class,
+			Apidae_Map::class,
+			Apidae_Categories::class
+		) );
 	}
 
 	public function uninstall() {
