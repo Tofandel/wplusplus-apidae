@@ -19,7 +19,6 @@ Displays a list of Apidae objects from a defined list template
  * `'selection_ids' * - int    -`     Comma separated list of apidae selection's id
  * `'paged'         - bool   -`     Whether the list should be paginated or not (defaults to 'true')
  * `'nb_result'     - int    -`     The number of result per page (defaults to '30')
- * `'more_json'     - string -`     If you need to modify the query sent to Apidae you can do this here in json format
  * `'order'         - string -`     How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
  * `'reverse_order' - bool   -`     Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
  * `'langs'         - string -`     Comma separated list of languages that you want to receive in the template (defaults to 'fr')
