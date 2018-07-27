@@ -65,7 +65,7 @@ class Apidae_Detail implements WP_Shortcode {
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
 			'description' => esc_html__( 'Shortcode to create the details of any apidae object', $WPlusPlusApidae->getTextDomain() ),
 			'name'        => esc_html__( 'Apidae Detail', $WPlusPlusApidae->getTextDomain() ),
-			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
+			'icon'        => plugins_url( 'logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array(
 				array(
 					'type'             => 'dropdown',

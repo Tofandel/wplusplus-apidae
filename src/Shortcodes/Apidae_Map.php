@@ -9,6 +9,7 @@
 namespace Tofandel\Apidae\Shortcodes;
 
 
+use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
@@ -21,7 +22,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @param   string  'type'      The type of the map (available: 'roadmap','satellite','hybrid','terrain') (defaults to 'roadmap')
  * @param   string  'marker_animation'  The marker animation on map load (available: 'none','bounce','drop') (defaults to 'drop')
  */
-class Apidae_Map {
+class Apidae_Map implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
 	protected function __init() {

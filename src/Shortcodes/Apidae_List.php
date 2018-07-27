@@ -72,10 +72,7 @@ class Apidae_List implements WP_Shortcode {
 
 		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
 
-		$file_names    = array();
-		$details_pages = array();
-		$langs         = array();
-
+		$file_names = $selections = $details_pages = $langs = array();
 
 		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
 			$langs      = self::getLangs();
@@ -97,6 +94,15 @@ class Apidae_List implements WP_Shortcode {
 				if ( strpos( $page->post_content, '[apidae_detail' ) !== false ) {
 					$details_pages[ $page->post_title ] = $page->ID;
 				}
+			}
+
+			$tmp_selections = ApidaeRequest::getSelections();
+			if ( ! empty( $tmp_selections ) ) {
+				foreach ( $tmp_selections as $selection ) {
+					$selections[ $selection['nom'] . ' (' . $selection['id'] . ')' ] = $selection['id'];
+				}
+			} else {
+				$selections[ __( 'No selection found', $WPlusPlusApidae->getTextDomain() ) ] = 0;
 			}
 		}
 
@@ -147,7 +153,7 @@ class Apidae_List implements WP_Shortcode {
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
 			'description' => esc_html__( 'Shortcode to create an apidae list', $WPlusPlusApidae->getTextDomain() ),
 			'name'        => esc_html__( 'Apidae List', $WPlusPlusApidae->getTextDomain() ),
-			'icon'        => plugins_url( 'admin/logo.svg', $WPlusPlusApidae->getFile() ),
+			'icon'        => plugins_url( 'logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array_merge( $params, array(
 				array(
 					'type'             => 'checkbox',
@@ -168,9 +174,10 @@ class Apidae_List implements WP_Shortcode {
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_number vc_wrapper-param-type-number vc_shortcode-param vc_column-with-padding',
 				),
 				array(
-					'type'        => 'textfield',
-					'heading'     => esc_html__( 'Selection IDs', $WPlusPlusApidae->getTextDomain() ),
+					'type'        => 'multidropdown',
+					'heading'     => esc_html__( 'Selections', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'selection_ids',
+					'value'       => $selections,
 					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->getTextDomain() ),
 					'admin_label' => true
 				),

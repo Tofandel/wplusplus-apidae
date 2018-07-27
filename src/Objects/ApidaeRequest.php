@@ -16,7 +16,7 @@ class ApidaeRequest {
 		$query['projetId'] = $tofandel_apidae['project_id'];
 		$query['apiKey']   = $tofandel_apidae['api_key'];
 		$query             = array( 'query' => json_encode( $query ) );
-		$url               = 'https://api.apidae-tourisme.com/api/v002/referentiel/selections/?query=' . http_build_query( $query );
+		$url               = 'https://api.apidae-tourisme.com/api/v002/referentiel/selections/?' . http_build_query( $query );
 		$md                = md5( $url );
 		$cache             = self::getCache( $md );
 		$isValid           = true;
@@ -32,6 +32,20 @@ class ApidaeRequest {
 			$rep = json_decode( $rep, true );
 		} else {
 			$rep = $cache;
+		}
+		if ( $isValid === true ) {
+			if ( is_array( $rep ) ) {
+				if ( $cache === false ) {
+					//We cache this for 30 minutes only
+					self::setCache( $md, $rep, 30 );
+				}
+
+				return $rep;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
 	}
 
@@ -171,12 +185,13 @@ class ApidaeRequest {
 	 *
 	 * @param string $md
 	 * @param string $content
+	 * @param int $time To override the default time
 	 *
 	 * @return boolean
 	 */
-	static public function setCache( $md, $content ) {
+	static public function setCache( $md, $content, $time = 0 ) {
 		global $tofandel_apidae;
-		$iCache = $tofandel_apidae['cache_duration'];
+		$iCache = $time ?: $tofandel_apidae['cache_duration'];
 		if ( $iCache == 0 ) {
 			return false;
 		} else {
@@ -195,12 +210,14 @@ class ApidaeRequest {
 	 * vide le cache
 	 */
 	static public function clearCache() {
-		global $wpdb;
+		global $wpdb, $WPlusPlusApidae;
 		$wpdb->query( $wpdb->prepare(
 			"DELETE FROM {$wpdb->options}
 		WHERE option_name LIKE %s OR option_name LIKE %s",
 			$wpdb->esc_like( '_transient_wpp_apidae_' ) . '%',
 			$wpdb->esc_like( '_transient_timeout_wpp_apidae_' ) . '%'
 		) );
+
+		return __( 'The cache has been successfully cleared', $WPlusPlusApidae->getTextDomain() );
 	}
 }
