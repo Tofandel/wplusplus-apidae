@@ -16,11 +16,19 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * Shortcode Apidae_Map
  * @package Tofandel\Apidae\Shortcodes
  *
- * @param   string  'width'     The width of the map element (defaults to '100%')
- * @param   string  'height'    The height of the map element (defaults to '300px')
- * @param   int     'zoom'      The zoom level between 1 and 21, leave blank for auto
- * @param   string  'type'      The type of the map (available: 'roadmap','satellite','hybrid','terrain') (defaults to 'roadmap')
- * @param   string  'marker_animation'  The marker animation on map load (available: 'none','bounce','drop') (defaults to 'drop')
+ * @param   string  'width'                 The width of the map element (defaults to '100%')
+ * @param   string  'height'                The height of the map element (defaults to '300px')
+ * @param   int     'zoom'                  The zoom level between 1 and 21, leave blank for auto
+ * @param   string  'type'                  The type of the map (available: 'roadmap','satellite','hybrid','terrain') (defaults to 'roadmap')
+ * @param   string  'marker_animation'      The marker animation on map load (available: 'none','bounce','drop') (defaults to 'drop')
+ * @param   int     'animation_duration'    The time it will take for all the animations to be completed (defaults to '2000' => 2 seconds)
+ * @param   bool    'disable_ui'            If you want to disable the controls for the map (defaults to 'false')
+ * @param   bool    'disable_scrollwheel'   If you want to disable zooming with the scrollwhell (defaults to 'false')
+ * @param   bool    'draggable'             If the user should be able to move the map (defaults to 'true')
+ * @param   bool    'use_clusters'          If you want close markers to be grouped on the map (defaults to 'false')
+ * @param   string  'preset'                The color preset you want to use (available:
+ * 'apple-maps-esque','avocado-world','becomeadinosaur','black-white','blue-essence','blue-water','cool-grey','flat-map','greyscale','light-dream','light-monochrome',
+ * 'mapbox','midnight-commander','neutral-blue','pale-down','paper','retro','shades-of-grey','subtle-grayscale','ultra-light-with-labels','unsaturated-browns')
  */
 class Apidae_Map implements WP_Shortcode {
 	use WP_VC_Shortcode;
@@ -274,12 +282,12 @@ class Apidae_Map implements WP_Shortcode {
 		$atts['height'] = ( ! preg_match( '~(px|%)$~', $atts['height'] ) ? $atts['height'] . 'px' : $atts['height'] );
 
 		$map_style = '';
-		if ( $atts['color_scheme'] == 'custom-color' ) {
+		if ( $atts['color_scheme'] == 'preset' || ! empty( $atts['preset'] ) ) {
+			$map_style = $presets [ $atts['preset'] ];
+		} elseif ( $atts['color_scheme'] == 'custom-color' || ! empty( $atts['hue'] ) ) {
 			$hue       = $atts['hue'];
 			$map_style = '[{"featureType":"water","elementType":"geometry","stylers":[{"color":"' . $hue . '"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"},{"lightness":-37}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"' . $hue . '"},{"weight":2},{"gamma":0.84}]},{"elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"weight":0.6},{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]}]';
-		} else if ( $atts['color_scheme'] == 'preset' ) {
-			$map_style = $presets [ $atts['preset'] ];
-		} else if ( $atts['color_scheme'] == 'json' ) {
+		} elseif ( $atts['color_scheme'] == 'json' || ! empty( $atts['json'] ) ) {
 			$map_style = preg_replace( '~\s+~', '', urldecode( base64_decode( $atts['json'] ) ) );
 		}
 

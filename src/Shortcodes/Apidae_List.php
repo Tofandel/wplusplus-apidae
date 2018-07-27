@@ -21,10 +21,10 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  *
  * @required-param  string  'template'      The slug of the list template
  * @required-param  int     'detail_id'     The ID of the detail page
+ * @required-param  int     'selection_ids' Comma separated list of apidae selection's id
  *
  * @param           bool    'paged'         Whether the list should be paginated or not (defaults to 'true')
  * @param           int     'nb_result'     The number of result per page (defaults to '30')
- * @param           int     'selection_ids' Comma separated list of apidae selection's id
  * @param           string  'more_json'     If you need to modify the query sent to Apidae you can do this here in json format
  * @param           string  'order'         How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
  * @param           bool    'reverse_order' Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
@@ -156,6 +156,14 @@ class Apidae_List implements WP_Shortcode {
 			'icon'        => plugins_url( 'logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array_merge( $params, array(
 				array(
+					'type'        => 'multidropdown',
+					'heading'     => esc_html__( 'Selections', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'selection_ids',
+					'value'       => $selections,
+					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->getTextDomain() ),
+					'admin_label' => true
+				),
+				array(
 					'type'             => 'checkbox',
 					'heading'          => esc_html__( 'Paged', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'       => 'paged',
@@ -172,14 +180,6 @@ class Apidae_List implements WP_Shortcode {
 					'extra'            => array( 'min' => 1, 'max' => 999 ),
 					'admin_label'      => true,
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_number vc_wrapper-param-type-number vc_shortcode-param vc_column-with-padding',
-				),
-				array(
-					'type'        => 'multidropdown',
-					'heading'     => esc_html__( 'Selections', $WPlusPlusApidae->getTextDomain() ),
-					'param_name'  => 'selection_ids',
-					'value'       => $selections,
-					'description' => __( 'The identifiers of the selections to retrieve, comma separated', $WPlusPlusApidae->getTextDomain() ),
-					'admin_label' => true
 				),
 				array(
 					'type'             => 'dropdown',

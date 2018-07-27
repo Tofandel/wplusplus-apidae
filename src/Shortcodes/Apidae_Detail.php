@@ -8,9 +8,9 @@
 
 namespace Tofandel\Apidae\Shortcodes;
 
+use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
-use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -19,8 +19,6 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @package Tofandel\Apidae\Shortcodes
  *
  * @required-param  string  'template'    The slug of the detail template
- *
- * @param           string  'more_json'   If you need to modify the query sent to Apidae you can do this here in json format
  * @param           string  'langs'       Comma separated list of languages that you want to receive in the template (defaults to 'fr')
  */
 class Apidae_Detail implements WP_Shortcode {
@@ -76,13 +74,13 @@ class Apidae_Detail implements WP_Shortcode {
 					'always_save'      => true,
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 				),
-				array(
+				/*array(
 					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
 					'type'        => 'textarea',
 					'heading'     => esc_html__( 'More JSON', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'more_json',
 					'description' => __( 'Additional configuration in JSON (ex: {"territoires": [95938, 156922]})<br><strong style="color:red">This will override any already present parameters!</strong>', $WPlusPlusApidae->getTextDomain() )
-				),
+				),*/
 				array(
 					'type'        => 'multidropdown',
 					'heading'     => esc_html__( 'Languages', $WPlusPlusApidae->getTextDomain() ),
@@ -105,7 +103,8 @@ class Apidae_Detail implements WP_Shortcode {
 	public static function shortcode( $atts, $content, $name ) {
 		$oid = intval( get_query_var( 'apioid', '' ) );
 
-		$json            = json_decode( $atts['more_json'] ) ?: array();
+		$json = array();
+		//$json            = json_decode( $atts['more_json'] ) ?: array();
 		$json['locales'] = $atts['langs'];
 
 		if ( empty( $oid ) || ( $object = ApidaeRequest::getSingleObject( $oid, $json ) ) === false ) {
