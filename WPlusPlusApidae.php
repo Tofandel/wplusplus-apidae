@@ -84,7 +84,7 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	/**
 	 * Add redux framework menus, sub-menus and settings page in this function
 	 */
-	public function reduxOptions() {
+	public function reduxConfig() {
 		$r = new ReduxConfig( $this, array(
 			'display_name'     => __( 'Apidae', $this->text_domain ),
 			'page_slug'        => $this->slug,

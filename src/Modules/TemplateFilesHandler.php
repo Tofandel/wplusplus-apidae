@@ -9,6 +9,7 @@
 namespace Tofandel\Apidae\Modules;
 
 
+use Tofandel\Apidae\Objects\Template;
 use Tofandel\Core\Interfaces\SubModule;
 
 class TemplateFilesHandler implements SubModule {
