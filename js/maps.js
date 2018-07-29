@@ -1,6 +1,8 @@
 (function ($) {
 
 	window.apidaeMaps = [];
+	var WPlusPlusApidae = WPlusPlusApidae || {maps: {}};
+
 
 	//Callback function to init maps
 	window.initApidaeMaps = function () {
@@ -29,7 +31,8 @@
 				draggable: true,
 				mapStyle: null,
 				animationDuration: 2000,
-				clusterImagePath: WPlusPlusApidae.maps.clusterImagePath || false
+				clusterImagePath: WPlusPlusApidae.maps.clusterImagePath || false,
+				useClusters: false
 			}, settings);
 
 			var map,

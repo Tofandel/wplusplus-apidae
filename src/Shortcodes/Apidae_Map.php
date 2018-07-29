@@ -293,7 +293,7 @@ class Apidae_Map implements WP_Shortcode {
 
 		// Enqueue maps js
 		global $WPlusPlusApidae, $tofandel_apidae;
-		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ), $atts['use_clusters'] ? array( 'clusterImagePath' => $WPlusPlusApidae->file( 'images\clusters\m' ) ) : false );
+		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ), $atts['use_clusters'] ? array( 'clusterImagePath' => $WPlusPlusApidae->fileUrl( 'images/clusters/m' ) ) : false );
 		if ( $atts['use_clusters'] ) {
 			$WPlusPlusApidae->addScript( 'markerclusterer' );
 		}
@@ -308,7 +308,7 @@ class Apidae_Map implements WP_Shortcode {
 <div class="apidae-google-maps" style="width:{$atts['width']};height:{$atts['height']}" data-type="{$atts['type']}"
 data-animation="{$atts['marker_animation']}" data-animation-duration="{$atts['animation_duration']}" data-zoom="{$atts['zoom']}"
 data-disable-ui="{$atts['disable_ui']}" data-scrollwheel="{$atts['disable_scrollwheel']}" data-draggable="{$atts['draggable']}"
-data-map-style="{$map_style}"></div>
+data-map-style="{$map_style}" data-use-clusters="{$atts['use_clusters']}"></div>
 HTML;
 
 		return $html;
