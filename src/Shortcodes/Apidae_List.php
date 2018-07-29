@@ -9,9 +9,9 @@
 namespace Tofandel\Apidae\Shortcodes;
 
 
+use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
-use Tofandel\Apidae\Objects\TemplateFilesHandler;
 use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
