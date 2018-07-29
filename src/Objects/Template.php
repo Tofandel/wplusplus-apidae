@@ -9,6 +9,7 @@
 namespace Tofandel\Apidae\Objects;
 
 
+use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\TwigExtensions\ExtensionsLoader;
 use Tofandel\Core\Traits\StaticInitializable;
 use Twig_Environment;
