@@ -1,7 +1,7 @@
 (function ($) {
 
 	window.apidaeMaps = [];
-	var WPlusPlusApidae = WPlusPlusApidae || {maps: {}};
+	var WPlusPlusApidae = typeof window.WPlusPlusApidae !== 'undefined' ? window.WPlusPlusApidae : {maps: {}};
 
 
 	//Callback function to init maps
@@ -82,7 +82,7 @@
 				if (markerNodes.length > 0) {
 					render();
 				}
-
+				container.trigger('apidae-map-loaded', [map, markers]);
 			};
 
 			//Render markers
