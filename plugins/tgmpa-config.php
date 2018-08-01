@@ -77,6 +77,7 @@ add_action( 'tgmpa_register',
 				//'external_url'       => 'https://github.com/tofandel/wplusplus-core',
 				// If set, overrides default API URL and points to an external URL.
 				//'is_callable'        => '',
+				'class_exists'       => \Tofandel\WPlusPlusCore::class
 				// If set, this callable will be be checked for availability to determine if a plugin is active.
 			),
 
