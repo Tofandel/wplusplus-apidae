@@ -26,18 +26,18 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with worpress simply by creating Twig templates
- * Version: 1.2.6.1
+ * Version: 1.2.7
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
- * Text Domain: wplusplusapidae
+ * Text Domain: wplusplus-apidae
  * Domain Path: /languages/
- * Download Url: https://github.com/Tofandel/wplusplus-apidae/
  */
 class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	protected $redux_opt_name = 'tofandel_apidae';
 	protected $is_licensed = true;
 	protected $download_url = 'https://tukangroup.com/product/premium-plugins/wplusplus-apidae/';
 	protected $product_id = 'wplusplus-apidae';
+	protected $repo_url = 'https://github.com/Tofandel/wplusplus-apidae/';
 
 	/**
 	 * Add actions and filters here
