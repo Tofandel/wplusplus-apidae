@@ -82,7 +82,7 @@
 				if (markerNodes.length > 0) {
 					render();
 				}
-				container.trigger('apidae-map-loaded', [map, markers]);
+				$(container).trigger('apidae-map-loaded', [map, markers]);
 			};
 
 			//Render markers

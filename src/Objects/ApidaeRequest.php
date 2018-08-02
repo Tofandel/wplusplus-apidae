@@ -70,14 +70,13 @@ class ApidaeRequest {
 		}
 
 
+		$query = apply_filters( 'apidae_single_request_query', $query );
 		foreach ( $query as $key => $querum ) {
 			if ( is_array( $querum ) ) {
 				//Even if the doc says otherwise the api doesn't take this argument as an array because we send them in GET
 				$query[ $key ] = implode( ',', $querum );
 			}
 		}
-
-		$query = apply_filters( 'apidae_single_request_query', $query );
 
 		$url     = sprintf( 'https://api.apidae-tourisme.com/api/v002/objet-touristique/get-by-id/%d/?', $id ) . http_build_query( $query );
 		$md      = md5( $url );
@@ -100,6 +99,11 @@ class ApidaeRequest {
 		if ( $isValid === true ) {
 			if ( is_array( $rep ) ) {
 				if ( $cache === false ) {
+					$l = explode( $query['locales'], ',' );
+					//TODO check if pt-BR works
+					if ( ! empty( [ $l[0] ] ) ) {
+						self::setLibelle( $rep, str_replace( '-', '', ucwords( strtolower( $l[0] ) ) ) );
+					}
 					self::setCache( $md, $rep );
 				}
 
@@ -109,6 +113,16 @@ class ApidaeRequest {
 			}
 		} else {
 			return false;
+		}
+	}
+
+	public static function setLibelle( &$array, $lang ) {
+		foreach ( $array as $key => $val ) {
+			if ( is_array( $val ) ) {
+				self::setLibelle( $array[ $key ], $lang );
+			} elseif ( $key == 'libelle' . $lang ) {
+				$array['libelle'] = $val;
+			}
 		}
 	}
 
@@ -157,6 +171,11 @@ class ApidaeRequest {
 			if ( is_array( $rep ) ) {
 				$rep['numFound'] = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
 				if ( $cache === false ) {
+					$l = explode( $query['locales'], ',' );
+					//TODO check if pt-BR works
+					if ( ! empty( [ $l[0] ] ) ) {
+						self::setLibelle( $rep, str_replace( '-', '', ucwords( strtolower( $l[0] ) ) ) );
+					}
 					self::setCache( $md, $rep );
 				}
 

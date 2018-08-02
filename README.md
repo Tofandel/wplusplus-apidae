@@ -23,7 +23,7 @@ Displays a list of Apidae objects from a defined list template
  * `'reverse_order' - bool   -`     Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
  * `'langs'         - string -`     Comma separated list of languages that you want to receive in the template (defaults to 'fr')
  * `'search_fields' - string -`     Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
- * `'detail_scheme' - string -`     The link scheme to the detail template (defaults to '/%type%/%nom.libelleFr%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
+ * `'detail_scheme' - string -`     The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
 
 ### Apidae_Detail
 Displays a single Apidae object from a defined single object template

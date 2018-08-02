@@ -30,7 +30,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @param           bool    'reverse_order' Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
  * @param           string  'langs'         Comma separated list of languages that you want to receive in the template (defaults to 'fr')
  * @param           string  'search_fields' Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
- * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelleFr%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
+ * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
  */
 class Apidae_List implements WP_Shortcode {
 	use WP_VC_Shortcode;
@@ -229,7 +229,7 @@ class Apidae_List implements WP_Shortcode {
 					'heading'     => esc_html__( 'Detail link scheme', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'detail_scheme',
 					'description' => __( 'The link scheme to the detail template', $WPlusPlusApidae->getTextDomain() ),
-					'std'         => '/%type%/%nom.libelleFr%/%localisation.adresse.commune.nom%'
+					'std'         => '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%'
 				),
 				array(
 					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),

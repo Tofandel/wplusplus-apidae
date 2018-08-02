@@ -37,7 +37,7 @@
 {% endblock images %}
 
 {% block description %}
-	{% set desc = o.presentation.descriptifDetaille.libelleFr|default(o.presentation.descriptifCourt.libelleFr) %}
+	{% set desc = o.presentation.descriptifDetaille.libelle|default(o.presentation.descriptifCourt.libelle) %}
 	<p class="description">{{ desc|nl2br }}</p>
 {% endblock description %}
 
@@ -54,19 +54,19 @@
 {% endblock localisation %}
 
 {% block tarifs_reservation %}
-	{% if o.ouverture.periodeEnClair.libelleFr is not empty %}
+	{% if o.ouverture.periodeEnClair.libelle is not empty %}
 		<h3>Ouverture</h3>
-		{{ o.ouverture.periodeEnClair.libelleFr|nl2br }}
+		{{ o.ouverture.periodeEnClair.libelle|nl2br }}
 	{% endif %}
-	{% if o.descriptionTarif.tarifsEnClair.libelleFr is not empty %}
+	{% if o.descriptionTarif.tarifsEnClair.libelle is not empty %}
 		<h3>Tarifs</h3>
-		{{ o.descriptionTarif.tarifsEnClair.libelleFr|nl2br }}
+		{{ o.descriptionTarif.tarifsEnClair.libelle|nl2br }}
 	{% endif %}
 	{% if o.descriptionTarif.modesPaiement is not empty %}
 		<h3>Modes de paiement acceptés</h3>
 		<ul class="modepaiement">
 			{% for pay in o.descriptionTarif.modesPaiement|orderBy('ordre') %}
-				<li>{{ pay.libelleFr }}</li>
+				<li>{{ pay.libelle }}</li>
 			{% endfor %}
 		</ul>
 	{% endif %}
@@ -81,14 +81,14 @@
 			{% for com in organisme %}
 				{% if com.type.id is iterable %}
 					<div class="communication communication-mode-{{ com.type.id.0 }}">
-						<h5>{{ com.type.libelleFr.0 }}</h5>
+						<h5>{{ com.type.libelle.0 }}</h5>
 						{% for key, val in com.type.id %}
 							<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
 						{% endfor %}
 					</div>
 				{% else %}
 					<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
-						<h5>{{ com.type.libelleFr }}</h5>
+						<h5>{{ com.type.libelle }}</h5>
 						<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
 					</div>
 				{% endif %}
@@ -103,14 +103,14 @@
 	{% for com in coms %}
 		{% if com.type.id is iterable %}
 			<div class="communication communication-mode-{{ com.type.id.0 }}">
-				<h5>{{ com.type.libelleFr.0 }}</h5>
+				<h5>{{ com.type.libelle.0 }}</h5>
 				{% for key, val in com.type.id %}
 					<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
 				{% endfor %}
 			</div>
 		{% else %}
 			<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
-				<h5>{{ com.type.libelleFr }}</h5>
+				<h5>{{ com.type.libelle }}</h5>
 				<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
 			</div>
 		{% endif %}
@@ -133,19 +133,19 @@
 						<ul>
 							{% for presta in attribute(o.prestations, key)|orderBy('ordre')|groupBy('familleCritere.id') %}
 								{% if presta.id is iterable %}
-									<li>{% if presta.familleCritere.libelleFr.0 is not empty %}
-											<strong>{{ presta.familleCritere.libelleFr.0 }}
+									<li>{% if presta.familleCritere.libelle.0 is not empty %}
+											<strong>{{ presta.familleCritere.libelle.0 }}
 											:</strong>{% endif %}
 										{% for key, val in presta.id %}
-											{{ attribute(presta.libelleFr, key) }}{% if not loop.last %},{% endif %}
+											{{ attribute(presta.libelle, key) }}{% if not loop.last %},{% endif %}
 										{% endfor %}
 									</li>
 								{% else %}
 									<li>
-										{% if presta.familleCritere.libelleFr is not empty %}
-											<strong>{{ presta.familleCritere.libelleFr }} :</strong>
+										{% if presta.familleCritere.libelle is not empty %}
+											<strong>{{ presta.familleCritere.libelle }} :</strong>
 										{% endif %}
-										{{ presta.libelleFr }}
+										{{ presta.libelle }}
 									</li>
 								{% endif %}
 							{% endfor %}
