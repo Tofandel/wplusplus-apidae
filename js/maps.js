@@ -32,7 +32,8 @@
 				mapStyle: null,
 				animationDuration: 2000,
 				clusterImagePath: WPlusPlusApidae.maps.clusterImagePath || false,
-				useClusters: false
+				useClusters: false,
+				useSpiderfier: false
 			}, settings);
 
 			var map,

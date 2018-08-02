@@ -81,7 +81,8 @@ class Apidae_Categories implements WP_Shortcode {
 			foreach ( self::getCategories() as $slug => $category ) {
 				$cats[ $slug ] = self::getCriteria( $slug );
 				if ( ! empty( $cats[ $slug ]['criteresQuery'] ) ) {
-					$crit = explode( ' ', $cats[ $slug ]['criteresQuery'] );
+					$crit                           = explode( ' ', $cats[ $slug ]['criteresQuery'] );
+					$cats[ $slug ]['criteresQuery'] = array();
 					foreach ( $crit as $key => $critere ) {
 						$c                                                                 = explode( ':', $critere );
 						$cats[ $slug ]['criteresQuery'][ str_replace( '+', '', $c[0] ) ][] = $c[1];

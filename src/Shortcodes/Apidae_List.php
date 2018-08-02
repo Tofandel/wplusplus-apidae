@@ -424,7 +424,8 @@ class Apidae_List implements WP_Shortcode {
 				'detailScheme'   => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%TYPE%/%CITY%/%NAME%',
 				'siteUrl'        => site_url(),
 				'pageQuery'      => $page_query,
-				'searchWords'    => $searchWords
+				'searchWords'    => $searchWords,
+				'categories'     => Apidae_Categories::getCategoriesCriterias()
 			) ) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );
