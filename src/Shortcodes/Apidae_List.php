@@ -355,7 +355,7 @@ class Apidae_List implements WP_Shortcode {
 			'order'         => $atts['order'],
 			'searchFields'  => $atts['search_fields'],
 			'asc'           => (bool) $atts['reverse_order'],
-			'locales'       => array( $atts['langs'] ),
+			'locales'       => explode( ',', $atts['langs'] ),
 			'searchQuery'   => '',
 			'criteresQuery' => ''
 		), $json );

@@ -99,10 +99,12 @@ class ApidaeRequest {
 		if ( $isValid === true ) {
 			if ( is_array( $rep ) ) {
 				if ( $cache === false ) {
-					$l = explode( $query['locales'], ',' );
-					//TODO check if pt-BR works
-					if ( ! empty( [ $l[0] ] ) ) {
-						self::setLibelle( $rep, str_replace( '-', '', ucwords( strtolower( $l[0] ) ) ) );
+					if ( ! empty( $query['locales'] ) ) {
+						$l = explode( ',', $query['locales'] );
+						//TODO check if pt-BR works
+						if ( ! empty( [ $l[0] ] ) ) {
+							self::setLibelle( $rep, str_replace( '-', '', ucwords( strtolower( $l[0] ) ) ) );
+						}
 					}
 					self::setCache( $md, $rep );
 				}
@@ -148,11 +150,11 @@ class ApidaeRequest {
 
 		$query = apply_filters( 'apidae_list_request_query', $query );
 
-		$query   = array( 'query' => json_encode( $query ) );
-		$url     = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?' . http_build_query( $query );
-		$md      = md5( $url );
-		$cache   = self::getCache( $md );
-		$isValid = true;
+		$json_query = array( 'query' => json_encode( $query ) );
+		$url        = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques?' . http_build_query( $json_query );
+		$md         = md5( $url );
+		$cache      = self::getCache( $md );
+		$isValid    = true;
 		if ( $cache === false ) {
 			$ch = curl_init();
 			curl_setopt( $ch, CURLOPT_URL, $url );
@@ -171,10 +173,11 @@ class ApidaeRequest {
 			if ( is_array( $rep ) ) {
 				$rep['numFound'] = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
 				if ( $cache === false ) {
-					$l = explode( $query['locales'], ',' );
-					//TODO check if pt-BR works
-					if ( ! empty( [ $l[0] ] ) ) {
-						self::setLibelle( $rep, str_replace( '-', '', ucwords( strtolower( $l[0] ) ) ) );
+					if ( ! empty( $query['locales'] ) ) {
+						//TODO check if pt-BR works
+						if ( ! empty( [ $query['locales'][0] ] ) ) {
+							self::setLibelle( $rep['objetsTouristiques'], str_replace( '-', '', ucwords( strtolower( $query['locales'][0] ) ) ) );
+						}
 					}
 					self::setCache( $md, $rep );
 				}
