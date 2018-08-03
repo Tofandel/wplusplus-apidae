@@ -126,6 +126,10 @@
 
 			//Add marker to specific position with specific icon
 			var addMarker = function (pin) {
+				if (typeof pin.addMarker === 'function') {
+					pin.addMarker(pin, markers, map, showInfo);
+					return;
+				}
 				var html = "<a href='" + pin.link + "'><b>" + pin.name + "</b></a> <br/>" + pin.addressLine1 + "<br/>" + pin.addressLine2;
 				var _marker = new google.maps.Marker({
 					position: pin.position,
