@@ -24,18 +24,12 @@ class Apidae_Search implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
 	protected function __init() {
-		global $WPlusPlusApidae, $pagenow;
-
-		$cats = array();
-
-		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
-		}
-
+		global $WPlusPlusApidae;
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
-			'description' => esc_html__( 'Shortcode to display the list of categories', $WPlusPlusApidae->getTextDomain() ),
-			'name'        => esc_html__( 'Apidae Categories', $WPlusPlusApidae->getTextDomain() ),
-			'icon'        => 'apidae dashicons dashicons-category',
+			'description' => esc_html__( 'Shortcode to display an Apidae search form', $WPlusPlusApidae->getTextDomain() ),
+			'name'        => esc_html__( 'Apidae Search', $WPlusPlusApidae->getTextDomain() ),
+			'icon'        => 'apidae dashicons dashicons-search',
 			'params'      => array(
 				array(
 					'type'        => 'vc_link',

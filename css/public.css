@@ -68,6 +68,7 @@
 
 .apidae-searchform {
 	display: inline-block;
+	width: 100%;
 }
 
 .apidae-searchform input.date {

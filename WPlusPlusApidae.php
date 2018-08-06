@@ -9,6 +9,7 @@ use Tofandel\Apidae\Shortcodes\Apidae_Detail;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
 use Tofandel\Apidae\Shortcodes\Apidae_Map;
 use Tofandel\Apidae\Shortcodes\Apidae_Search;
+use Tofandel\Apidae\Shortcodes\Apidae_Widget;
 use Tofandel\Core\Interfaces\WP_Plugin as WP_Plugin_Interface;
 use Tofandel\Core\Objects\ReduxConfig;
 use Tofandel\Core\Objects\WP_Plugin;
@@ -65,7 +66,8 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 			Apidae_List::class,
 			Apidae_Map::class,
 			Apidae_Categories::class,
-			Apidae_Search::class
+			Apidae_Search::class,
+			Apidae_Widget::class
 		) );
 	}
 
@@ -162,6 +164,7 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'id'           => 'categories',
 					'item_name'    => __( 'category', $this->getTextDomain() ),
 					'bind-title'   => 'category-name',
+					'limit'        => $this->isLicensed() ? '100' : '4',
 					'fields'       => array(
 						array(
 							'title' => __( 'Category Name', $this->getTextDomain() ),
@@ -199,6 +202,7 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->getTextDomain() ),
 					'bind-title'   => 'list-name',
+					'limit'        => $this->isLicensed() ? '10' : '1',
 					'fields'       => array(
 						array(
 							'title' => __( 'Template Name', $this->getTextDomain() ),
@@ -238,6 +242,7 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->getTextDomain() ),
 					'bind-title'   => 'detail-name',
+					'limit'        => $this->isLicensed() ? '10' : '1',
 					'fields'       => array(
 						array(
 							'title' => __( 'Template Name', $this->getTextDomain() ),
