@@ -8,6 +8,7 @@ use Tofandel\Apidae\Shortcodes\Apidae_Categories;
 use Tofandel\Apidae\Shortcodes\Apidae_Detail;
 use Tofandel\Apidae\Shortcodes\Apidae_List;
 use Tofandel\Apidae\Shortcodes\Apidae_Map;
+use Tofandel\Apidae\Shortcodes\Apidae_Search;
 use Tofandel\Core\Interfaces\WP_Plugin as WP_Plugin_Interface;
 use Tofandel\Core\Objects\ReduxConfig;
 use Tofandel\Core\Objects\WP_Plugin;
@@ -57,12 +58,14 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	 * @throws \Exception
 	 */
 	public function definitions() {
+		$this->registerStyle( 'public' );
 		$this->setSubModule( new TemplateFilesHandler( $this ) );
 		$this->setShortcodes( array(
 			Apidae_Detail::class,
 			Apidae_List::class,
 			Apidae_Map::class,
-			Apidae_Categories::class
+			Apidae_Categories::class,
+			Apidae_Search::class
 		) );
 	}
 

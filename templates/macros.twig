@@ -11,10 +11,10 @@
 	{% endif %}
 {% endspaceless %}{% endmacro image_url %}
 
-{% macro diaporama(o, size) %}
+{% macro list_diaporama(o, size, class) %}
 	{% import _self as apidae %}
 	{% if o.illustrations|length > 1 %}
-		<ul class="diaporama">
+		<ul class="diaporama {{ class }}">
 			{% for index, images in o.illustrations %}
 				<li class="slide"><img src="{{ apidae.image_url(o, size, index) }}"
 									   alt="{{ images.traductionFichiers[0].fileName }}"
@@ -26,12 +26,28 @@
 		<img src="{{ apidae.image_url(o, size, 0) }}" alt="{{ images.traductionFichiers[0].fileName }}"
 			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
 	{% endif %}
-{% endmacro diaporama %}
+{% endmacro list_diaporama %}
+
+{% macro fotorama_diaporama(o, size, class) %}
+	{% import _self as apidae %}
+	{% if o.illustrations|length > 1 %}
+		<div class="fotorama {{ class }}">
+			{% for index, images in o.illustrations %}
+				<img src="{{ apidae.image_url(o, size, index) }}" alt="{{ images.traductionFichiers[0].fileName }}"
+					 width="{{ images.traductionFichiers[0].largeur }}"
+					 height="{{ images.traductionFichiers[0].hauteur }}">
+			{% endfor %}
+		</div>
+	{% else %}
+		<img src="{{ apidae.image_url(o, size, 0) }}" alt="{{ images.traductionFichiers[0].fileName }}"
+			 width="{{ images.traductionFichiers[0].largeur }}" height="{{ images.traductionFichiers[0].hauteur }}">
+	{% endif %}
+{% endmacro fotorama_diaporama %}
 
 {% macro avia_diaporama(o, size) %}
 	{% import _self as apidae %}
 	{% if o.illustrations|length > 1 %}
-		<div id="apidae_slider" class="avia-fullwidth-slider main_color avia-shadow fullsize">
+		<div class="apidae_slider avia-fullwidth-slider main_color avia-shadow fullsize">
 			<div data-size="no scaling" data-lightbox_size="large" data-animation="slide" data-conditional_play=""
 				 data-video_counter="0" data-autoplay="true" data-bg_slider="false"
 				 data-slide_height=""

@@ -3,6 +3,8 @@
 {% block scripts %}
 	{{ enqueue_script('jquery-ui-tabs') }}
 	{{ enqueue_style('jquery-ui-css', '//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css', false,"1.9.0") }}
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
 	<script>
 		jQuery(document).ready(function ($) {
 			$(".tabs").tabs();
@@ -182,7 +184,7 @@
 			{% endblock title %}
 			{% block images %}
 				<div class="image-container">
-					{{ apidae.diaporama(o, 'medium') }}
+					{{ apidae.fotorama_diaporama(o, 'medium') }}
 				</div>
 			{% endblock images %}
 			{% block tabs %}

@@ -1,85 +1,63 @@
 {% import "macros.twig" as apidae %}
 
 {% block scripts %}
-	<script>
-		jQuery(document).ready(function ($) {
-			$("input[name=apisearch]").on("search", function () {
-				$(this).closest('form').submit();
-			});
-		});
-	</script>
+	{{ enqueue_style('public') }}
 {% endblock %}
 {% block layout %}
 	{% block search_form %}
-		{% autoescape 'html_attr' %}
-			<form action="{{ url }}" class="searchform" method="get">
-				<div>
-					{% block query_args %}
-						{% for key, value in pageQuery %}
-							<input type="hidden" name="{{ key }}" value="{{ value }}">
-						{% endfor %}
-					{% endblock query_args %}
-					{% block search_input %}
-						<input type="search" name="apisearch" value="{{ searchWords }}"
-							   placeholder="{{ __('Search') }}"
-							   class="searchinput"
-						><input type="submit" value="{{ __('Validate') }}" class="searchsubmit button">
-					{% endblock search_input %}
-				</div>
-			</form>
-		{% endautoescape %}
+		[apidae_search]
 	{% endblock search_form %}
 	{% if numResult > 0 %}
-		{% block pagination %}
-			{% if totalPages > 1 %}
-				{{ paginate(urlScheme, totalPages, currentPage, 7, '<<', '>>') }}
-			{% endif %}
-		{% endblock pagination %}
-		{% block loop %}
-			<div class="apidae-list">
-			{% for o in searchResult %}
-			{% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
-		{% block marker %}
-			{% autoescape 'js' %}
-			{% if useMaps %}
-			<script>
-				if (typeof markerNodes === 'undefined')
-					var markerNodes = [];
-				markerNodes.push({
-					'id': "apidae-{{ o.id }}",
-					'name': "{{ o.nom.libelle }}",
-					'addressLine1': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
-					'addressLine2': "{{ o.localisation.adresse.adresse1 }}",
-					'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
-					'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
-					'link': "{{ link }}",
-					'icon': "{{ map_icon }}"
-				});
-			</script>
-			{% endif %}
-			{% endautoescape %}
-		{% endblock marker %}
-			<div class="apidae-cell" id="apidae-{{ o.id }}">
-				{% block single %}
-					<div class="image-container">
-						<a href="{{ link }}" class="image-container-inner">
-							<img class="img" src="{{ apidae.image_url(o, 'medium', 0) }}">
-						</a>
+		<div class="apidae-list">
+			{% block pagination %}
+				{% if totalPages > 1 %}
+					{{ paginate(urlScheme, totalPages, currentPage, 7, '<<', '>>') }}
+				{% endif %}
+			{% endblock pagination %}
+			{% block loop %}
+				{% for o in searchResult %}
+					{% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
+					{% block marker %}
+					{% autoescape 'js' %}
+					{% if useMaps %}
+					<script>
+						if (typeof markerNodes === 'undefined')
+							var markerNodes = [];
+						markerNodes.push({
+							'id': "apidae-{{ o.id }}",
+							'name': "{{ o.nom.libelle }}",
+							'addressLine1': "{{ o.localisation.adresse.codePostal }}, {{ o.localisation.adresse.commune.nom }}",
+							'addressLine2': "{{ o.localisation.adresse.adresse1 }}",
+							'lng': "{{ o.localisation.geolocalisation.geoJson.coordinates[0] }}",
+							'lat': "{{ o.localisation.geolocalisation.geoJson.coordinates[1] }}",
+							'link': "{{ link }}",
+							'icon': "{{ map_icon }}"
+						});
+					</script>
+					{% endif %}
+					{% endautoescape %}
+					{% endblock marker %}
+					<div class="apidae-cell" id="apidae-{{ o.id }}">
+						{% block single %}
+							<a href="{{ link }}" class="image-container-inner">
+								<div class="image-container">
+									<img class="img" src="{{ apidae.image_url(o, 'medium', 0) }}">
+								</div>
+							</a>
+							<section class="info">
+								<h3 class="title">{{ o.nom.libelle }}</h3>
+								<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
+								<p class="description">{{ o.presentation.descriptifCourt.libelle }}</p>
+								<div class="link"><a href="{{ link }}">{{ __('Read more') }}</a></div>
+							</section>
+						{% endblock single %}
 					</div>
-					<section class="info">
-						<h3 class="title">{{ o.nom.libelle }}</h3>
-						<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
-						<p class="description">{{ o.presentation.descriptifCourt.libelle }}</p>
-						<div class="link"><a href="{{ link }}">{{ __('Read more') }}</a></div>
-					</section>
-				{% endblock single %}
-			</div>
-			{% endfor %}
-		{% endblock loop %}
+				{% endfor %}
+			{% endblock loop %}
+			{% block footer %}
+				{{ block('pagination') }}
+			{% endblock footer %}
 		</div>
-		{% block footer %}
-			{{ block('pagination') }}
-		{% endblock footer %}
 	{% else %}
 		{% block no_result %}
 			<h4>{{ __('No result found') }}</h4>

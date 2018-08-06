@@ -64,7 +64,7 @@
 					disableDefaultUI: settings['disableUi'],
 					scrollwheel: settings['scrollwheel'],
 					draggable: settings['draggable'],
-					styles: JSON.parse(decodeURIComponent(settings['mapStyle'])),
+					styles: settings['mapStyle'] ? JSON.parse(decodeURIComponent(settings['mapStyle'])) : null,
 					mapTypeId: google.maps.MapTypeId[settings['type'].toUpperCase()]
 				});
 

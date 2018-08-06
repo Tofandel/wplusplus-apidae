@@ -5,48 +5,44 @@
 {% extends "list-base.twig" %}
 {% import "macros.twig" as apidae %}
 
+{% block scripts %}
+	{{ enqueue_style('public') }}
+{% endblock %}
+
 {% set map_icon = '' %}
+
 {% block layout %}
-	{{ block('search_form') }}
-	{# block('query_args') #}
-	{# block('search_input') #}
-	{# endblock search_form #}
+	{% block search_form %}[apidae_search]{% endblock search_form %}
 
 	{% if numResult > 0 %}
-		{{ block('pagination') }}
-		{# endblock pagination #}
+		<div class="apidae-list">
+			{{ block('pagination') }}
+			{# endblock pagination #}
 
-		{{ block('loop') }}
-		{# block('marker') #}
-		{# block('single') #}
-		{# endblock loop #}
+			{{ block('loop') }}
+			{# block('marker') #}
+			{# block('single') #}
+			{# endblock loop #}
 
-		{{ block('footer') }}
-		{# block(''pagination'') #}
-		{# endblock footer #}
+			{{ block('footer') }}
+			{# block(''pagination'') #}
+			{# endblock footer #}
+		</div>
 	{% else %}
 		{{ block('no_result') }}
 	{% endif %}
 {% endblock %}
 
 {% block single %}
-	<div class="apidae-cell">
+	<a href="{{ link }}" class="image-container-inner">
 		<div class="image-container">
-			<a href="{{ link }}" class="image-container-inner">
-				<img class="img" src="{{ apidae.image_url(o, 'medium', 0) }}">
-			</a>
+			<img class="img" src="{{ apidae.image_url(o, 'medium', 0) }}">
 		</div>
-		<section class="info">
-			<h3 class="title">{{ o.nom.libelle }}</h3>
-			<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
-			<p class="description">{{ o.presentation.descriptifCourt.libelle }}</p>
-			<div class="link"><a href="{{ link }}">{{ __('Read more') }}</a></div>
-		</section>
-	</div>
+	</a>
+	<section class="info">
+		<h3 class="title">{{ o.nom.libelle }}</h3>
+		<h4 class="commune">{{ o.localisation.adresse.commune.nom }}</h4>
+		<p class="description">{{ o.presentation.descriptifCourt.libelle }}</p>
+		<div class="link"><a href="{{ link }}">{{ __('Read more') }}</a></div>
+	</section>
 {% endblock %}
-
-{% block search_input %}
-	<input type="search" name="apisearch" value="{{ searchWords }}" placeholder="{{ __('Search') }}"
-		   class="searchinput"
-	><input type="submit" value="{{ __('Validate') }}" class="searchsubmit button">
-{% endblock search_input %}

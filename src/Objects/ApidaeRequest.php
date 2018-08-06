@@ -173,11 +173,8 @@ class ApidaeRequest {
 			if ( is_array( $rep ) ) {
 				$rep['numFound'] = array_key_exists( 'numFound', $rep ) ? intval( $rep['numFound'] ) : 0;
 				if ( $cache === false ) {
-					if ( ! empty( $query['locales'] ) ) {
-						//TODO check if pt-BR works
-						if ( ! empty( [ $query['locales'][0] ] ) ) {
-							self::setLibelle( $rep['objetsTouristiques'], str_replace( '-', '', ucwords( strtolower( $query['locales'][0] ) ) ) );
-						}
+					if ( ! empty( [ $query['locales'][0] ] ) && ! empty( $rep['objetsTouristiques'] ) ) {
+						self::setLibelle( $rep['objetsTouristiques'], str_replace( '-', '', ucwords( strtolower( $query['locales'][0] ) ) ) );
 					}
 					self::setCache( $md, $rep );
 				}
