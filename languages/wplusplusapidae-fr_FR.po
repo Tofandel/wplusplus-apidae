@@ -433,7 +433,7 @@ msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"W++ apidae allows you to use apidae with worpress simply by creating Twig "
+"W++ apidae allows you to use apidae with worpdress simply by creating Twig "
 "templates"
 msgstr ""
 

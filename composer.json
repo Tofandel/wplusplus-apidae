@@ -7,7 +7,7 @@
     }
   ],
   "type": "wordpress-plugin",
-  "description": "W++ apidae allows you to use apidae with worpress simply by creating Twig templates",
+  "description": "W++ apidae allows you to use apidae with wordpress simply by creating Twig templates",
   "license": "Apache 2.0",
   "keywords": [
     "plugin",
