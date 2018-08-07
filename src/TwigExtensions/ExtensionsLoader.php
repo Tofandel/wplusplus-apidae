@@ -18,20 +18,23 @@ class ExtensionsLoader extends \Twig_Extension {
 	 */
 	public function getFunctions() {
 		$functions                    = array();
-		$functions['pagination_data'] = new \Twig_Function( 'pagination_data', [
+		$functions['pagination_data'] = new \Twig\TwigFunction( 'pagination_data', [
 			Paginate::class,
 			'PaginationDataFunction'
 		] );
-		$functions['paginate']        = new \Twig_Function( 'paginate', [ Paginate::class, 'PaginateFunction' ], array(
+		$functions['paginate']        = new \Twig\TwigFunction( 'paginate', [
+			Paginate::class,
+			'PaginateFunction'
+		], array(
 			'is_safe' => array( 'html' )
 		) );
-		$functions['__']              = new \Twig_Function( '__', function ( $str ) {
+		$functions['__']              = new \Twig\TwigFunction( '__', function ( $str ) {
 			global $WPlusPlusApidae;
 
 			return __( $str, $WPlusPlusApidae->getTextDomain() );
 		} );
-		$functions['enqueue_script']  = new \Twig_Function( 'enqueue_script', 'wp_enqueue_script' );
-		$functions['enqueue_style']   = new \Twig_Function( 'enqueue_style', 'wp_enqueue_style' );
+		$functions['enqueue_script']  = new \Twig\TwigFunction( 'enqueue_script', 'wp_enqueue_script' );
+		$functions['enqueue_style']   = new \Twig\TwigFunction( 'enqueue_style', 'wp_enqueue_style' );
 
 		return apply_filters( 'apidae_twig_functions', $functions );
 	}
@@ -42,10 +45,10 @@ class ExtensionsLoader extends \Twig_Extension {
 	 */
 	public function getFilters() {
 		$filters                = array();
-		$filters['slugify']     = new \Twig_Filter( 'slugify', 'wpp_slugify' );
-		$filters['applyScheme'] = new \Twig_Filter( 'applyScheme', [ Apidae_List::class, 'applyScheme' ] );
-		$filters['orderBy']     = new \Twig_Filter( 'orderBy', 'wpp_order_by' );
-		$filters['groupBy']     = new \Twig_Filter( 'groupBy', 'wpp_group_by' );
+		$filters['slugify']     = new \Twig\TwigFilter( 'slugify', 'wpp_slugify' );
+		$filters['applyScheme'] = new \Twig\TwigFilter( 'applyScheme', [ Apidae_List::class, 'applyScheme' ] );
+		$filters['orderBy']     = new \Twig\TwigFilter( 'orderBy', 'wpp_order_by' );
+		$filters['groupBy']     = new \Twig\TwigFilter( 'groupBy', 'wpp_group_by' );
 
 		return apply_filters( 'apidae_twig_filters', $filters );
 	}
