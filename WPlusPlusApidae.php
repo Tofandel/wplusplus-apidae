@@ -11,7 +11,7 @@ use Tofandel\Apidae\Shortcodes\Apidae_Map;
 use Tofandel\Apidae\Shortcodes\Apidae_Search;
 use Tofandel\Apidae\Shortcodes\Apidae_Widget;
 use Tofandel\Core\Interfaces\WP_Plugin as WP_Plugin_Interface;
-use Tofandel\Core\Objects\ReduxConfig;
+use Tofandel\Core\Modules\ReduxFramework;
 use Tofandel\Core\Objects\WP_Plugin;
 
 if ( is_admin() && ! wp_doing_ajax() ) {
@@ -28,7 +28,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with worpress simply by creating Twig templates
- * Version: 1.4.1
+ * Version: 1.5
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wplusplus-apidae
@@ -90,10 +90,11 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	}
 
 	/**
+	 * @param  ReduxFramework $r
 	 * Add redux framework menus, sub-menus and settings page in this function
 	 */
-	public function reduxConfig() {
-		$r = new ReduxConfig( $this->redux_opt_name, array(
+	public function reduxInit( ReduxFramework $r ) {
+		$r->setArgs( array(
 			'display_name'     => __( 'Apidae', $this->text_domain ),
 			'page_slug'        => $this->slug,
 			'page_title'       => __( 'Apidae Options', $this->text_domain ),

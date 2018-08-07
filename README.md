@@ -56,4 +56,22 @@ Displays a google map with the markers from the Apidae_List or Apidae_Detail pre
  * `'preset'               -  string -` The color preset you want to use (available:
         'apple-maps-esque','avocado-world','becomeadinosaur','black-white','blue-essence','blue-water','cool-grey','flat-map','greyscale','light-dream','light-monochrome',
         'mapbox','midnight-commander','neutral-blue','pale-down','paper','retro','shades-of-grey','subtle-grayscale','ultra-light-with-labels','unsaturated-browns')
-        
+
+### Apidae_Search :
+Displays a search form for a list
+
+**Parameters:**
+ * `'url' *         -  string -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
+ * `'search_input'  -  bool   -` Whether to display the keyword search input (defaults to 'true')
+ * `'date_inputs'   -  bool   -` Whether to display the dates input (defaults to 'true')
+ 
+TODO Other parameters for text customization are not yet documented
+ 
+### Apidae_Widget :
+Displays an Apidae widget
+
+**Parameters:**
+ * `'detail_id' *     -  int    -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
+ * `'width'           -  string -` The width of the widget (defaults to '100%')
+ * `'height'          -  string -` The height of the widget (defaults to '700px')
+ 

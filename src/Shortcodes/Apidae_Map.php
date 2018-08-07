@@ -33,6 +33,14 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_Map implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
+	const PRO = array(
+		'use_clusters',
+		'color_scheme',
+		'hue',
+		'preset',
+		'json'
+	);
+
 	protected function __init() {
 		global $WPlusPlusApidae, $tofandel_apidae;
 
@@ -219,9 +227,16 @@ class Apidae_Map implements WP_Shortcode {
 						'value'   => 'json'
 					),
 					'group'       => esc_html__( 'Color', $WPlusPlusApidae->getTextDomain() )
-				),
+				)
 			) )
 		);
+		if ( ! $WPlusPlusApidae->isLicensed() ) {
+			foreach ( self::$vc_params['params'] as $key => $param ) {
+				if ( isset( $param['param_name'] ) && in_array( $param['param_name'], self::PRO ) ) {
+					self::$vc_params['params']['type'] = 'pro';
+				}
+			}
+		}
 	}
 
 	/**

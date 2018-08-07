@@ -13,12 +13,8 @@ use Tofandel\Core\Interfaces\WP_Shortcode;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
- * Shortcode Apidae_Categories
+ * Class Apidae_Search
  * @package Tofandel\Apidae\Shortcodes
- *
- * @required-param  string  'categories'    Comma separated list of the Apidae categories slug you want displayed (you have to create them first in the apidae options)
- *
- * @param           bool    'all_link'      Whether to display the 'All' link or not (defaults to true)
  */
 class Apidae_Search implements WP_Shortcode {
 	use WP_VC_Shortcode;
