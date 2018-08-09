@@ -33,13 +33,14 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_Map implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
-	const PRO = array(
+	private $pro = [
 		'use_clusters',
+		'use_spiderfier',
 		'color_scheme',
 		'hue',
 		'preset',
 		'json'
-	);
+	];
 
 	protected function __init() {
 		global $WPlusPlusApidae, $tofandel_apidae;
@@ -153,10 +154,17 @@ class Apidae_Map implements WP_Shortcode {
 				),
 				array(
 					'heading'          => esc_html__( 'Use Clusters', $WPlusPlusApidae->getTextDomain() ),
-					'description'      => '<a href="https://developers.google.com/maps/documentation/javascript/marker-clustering">' . __( 'Example', $WPlusPlusApidae->getTextDomain() ),
+					'description'      => '<a href="https://developers.google.com/maps/documentation/javascript/marker-clustering">' . __( 'Example', $WPlusPlusApidae->getTextDomain() ) . '</a>',
 					'param_name'       => 'use_clusters',
 					'type'             => 'checkbox',
-					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param'
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param',
+				),
+				array(
+					'heading'          => esc_html__( 'Use Spiderfier', $WPlusPlusApidae->getTextDomain() ),
+					'description'      => '<a href="https://github.com/jawj/OverlappingMarkerSpiderfier">' . __( 'Example', $WPlusPlusApidae->getTextDomain() ) . '</a>',
+					'param_name'       => 'use_spiderfier',
+					'type'             => 'checkbox',
+					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param',
 				),
 				array(
 					'heading'          => esc_html__( 'Scheme', $WPlusPlusApidae->getTextDomain() ),
@@ -232,8 +240,9 @@ class Apidae_Map implements WP_Shortcode {
 		);
 		if ( ! $WPlusPlusApidae->isLicensed() ) {
 			foreach ( self::$vc_params['params'] as $key => $param ) {
-				if ( isset( $param['param_name'] ) && in_array( $param['param_name'], self::PRO ) ) {
-					self::$vc_params['params']['type'] = 'pro';
+				if ( isset( $param['param_name'] ) && in_array( $param['param_name'], $this->pro ) ) {
+					self::$vc_params['params'][ $key ]['type']    = 'pro';
+					self::$vc_params['params'][ $key ]['buy_url'] = $WPlusPlusApidae->getBuyUrl();
 				}
 			}
 		}
@@ -297,21 +306,27 @@ class Apidae_Map implements WP_Shortcode {
 		$atts['height'] = ( ! preg_match( '~(px|%)$~', $atts['height'] ) ? $atts['height'] . 'px' : $atts['height'] );
 
 		$map_style = '';
-		if ( $atts['color_scheme'] == 'preset' || ! empty( $atts['preset'] ) ) {
-			$map_style = $presets [ $atts['preset'] ];
-		} elseif ( $atts['color_scheme'] == 'custom-color' || ! empty( $atts['hue'] ) ) {
-			$hue       = $atts['hue'];
-			$map_style = '[{"featureType":"water","elementType":"geometry","stylers":[{"color":"' . $hue . '"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"},{"lightness":-37}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"' . $hue . '"},{"weight":2},{"gamma":0.84}]},{"elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"weight":0.6},{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]}]';
-		} elseif ( $atts['color_scheme'] == 'json' || ! empty( $atts['json'] ) ) {
-			$map_style = preg_replace( '~\s+~', '', urldecode( base64_decode( $atts['json'] ) ) );
-		}
-
 		// Enqueue maps js
 		global $WPlusPlusApidae, $tofandel_apidae;
 		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ), $atts['use_clusters'] ? array( 'clusterImagePath' => $WPlusPlusApidae->fileUrl( 'images/clusters/m' ) ) : false );
-		if ( $atts['use_clusters'] ) {
-			$WPlusPlusApidae->addScript( 'markerclusterer' );
+
+		if ( $WPlusPlusApidae->isLicensed() ) {
+			if ( $atts['color_scheme'] == 'preset' || ! empty( $atts['preset'] ) ) {
+				$map_style = $presets [ $atts['preset'] ];
+			} elseif ( $atts['color_scheme'] == 'custom-color' || ! empty( $atts['hue'] ) ) {
+				$hue       = $atts['hue'];
+				$map_style = '[{"featureType":"water","elementType":"geometry","stylers":[{"color":"' . $hue . '"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"},{"lightness":-37}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"' . $hue . '"},{"weight":2},{"gamma":0.84}]},{"elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"weight":0.6},{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"' . self::adjust_brightness( $hue, 51 ) . '"}]}]';
+			} elseif ( $atts['color_scheme'] == 'json' || ! empty( $atts['json'] ) ) {
+				$map_style = preg_replace( '~\s+~', '', urldecode( base64_decode( $atts['json'] ) ) );
+			}
+
+			if ( $atts['use_clusters'] ) {
+				$WPlusPlusApidae->addScript( 'markerclusterer' );
+			} elseif ( $atts['use_spiderfier'] ) {
+				$WPlusPlusApidae->addScript( 'oms' );
+			}
 		}
+
 		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( 'maps' ) );
 
 		$atts['draggable']           = ( $atts['draggable'] == 'true' ? 'true' : 'false' );
@@ -319,11 +334,13 @@ class Apidae_Map implements WP_Shortcode {
 		$atts['disable_scrollwheel'] = ( $atts['disable_scrollwheel'] == 'true' ? 'true' : 'false' );
 		$map_style                   = urlencode( $map_style );
 
+		$sp_or_cluster = $atts['use_clusters'] ? 'data-use-clusters="' . $atts['use_clusters'] . '"' : 'data-use-spiderfier="' . $atts['use_spiderfier'] . '"';
+
 		$html = <<<HTML
 <div class="apidae-google-maps" style="width:{$atts['width']};height:{$atts['height']}" data-type="{$atts['type']}"
 data-animation="{$atts['marker_animation']}" data-animation-duration="{$atts['animation_duration']}" data-zoom="{$atts['zoom']}"
 data-disable-ui="{$atts['disable_ui']}" data-scrollwheel="{$atts['disable_scrollwheel']}" data-draggable="{$atts['draggable']}"
-data-map-style="{$map_style}" data-use-clusters="{$atts['use_clusters']}"></div>
+data-map-style="{$map_style}" {$sp_or_cluster}></div>
 HTML;
 
 		return $html;
