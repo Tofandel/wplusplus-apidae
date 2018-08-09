@@ -37,7 +37,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
 class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	protected $redux_opt_name = 'tofandel_apidae';
 	protected $is_licensed = true;
-	protected $download_url = 'https://tukangroup.com/product/premium-plugins/wplusplus-apidae/';
+	protected $download_url = 'https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/';
 	protected $product_id = 'wplusplus-apidae';
 	protected $repo_url = 'https://github.com/Tofandel/wplusplus-apidae/';
 
