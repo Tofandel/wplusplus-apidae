@@ -1,0 +1,580 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: W++ Apidae\n"
+"POT-Creation-Date: 2018-08-09 14:42+0200\n"
+"PO-Revision-Date: 2018-07-11 22:56+0200\n"
+"Last-Translator: Adrien Foulon <adrien.foulon@tukan.hu>\n"
+"Language-Team: Adrien Foulon <adrien.foulon@tukan.hu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: WPlusPlusApidae.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
+
+#: WPlusPlusApidae.php:106 WPlusPlusApidae.php:110
+#: src/Shortcodes/Apidae_Categories.php:36
+#: src/Shortcodes/Apidae_Detail.php:86 src/Shortcodes/Apidae_List.php:153
+#: src/Shortcodes/Apidae_Map.php:61 src/Shortcodes/Apidae_Search.php:25
+#: src/Shortcodes/Apidae_Widget.php:30
+msgid "Apidae"
+msgstr ""
+
+#: templates/detail-base.twig:181
+msgid "< Return"
+msgstr ""
+
+#: WPlusPlusApidae.php:108
+msgid "Apidae Options"
+msgstr ""
+
+#: WPlusPlusApidae.php:122
+msgid "List templates"
+msgstr ""
+
+#: WPlusPlusApidae.php:123 WPlusPlusApidae.php:128
+msgid "<p>This is the tab content, HTML is allowed.</p>"
+msgstr ""
+
+#: WPlusPlusApidae.php:127
+msgid "Detail templates"
+msgstr ""
+
+#: WPlusPlusApidae.php:133
+msgid "Settings"
+msgstr ""
+
+#: WPlusPlusApidae.php:135
+msgid "Apidae API parameters."
+msgstr ""
+
+#: WPlusPlusApidae.php:139
+msgid "Project ID"
+msgstr ""
+
+#: WPlusPlusApidae.php:145 WPlusPlusApidae.php:308
+msgid "Api Key"
+msgstr ""
+
+#: WPlusPlusApidae.php:150
+msgid "Cache duration"
+msgstr ""
+
+#: WPlusPlusApidae.php:153
+msgid "In minutes, 0 = no cache"
+msgstr ""
+
+#: WPlusPlusApidae.php:158
+msgid "Clear the cache"
+msgstr ""
+
+#: WPlusPlusApidae.php:166 WPlusPlusApidae.php:170
+#: src/Shortcodes/Apidae_Categories.php:43
+msgid "Categories"
+msgstr ""
+
+#: WPlusPlusApidae.php:174
+msgid "category"
+msgstr ""
+
+#: WPlusPlusApidae.php:179
+msgid "Category Name"
+msgstr ""
+
+#: WPlusPlusApidae.php:184
+msgid "Category Identifier"
+msgstr ""
+
+#: WPlusPlusApidae.php:194
+msgid "Query"
+msgstr ""
+
+#: WPlusPlusApidae.php:205
+msgid ""
+"Fill the query fields that the selected category will modify during the "
+"request to apidae in JSON.<br>\n"
+"<a href=\"http://dev.apidae-tourisme.com/fr/documentation-technique/v2/api-"
+"de-diffusion/format-des-recherches#communeCodesInsee\" target=\"_blank\" "
+"rel=\"noopener\">Read the documentation</a> for the list of available "
+"query fields"
+msgstr ""
+
+#: WPlusPlusApidae.php:213 WPlusPlusApidae.php:217
+msgid "Object List Templates"
+msgstr ""
+
+#: WPlusPlusApidae.php:222 WPlusPlusApidae.php:267
+msgid "template"
+msgstr ""
+
+#: WPlusPlusApidae.php:227 WPlusPlusApidae.php:272
+msgid "Template ID"
+msgstr ""
+
+#: WPlusPlusApidae.php:237 WPlusPlusApidae.php:282
+msgid "Template Code"
+msgstr ""
+
+#: WPlusPlusApidae.php:246
+msgid "More request parameters"
+msgstr ""
+
+#: WPlusPlusApidae.php:247
+msgid ""
+"Checkout <a href=\"http://dev.apidae-tourisme.com/fr/documentation-"
+"technique/v2/api-de-diffusion/format-des-recherches\" rel=\"noopener\" "
+"target=\"_blank\">the apidae documentation</a> for more information"
+msgstr ""
+
+#: WPlusPlusApidae.php:258 WPlusPlusApidae.php:262
+msgid "Single Object Templates"
+msgstr ""
+
+#: WPlusPlusApidae.php:296
+msgid "Google Maps"
+msgstr ""
+
+#: WPlusPlusApidae.php:298
+msgid "Google Maps API parameters."
+msgstr ""
+
+#: WPlusPlusApidae.php:302
+msgid "Enable google maps"
+msgstr ""
+
+#: src/Objects/ApidaeRequest.php:241
+msgid "The cache has been successfully cleared"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Categories.php:37
+msgid "Shortcode to display the list of categories"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Categories.php:38
+msgid "Apidae Categories"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Categories.php:50
+msgid "Show the \"All\" link"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Categories.php:278
+msgid "All"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:77 src/Shortcodes/Apidae_List.php:80
+msgid "Please select a template"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:87
+msgid "Shortcode to create the details of any apidae object"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:88
+msgid "Apidae Detail"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:92 src/Shortcodes/Apidae_List.php:227
+#: src/Shortcodes/Apidae_List.php:235
+msgid "Advanced"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:94
+msgid "Title scheme"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:96
+msgid "The scheme of the page title"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:101 src/Shortcodes/Apidae_List.php:123
+msgid "Template"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Detail.php:117 src/Shortcodes/Apidae_List.php:220
+msgid "Languages"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:42
+msgid "French"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:43
+msgid "English"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:44
+msgid "German"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:45
+msgid "Dutch"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:46
+msgid "Italian"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:47
+msgid "Spanish"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:48
+msgid "Russian"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:49
+msgid "Chinese"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:50
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:105
+msgid "No selection found"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:111
+msgid "No template created"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:112 src/Shortcodes/Apidae_List.php:135
+#, php-format
+msgid "Click %shere%s to create one"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:134
+msgid "No detail page found"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:144
+msgid "Detail page"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:154
+msgid "Shortcode to create an apidae list"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:155
+msgid "Apidae List"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:160
+msgid "Selections"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:163
+msgid "The identifiers of the selections to retrieve, comma separated"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:168
+msgid "Paged"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:170
+msgid "If unchecked the results will not be paginated."
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:176
+msgid "Number of results per page"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:186
+msgid "Order by"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:189 src/Shortcodes/Apidae_List.php:212
+msgid "Name"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:190
+msgid "Identifier"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:191
+msgid "Random"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:192
+msgid "Date"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:193
+msgid "Pertinence"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:194
+msgid "Distance"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:202
+msgid "Reverse Order"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:204
+msgid "If checked the ordering will be inverted."
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:209
+msgid "Search Fields"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:213
+msgid "Name & description"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:214
+msgid "Name, description & criteria"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:229
+msgid "Detail link scheme"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:231
+msgid "The link scheme to the detail template"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:237
+msgid "More JSON"
+msgstr ""
+
+#: src/Shortcodes/Apidae_List.php:239
+msgid ""
+"Additional configuration in JSON (ex: {\"territoires\": [95938, "
+"156922]})<br><strong style=\"color:red\">This will override any already "
+"present parameters!</strong>"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:49
+msgid "Google Maps API Key is missing"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:50
+#, php-format
+msgid "Click %shere%s to set an API key"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:62
+msgid "Shortcode to create an apidae map"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:63
+msgid "Apidae Map"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:68 src/Shortcodes/Apidae_Widget.php:45
+msgid "Width"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:77 src/Shortcodes/Apidae_Widget.php:52
+msgid "Height"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:86
+msgid "Zoom"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:98
+msgid "Map type"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:102
+msgid "Roadmap"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:103
+msgid "Satellite"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:104
+msgid "Hybrid"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:105
+msgid "Terrain"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:113 src/Shortcodes/Apidae_Map.php:127
+msgid "Marker Animation"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:117
+msgid "None"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:118
+msgid "Drop"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:119
+msgid "Bounce"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:135
+msgid "Disable UI"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:141
+msgid "Disable Scroll Wheel"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:147
+msgid "Draggable"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:155
+msgid "Use Clusters"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:156
+msgid "Example"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:162
+msgid "Scheme"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:166
+msgid "Default"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:167 src/Shortcodes/Apidae_Map.php:186
+msgid "Preset"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:168 src/Shortcodes/Apidae_Map.php:221
+msgid "JSON"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:169
+msgid "Custom"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:172 src/Shortcodes/Apidae_Map.php:175
+#: src/Shortcodes/Apidae_Map.php:183 src/Shortcodes/Apidae_Map.php:218
+#: src/Shortcodes/Apidae_Map.php:229
+msgid "Color"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Map.php:222
+#, php-format
+msgid "Use exported JSON for map style. See map presets %shere%s"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:26
+msgid "Shortcode to display an Apidae search form"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:27
+msgid "Apidae Search"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:32
+msgid "Destination url"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:39
+msgid "Search Input"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:46
+msgid "Date Inputs"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:53
+msgid "Start Date Placeholder"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:55 src/Shortcodes/Apidae_Search.php:131
+msgid "Start date"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:59
+msgid "End Date Placeholder"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:61 src/Shortcodes/Apidae_Search.php:132
+msgid "End date"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:65
+msgid "Search Placeholder"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:67 src/Shortcodes/Apidae_Search.php:136
+msgid "Search..."
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:71
+msgid "Submit Title"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:73 src/Shortcodes/Apidae_Search.php:137
+msgid "Search"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:77
+msgid "Submit Text"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Search.php:78
+msgid "Leave it empty to display a SVG search icon"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Widget.php:31
+#, php-format
+msgid "Shortcode to display an %sApidae Widget%s"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Widget.php:33
+msgid "Apidae Widget"
+msgstr ""
+
+#: src/Shortcodes/Apidae_Widget.php:38
+msgid "Widget ID"
+msgstr ""
+
+#: src/TwigExtensions/Paginate.php:36
+msgid "Previous"
+msgstr ""
+
+#: src/TwigExtensions/Paginate.php:47
+#, php-format
+msgid "Go to page %d"
+msgstr ""
+
+#: src/TwigExtensions/Paginate.php:52
+msgid "Next"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "W++ Apidae"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/Tofandel/wplusplus-apidae/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"W++ apidae allows you to use apidae with wordpress simply by creating Twig "
+"templates"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Adrien Foulon <tofandel@tukan.hu>"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://tukan.fr/a-propos/#adrien-foulon"
+msgstr ""

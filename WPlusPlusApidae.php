@@ -28,7 +28,7 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with wordpress simply by creating Twig templates
- * Version: 1.5
+ * Version: 1.5.1
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wplusplus-apidae
@@ -46,7 +46,10 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	 */
 	public function actionsAndFilters() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue' ] );
+		add_action( 'template_redirect', [ Apidae_Detail::class, 'setPageTitle' ] );
 	}
+
+
 
 	public function admin_enqueue() {
 		$this->addStyle( 'admin' );
@@ -87,6 +90,11 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	}
 
 	public function activated() {
+	}
+
+	public function deactivated() {
+		parent::deactivated();
+		ApidaeRequest::clearCache();
 	}
 
 	/**
@@ -165,12 +173,22 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'id'           => 'categories',
 					'item_name'    => __( 'category', $this->getTextDomain() ),
 					'bind-title'   => 'category-name',
-					'limit'        => $this->isLicensed() ? '100' : '4',
+					'limit'        => $this->isLicensed() ? 100 : 4,
 					'fields'       => array(
 						array(
 							'title' => __( 'Category Name', $this->getTextDomain() ),
 							'type'  => 'text',
 							'id'    => 'category-name',
+						),
+						array(
+							'title'    => __( 'Category Identifier', $this->getTextDomain() ),
+							'type'     => 'text',
+							'id'       => 'category-id',
+							'validate' => 'preg_replace',
+							'preg'     => array(
+								'pattern'     => '/[^a-z0-9_-]/s',
+								'replacement' => ''
+							)
 						),
 						array(
 							'title'   => __( 'Query', $this->getTextDomain() ),
@@ -196,19 +214,24 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 			'icon'   => 'el el-file-edit',
 			'fields' => array(
 				array(
-					'title'        => __( ' Object List Templates', $this->getTextDomain() ),
+					'title'        => __( 'Object List Templates', $this->getTextDomain() ),
 					'id'           => 'list-template',
 					'type'         => 'repeater',
 					//'sortable'     => false,
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->getTextDomain() ),
 					'bind-title'   => 'list-name',
-					'limit'        => $this->isLicensed() ? '10' : '1',
+					'limit'        => $this->isLicensed() ? 10 : 1,
 					'fields'       => array(
 						array(
-							'title' => __( 'Template Name', $this->getTextDomain() ),
-							'id'    => 'list-name',
-							'type'  => 'text',
+							'title'    => __( 'Template ID', $this->getTextDomain() ),
+							'id'       => 'list-name',
+							'type'     => 'text',
+							'validate' => 'preg_replace',
+							'preg'     => array(
+								'pattern'     => '/[^a-z0-9_-]/s',
+								'replacement' => ''
+							)
 						),
 						array(
 							'title'             => __( 'Template Code', $this->getTextDomain() ),
@@ -243,12 +266,17 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'group_values' => true,
 					'item_name'    => __( 'template', $this->getTextDomain() ),
 					'bind-title'   => 'detail-name',
-					'limit'        => $this->isLicensed() ? '10' : '1',
+					'limit'        => $this->isLicensed() ? 10 : 1,
 					'fields'       => array(
 						array(
-							'title' => __( 'Template Name', $this->getTextDomain() ),
-							'id'    => 'detail-name',
-							'type'  => 'text',
+							'title'    => __( 'Template ID', $this->getTextDomain() ),
+							'id'       => 'detail-name',
+							'type'     => 'text',
+							'validate' => 'preg_replace',
+							'preg'     => array(
+								'pattern'     => '/[^a-z0-9_-]/s',
+								'replacement' => ''
+							)
 						),
 						array(
 							'title'             => __( 'Template Code', $this->getTextDomain() ),

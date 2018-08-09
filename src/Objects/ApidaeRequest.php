@@ -21,8 +21,7 @@ class ApidaeRequest {
 		$cache             = self::getCache( $md );
 		$isValid           = true;
 		if ( $cache === false ) {
-			$ch = curl_init();
-			curl_setopt( $ch, CURLOPT_URL, $url );
+			$ch = curl_init( $url );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			curl_setopt( $ch, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
@@ -99,7 +98,10 @@ class ApidaeRequest {
 		if ( $isValid === true ) {
 			if ( is_array( $rep ) ) {
 				if ( $cache === false ) {
-					if ( ! empty( $query['locales'] ) ) {
+					if ( ! empty( $rep['errorType'] ) ) {
+						$rep = false;
+					}
+					if ( $rep && ! empty( $query['locales'] ) ) {
 						$l = explode( ',', $query['locales'] );
 						//TODO check if pt-BR works
 						if ( ! empty( [ $l[0] ] ) ) {
@@ -156,8 +158,7 @@ class ApidaeRequest {
 		$cache      = self::getCache( $md );
 		$isValid    = true;
 		if ( $cache === false ) {
-			$ch = curl_init();
-			curl_setopt( $ch, CURLOPT_URL, $url );
+			$ch = curl_init( $url );
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			curl_setopt( $ch, CURLOPT_TIMEOUT, 15 );
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );

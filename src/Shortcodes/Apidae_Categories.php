@@ -63,15 +63,160 @@ class Apidae_Categories implements WP_Shortcode {
 
 			$cats = array();
 
-			if ( isset( $tofandel_apidae['categories']['category-name'] ) ) {
-				//TODO unique cats
-				foreach ( $tofandel_apidae['categories']['category-name'] as $i => $name ) {
-					$cats[ wpp_slugify( $name ) ] = $name;
+			if ( ! empty( $tofandel_apidae['categories']['category-id'] )
+			     || ! empty( $tofandel_apidae['categories']['category-name'] ) ) {
+				if ( empty( $tofandel_apidae['categories']['category-id'] ) ) {
+					$tofandel_apidae['categories']['category-id'] = $tofandel_apidae['categories']['category-name'];
+					$tofandel_apidae['categories']['category-id'] = array_map( '__return_false', $tofandel_apidae['categories']['category-id'] );
+				}
+				foreach ( $tofandel_apidae['categories']['category-id'] as $i => $name ) {
+					if ( empty( $name ) ) {
+						$name = wpp_slugify( $tofandel_apidae['categories']['category-name'][ $i ] );
+					}
+					$cats[ $name ] = $tofandel_apidae['categories']['category-name'][ $i ];
+				}
+			}
+			$cats = apply_filters( 'apidae_get_categories', $cats );
+		}
+
+		return $cats;
+	}
+
+	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
+		$cats = self::getCategoriesCriterias();
+
+		$found = array();
+
+		foreach ( $cats as $slug => $cat ) {
+			if ( ! empty( $cat['criteresQuery']['type'] ) ) {
+				//TODO does not handle parenthesis and other criterias
+				if ( in_array( $o['type'], $cat['criteresQuery']['type'] ) ) {
+					$found['id']    = $slug;
+					$found['label'] = $cat['label'];
+
+					return $found;
+				}
+			}
+			if ( ! empty( $cat['searchQuery'] ) ) {
+				$cat['searchQuery'] = str_replace( ' ', '|', $cat['searchQuery'] );
+				if ( ! empty( $o['nom']['libelle'] ) && preg_match( '/(' . $cat['searchQuery'] . ')/i', $o['nom']['libelle'] ) ) {
+					$found['id']    = $slug;
+					$found['label'] = $cat['label'];
+
+					return $found;
+				}
+				if ( empty( $searchQuery['searchFields'] ) ) {
+					$searchQuery['searchFields'] = 'NOM_DESCRIPTION';
+				}
+				if ( strpos( $searchQuery['searchFields'], 'DESCRIPTION' ) !== false ) {
+					if ( ! empty( $o['presentation']['descriptifCourt']['libelle'] ) && preg_match( '/' . $cat['searchQuery'] . '/i', $o['presentation']['descriptifCourt']['libelle'] ) ) {
+						$found['id']    = $slug;
+						$found['label'] = $cat['label'];
+
+						return $found;
+					}
+
+					if ( ! empty( $o['presentation']['descriptifDetaille']['libelle'] ) && preg_match( '/' . $cat['searchQuery'] . '/i', $o['presentation']['descriptifDetaille']['libelle'] ) ) {
+						$found['id']    = $slug;
+						$found['label'] = $cat['label'];
+
+						return $found;
+					}
+				}
+				//TODO criteres
+			}
+			if ( ! empty( $cat['territoireIds'] ) ) {
+				if ( ! is_array( $cat['territoireIds'] ) ) {
+					$cat['territoireIds'] = array_map( 'trim', explode( ',', $cat['territoireIds'] ) );
+				}
+				foreach ( $o['territoires'] as $territoire ) {
+					if ( in_array( $territoire['id'], $cat['territoireIds'] ) ) {
+						$found['id']    = $slug;
+						$found['label'] = $cat['label'];
+						break;
+					}
+				}
+				if ( isset( $found[ $slug ] ) ) {
+					return $found;
+				}
+			}
+			if ( ! empty( $cat['communeCodesInsee'] ) ) {
+				if ( ! is_array( $cat['communeCodesInsee'] ) ) {
+					$cat['communeCodesInsee'] = array_map( 'trim', explode( ',', $cat['communeCodesInsee'] ) );
+				}
+				if ( in_array( $o['localisation']['adresse']['codePostal'], $cat['communeCodesInsee'] ) ) {
+					$found['id']    = $slug;
+					$found['label'] = $cat['label'];
+
+					return $found;
 				}
 			}
 		}
 
-		return $cats;
+		return $found;
+	}
+
+	public static function getCategoriesFromObject( $o, $searchQuery = array() ) {
+		$cats = self::getCategoriesCriterias();
+
+		$found = array();
+
+		foreach ( $cats as $slug => $cat ) {
+			if ( ! empty( $cat['criteresQuery']['type'] ) ) {
+				//TODO does not handle parenthesis and other criterias
+				if ( in_array( $o['type'], $cat['criteresQuery']['type'] ) ) {
+					$found[ $slug ] = $cat['label'];
+					continue;
+				}
+			}
+			if ( ! empty( $cat['searchQuery'] ) ) {
+				$cat['searchQuery'] = str_replace( ' ', '|', $cat['searchQuery'] );
+				if ( ! empty( $o['nom']['libelle'] ) && preg_match( '/(' . $cat['searchQuery'] . ')/i', $o['nom']['libelle'] ) ) {
+					$found[ $slug ] = $cat['label'];
+					continue;
+				}
+				if ( empty( $searchQuery['searchFields'] ) ) {
+					$searchQuery['searchFields'] = 'NOM_DESCRIPTION';
+				}
+				if ( strpos( $searchQuery['searchFields'], 'DESCRIPTION' ) !== false ) {
+					if ( ! empty( $o['presentation']['descriptifCourt']['libelle'] ) && preg_match( '/' . $cat['searchQuery'] . '/i', $o['presentation']['descriptifCourt']['libelle'] ) ) {
+						$found[ $slug ] = $cat['label'];
+						continue;
+					}
+
+					if ( ! empty( $o['presentation']['descriptifDetaille']['libelle'] ) && preg_match( '/' . $cat['searchQuery'] . '/i', $o['presentation']['descriptifDetaille']['libelle'] ) ) {
+						$found[ $slug ] = $cat['label'];
+						continue;
+					}
+				}
+				//TODO criteres
+			}
+			if ( ! empty( $cat['territoireIds'] ) ) {
+				if ( ! is_array( $cat['territoireIds'] ) ) {
+					$cat['territoireIds'] = array_map( 'trim', explode( ',', $cat['territoireIds'] ) );
+				}
+				foreach ( $o['territoires'] as $territoire ) {
+					if ( in_array( $territoire['id'], $cat['territoireIds'] ) ) {
+						$found[ $slug ] = $cat['label'];
+						break;
+					}
+				}
+				if ( isset( $found[ $slug ] ) ) {
+					continue;
+				}
+			}
+			if ( ! empty( $cat['communeCodesInsee'] ) ) {
+				if ( ! is_array( $cat['communeCodesInsee'] ) ) {
+					$cat['communeCodesInsee'] = array_map( 'trim', explode( ',', $cat['communeCodesInsee'] ) );
+				}
+				if ( in_array( $o['localisation']['adresse']['codePostal'], $cat['communeCodesInsee'] ) ) {
+					$found[ $slug ] = $cat['label'];
+					continue;
+				}
+			}
+		}
+
+		return $found;
 	}
 
 	public static function getCategoriesCriterias() {
@@ -88,7 +233,7 @@ class Apidae_Categories implements WP_Shortcode {
 						$cats[ $slug ]['criteresQuery'][ str_replace( '+', '', $c[0] ) ][] = $c[1];
 					}
 				}
-
+				$cats[ $slug ]['label'] = $category;
 			}
 		}
 

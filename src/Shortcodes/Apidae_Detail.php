@@ -24,6 +24,8 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_Detail implements WP_Shortcode {
 	use WP_VC_Shortcode;
 
+	static $doing_header = false;
+
 	/**
 	 * Ajout des règles de rewrite avec flush_rules si les donnees ne sont pas en base, plus demarrage de session.
 	 * @global $wp_rewrite
@@ -36,6 +38,29 @@ class Apidae_Detail implements WP_Shortcode {
 		$rules = get_option( 'rewrite_rules' );
 		if ( ! isset( $rules[ $rule ] ) ) {
 			flush_rewrite_rules( true );
+		}
+	}
+
+	/**
+	 * This is to set 404 pages or the page title if we find the detail shortcode we execute it before anything is displayed on the page
+	 * @throws \ReflectionException
+	 */
+	public static function setPageTitle() {
+		global $post;
+		if ( $post->post_type == 'page' && wpp_has_shortcode( $post, self::getName() ) ) {
+			self::$doing_header = true;
+			global $shortcode_tags;
+			$_tags = $shortcode_tags;
+			$tags  = self::getNames();
+			foreach ( $_tags as $tag => $callback ) {
+				if ( ! in_array( $tag, $tags ) ) // filter unwanted shortcode
+				{
+					unset( $shortcode_tags[ $tag ] );
+				}
+			}
+			do_shortcode( $post->post_content );
+			$shortcode_tags     = $_tags;
+			self::$doing_header = false;
 		}
 	}
 
@@ -65,6 +90,14 @@ class Apidae_Detail implements WP_Shortcode {
 			'name'        => esc_html__( 'Apidae Detail', $WPlusPlusApidae->getTextDomain() ),
 			'icon'        => plugins_url( 'logo.svg', $WPlusPlusApidae->getFile() ),
 			'params'      => array(
+				array(
+					'group'       => __( 'Advanced', $WPlusPlusApidae->getTextDomain() ),
+					'type'        => 'textfield',
+					'heading'     => esc_html__( 'Title scheme', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'title_scheme',
+					'description' => __( 'The scheme of the page title', $WPlusPlusApidae->getTextDomain() ),
+					'std'         => '%nom.libelle%'
+				),
 				array(
 					'type'             => 'dropdown',
 					'heading'          => esc_html__( 'Template', $WPlusPlusApidae->getTextDomain() ),
@@ -108,13 +141,34 @@ class Apidae_Detail implements WP_Shortcode {
 		$json['locales'] = $atts['langs'];
 
 		if ( empty( $oid ) || ( $object = ApidaeRequest::getSingleObject( $oid, $json ) ) === false ) {
-			global $wp_query;
-			$wp_query->set_404();
+			if ( static::$doing_header ) {
+				global $wp_query;
+				$wp_query->set_404();
+			}
+
+			return "";
+		}
+		if ( static::$doing_header ) {
+			global $post;
+			$post->post_title = Apidae_List::applyScheme( $atts['title_scheme'], $object );
+			add_filter( 'document_title_parts', function ( $title ) {
+				global $post;
+				$title['title'] = $post->post_title;
+
+				return $title;
+			}, 1, 1 );
+			add_filter( 'wp_title', function ( $title ) {
+				return $title;
+			}, 1, 0 );
 
 			return "";
 		}
 
-		$f = TemplateFilesHandler::DETAIL_DIR . basename( $atts['template'] ) . '.twig';
+		if ( empty( $atts['template'] ) ) {
+			$f = TemplateFilesHandler::TPL_DIR . 'detail-layout.twig';
+		} else {
+			$f = TemplateFilesHandler::DETAIL_DIR . basename( $atts['template'] ) . '.twig';
+		}
 
 		try {
 			$tpl = new Template( $f );
@@ -130,7 +184,7 @@ class Apidae_Detail implements WP_Shortcode {
 				'referer'    => wp_get_referer(),
 				'siteUrl'    => site_url(),
 				'o'          => $object,
-				'categories' => Apidae_Categories::getCategoriesCriterias(),
+				//'categories' => Apidae_Categories::getCategoriesCriterias(),
 				'useMaps'    => $tofandel_apidae['maps_enable']
 			) ) );
 		} catch ( \Exception $e ) {

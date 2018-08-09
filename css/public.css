@@ -2,7 +2,8 @@
 	list-style: none;
 	text-align: center;
 	padding: 0;
-	margin: 10px 0;
+	margin: 10px auto;
+	display: block;
 }
 
 .apidae-list .pagination li {

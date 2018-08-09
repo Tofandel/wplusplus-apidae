@@ -94,7 +94,7 @@ class Apidae_Search implements WP_Shortcode {
 		static $once = true;
 		global $WPlusPlusApidae;
 
-		$url        = urlencode( $atts['url'] );
+		$url        = esc_attr( $atts['url'] );
 		$page_query = array();
 
 
@@ -117,13 +117,7 @@ class Apidae_Search implements WP_Shortcode {
 			}
 		}
 
-		$submit_text = ! empty( $atts['submit_text'] ) ? strip_tags( $atts['submit_text'], array(
-			'span',
-			'i',
-			'p',
-			'b',
-			'strong'
-		) ) : '<svg width="32" height="32" viewBox="0 0 32 32" class="search-svg"><style type="text/css">.se0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;}</style><circle class="se0" cx="13" cy="13" r="7"/><line class="se0" x1="18" x2="24" y1="18" y2="24"/></svg>';
+		$submit_text = ! empty( $atts['submit_text'] ) ? strip_tags( $atts['submit_text'], '<span><i><p><b><strong>' ) : '<svg width="32" height="32" viewBox="0 0 32 32" class="search-svg"><style type="text/css">.se0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;}</style><circle class="se0" cx="13" cy="13" r="7"/><line class="se0" x1="18" x2="24" y1="18" y2="24"/></svg>';
 
 		$search_input = $atts['search_input'] == 'true';
 		$date_inputs  = $atts['date_inputs'] == 'true';

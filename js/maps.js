@@ -124,37 +124,76 @@
 				infoWindow.close();
 			};
 
-			//Add marker to specific position with specific icon
-			var addMarker = function (pin) {
-				if (typeof pin.addMarker === 'function') {
-					pin.addMarker(pin, markers, map, showInfo);
-					return;
-				}
-				var html = "<a href='" + pin.link + "'><b>" + pin.name + "</b></a> <br/>" + pin.addressLine1 + "<br/>" + pin.addressLine2;
-				var _marker = new google.maps.Marker({
-					position: pin.position,
-					map: map,
-					icon: pin.icon,
-					title: pin.name,
-					info: html
-				});
-				markers.push(_marker);
+			if (settings['useSpiderfier']) {
+				var oms = false,
+					addMarker = function (pin) {
+						if (typeof pin.addMarker === 'function') {
+							pin.addMarker(pin, markers, map, showInfo);
+							return;
+						}
+						oms = oms ? oms : new OverlappingMarkerSpiderfier(map, {
+							markersWontMove: true,
+							markersWontHide: true,
+							basicFormatEvents: true
+						});
+						var html = "<a href='" + pin.link + "'><b>" + pin.name + "</b></a> <br/>" + pin.addressLine1 + "<br/>" + pin.addressLine2;
+						var _marker = new google.maps.Marker({
+							position: pin.position,
+							icon: pin.icon,
+							title: pin.name,
+							info: html
+						});
+						oms.addMarker(_marker);
+						markers.push(_marker);
 
-				if (pin.auto_open) {
-					showInfo(_marker);
-				}
+						if (pin.auto_open) {
+							showInfo(_marker);
+						}
 
-				//Add info window
-				if (pin.info != '') {
-					google.maps.event.addListener(_marker, 'click', function () {
-						showInfo(_marker);
-						$('#' + pin.id).addClass('pin-active');
+						//Add info window
+						if (pin.info != '') {
+							google.maps.event.addListener(_marker, 'spider_click', function () {
+								showInfo(_marker);
+								jQuery('#' + pin.id).addClass('pin-active');
+							});
+							jQuery('#' + pin.id).on('hover', function () {
+								showInfo(_marker);
+							});
+						}
+					};
+			} else {
+				//Add marker to specific position with specific icon
+				addMarker = function (pin) {
+					if (typeof pin.addMarker === 'function') {
+						pin.addMarker(pin, markers, map, showInfo);
+						return;
+					}
+					var html = "<a href='" + pin.link + "'><b>" + pin.name + "</b></a> <br/>" + pin.addressLine1 + "<br/>" + pin.addressLine2;
+					var _marker = new google.maps.Marker({
+						position: pin.position,
+						map: map,
+						icon: pin.icon,
+						title: pin.name,
+						info: html
 					});
-					$('#' + pin.id).on('hover', function () {
+					markers.push(_marker);
+
+					if (pin.auto_open) {
 						showInfo(_marker);
-					});
-				}
-			};
+					}
+
+					//Add info window
+					if (pin.info != '') {
+						google.maps.event.addListener(_marker, 'click', function () {
+							showInfo(_marker);
+							$('#' + pin.id).addClass('pin-active');
+						});
+						$('#' + pin.id).on('hover', function () {
+							showInfo(_marker);
+						});
+					}
+				};
+			}
 
 			//Add marker to specific position with specific icon, uses the specified animation
 			var addMarkerWithTimeout = function (pin, timeout) {

@@ -15,6 +15,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 /**
  * Class Apidae_Widget
  * @package Tofandel\Apidae\Shortcodes
+ * @see https://base.apidae-tourisme.com/diffuser/widget/
  */
 class Apidae_Widget extends \WP_Widget implements WP_Shortcode {
 	use WP_VC_Shortcode;
@@ -28,8 +29,7 @@ class Apidae_Widget extends \WP_Widget implements WP_Shortcode {
 
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
-			'description' => sprintf( esc_html__( 'Shortcode to display an %sApidae Widget%s', $WPlusPlusApidae->getTextDomain() ),
-				'<a href="https://base.apidae-tourisme.com/diffuser/widget/" target="_blank" rel="noopener">', '</a>' ),
+			'description' => __( 'Shortcode to display an Apidae Widget', $WPlusPlusApidae->getTextDomain() ),
 			'name'        => esc_html__( 'Apidae Widget', $WPlusPlusApidae->getTextDomain() ),
 			'icon'        => 'apidae dashicons dashicons-welcome-widgets-menus',
 			'params'      => array(
@@ -74,7 +74,7 @@ class Apidae_Widget extends \WP_Widget implements WP_Shortcode {
 		$width  = esc_attr( $atts['width'] );
 		$height = esc_attr( $atts['height'] );
 		$html   = <<<HTML
-<div class="sitra-widget" id="sitra-widget-{$id}" style="width: {$width}; height: {$height};"></div>
+<div class="sitra-widget" id="sitra-widget-{$id}" style="width:{$width}; height:{$height}"></div>
 HTML;
 
 		return $html;

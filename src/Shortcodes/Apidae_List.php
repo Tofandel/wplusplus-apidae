@@ -289,7 +289,11 @@ class Apidae_List implements WP_Shortcode {
 	 * @return string
 	 */
 	public static function shortcode( $atts, $content, $name ) {
-		$f = TemplateFilesHandler::LIST_DIR . basename( $atts['template'] ) . '.twig';
+		if ( empty( $atts['template'] ) ) {
+			$f = TemplateFilesHandler::TPL_DIR . 'detail-layout.twig';
+		} else {
+			$f = TemplateFilesHandler::LIST_DIR . basename( $atts['template'] ) . '.twig';
+		}
 
 		try {
 			$tpl = new Template( $f );
@@ -421,11 +425,12 @@ class Apidae_List implements WP_Shortcode {
 				'url'            => $url,
 				'useMaps'        => $tofandel_apidae['maps_enable'],
 				'detailPageSlug' => $detailSlug,
-				'detailScheme'   => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%TYPE%/%CITY%/%NAME%',
+				'detailScheme'   => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
 				'siteUrl'        => site_url(),
 				'pageQuery'      => $page_query,
 				'searchWords'    => $searchWords,
-				'categories'     => Apidae_Categories::getCategoriesCriterias()
+				'query'          => $full_query
+				//'categories'     => Apidae_Categories::getCategoriesCriterias()
 			) ) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );
