@@ -156,10 +156,21 @@ class Apidae_Detail implements WP_Shortcode {
 				$title['title'] = $post->post_title;
 
 				return $title;
-			}, 1, 1 );
-			add_filter( 'wp_title', function ( $title ) {
-				return $title;
-			}, 1, 0 );
+			}, 10, 1 );
+			add_filter( 'the_title', function () {
+				global $post;
+
+				return $post->post_title;
+			}, 10, 0 );
+			$pid = $post->ID;
+			add_filter( 'page_link', function ( $permalink, $post_id ) use ( $pid ) {
+				global $wp;
+				if ( $pid == $post_id ) {
+					return home_url( $wp->request );
+				}
+
+				return $permalink;
+			}, 10, 2 );
 
 			return "";
 		}
