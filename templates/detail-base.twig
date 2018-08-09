@@ -150,8 +150,6 @@
 	conforts: "Conforts",
 	languesparlees: "Langues Parlées"}) %}
 {% set dir_link = "https://www.google.com/maps/dir//" ~ o.localisation.adresse.adresse1 ~","~ o.localisation.adresse.codePostal ~","~ o.localisation.adresse.commune.nom ~ "/@" ~ o.localisation.geolocalisation.geoJson.coordinates[1] ~","~ o.localisation.geolocalisation.geoJson.coordinates[0] ~"z/" %}
-{% set category = getCategoryFromObject(o) %}
-
 
 <div class="apidae-detail" id="apidae-{{ o.id }}">
 	{% block marker %}
@@ -185,6 +183,7 @@
 				<h2 class="title">{{ o.nom.libelle }}</h2>
 			{% endblock title %}
 			{% block category %}
+				{% set category = getCategoryFromObject(o) %}
 				<h4 class="cat-title cat-{{ category.id }}-title">{{ category.label }}</h4>
 			{% endblock category %}
 			{% block images %}
