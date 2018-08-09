@@ -141,7 +141,8 @@
 							position: pin.position,
 							icon: pin.icon,
 							title: pin.name,
-							info: html
+							info: html,
+							pin: pin
 						});
 						oms.addMarker(_marker);
 						markers.push(_marker);
