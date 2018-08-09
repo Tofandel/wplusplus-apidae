@@ -64,11 +64,11 @@ add_action( 'tgmpa_register',
 				// The plugin name.
 				'slug'               => 'wplusplus-core',
 				// The plugin slug (typically the folder name).
-				'source'             => 'https://github.com/Tofandel/wplusplus-core/archive/v1.5.zip',
+				'source'             => 'https://tukangroup.com/latest_release.php?repo=Tofandel/wplusplus-core',
 				// The plugin source.
 				'required'           => true,
 				// If false, the plugin is only 'recommended' instead of required.
-				'version'            => '1.5',
+				'version'            => '1.5.1',
 				// E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 				'force_activation'   => false,
 				// If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
