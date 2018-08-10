@@ -345,7 +345,7 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 			}
 		}
 
-		wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( 'maps' ) );
+		wp_enqueue_script( 'apidae-google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( 'maps' ) );
 
 		$atts['draggable']           = ( $atts['draggable'] == 'true' ? 'true' : 'false' );
 		$atts['disable_ui']          = ( $atts['disable_ui'] == 'true' ? 'true' : 'false' );
