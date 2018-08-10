@@ -168,9 +168,9 @@
 						if (pin.info != '') {
 							google.maps.event.addListener(_marker, 'spider_click', function () {
 								showInfo(_marker);
-								jQuery('#' + pin.id).addClass('pin-active');
+								$('#' + pin.id).addClass('pin-active');
 							});
-							jQuery('#' + pin.id).on('hover', function () {
+							$('#' + pin.id).on('hover', function () {
 								showInfo(_marker);
 							});
 						}
