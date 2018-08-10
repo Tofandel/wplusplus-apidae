@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+/**
  * Created by PhpStorm.
  * User: Adrien
  * Date: 03/07/2018
@@ -9,7 +17,7 @@
 namespace Tofandel\Apidae\Shortcodes;
 
 
-use Tofandel\Core\Interfaces\WP_Shortcode;
+use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_I;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
@@ -30,10 +38,10 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * 'apple-maps-esque','avocado-world','becomeadinosaur','black-white','blue-essence','blue-water','cool-grey','flat-map','greyscale','light-dream','light-monochrome',
  * 'mapbox','midnight-commander','neutral-blue','pale-down','paper','retro','shades-of-grey','subtle-grayscale','ultra-light-with-labels','unsaturated-browns')
  */
-class Apidae_Map implements WP_Shortcode {
+class Apidae_Map implements WP_VC_Shortcode_I {
 	use WP_VC_Shortcode;
 
-	private $pro = [
+	protected static $pro = [
 		'use_clusters',
 		'use_spiderfier',
 		'color_scheme',
@@ -42,7 +50,25 @@ class Apidae_Map implements WP_Shortcode {
 		'json'
 	];
 
-	protected function __init() {
+	protected static $atts = [
+		'width'               => '100%',
+		'height'              => '300px',
+		'zoom'                => '',
+		'type'                => 'roadmap',
+		'marker_animation'    => 'drop',
+		'animation_duration'  => '2000',
+		'disable_ui'          => '',
+		'disable_scrollwheel' => '',
+		'draggable'           => 'true',
+		'use_clusters'        => '',
+		'use_spiderfier'      => '',
+		'color_scheme'        => '',
+		'hue'                 => '',
+		'preset'              => '',
+		'json'                => '',
+	];
+
+	public static function initVCParams() {
 		global $WPlusPlusApidae, $tofandel_apidae;
 
 		$params = empty( $tofandel_apidae['maps_api_key'] ) ? array(
@@ -70,7 +96,6 @@ class Apidae_Map implements WP_Shortcode {
 					'description'      => 'Eg: 300px or 100%',
 					'param_name'       => 'width',
 					'type'             => 'textfield',
-					'std'              => '100%',
 					'edit_field_class' => 'vc_col-xs-4 vc_column wpb_el_type_textfield vc_wrapper-param-type-textfield vc_shortcode-param vc_column-with-padding',
 					'admin_label'      => true
 				),
@@ -79,7 +104,6 @@ class Apidae_Map implements WP_Shortcode {
 					'description'      => 'Eg: 300px',
 					'param_name'       => 'height',
 					'type'             => 'textfield',
-					'std'              => '300px',
 					'edit_field_class' => 'vc_col-xs-4 vc_column wpb_el_type_textfield vc_wrapper-param-type-textfield vc_shortcode-param',
 					'admin_label'      => true
 				),
@@ -87,7 +111,6 @@ class Apidae_Map implements WP_Shortcode {
 					'heading'          => esc_html__( 'Zoom', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'       => 'zoom',
 					'type'             => 'number',
-					'std'              => '',
 					'extra'            => array(
 						'min' => 1,
 						'max' => 21
@@ -122,7 +145,6 @@ class Apidae_Map implements WP_Shortcode {
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param',
 					'admin_label'      => true,
 					'save_always'      => true,
-					'std'              => 'drop'
 				),
 				array(
 					'heading'          => esc_html__( 'Marker Animation', $WPlusPlusApidae->getTextDomain() ),
@@ -130,7 +152,6 @@ class Apidae_Map implements WP_Shortcode {
 					'type'             => 'number',
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_number vc_wrapper-param-type-number vc_shortcode-param',
 					'save_always'      => true,
-					'std'              => '2000'
 				),
 				array(
 					'heading'          => esc_html__( 'Disable UI', $WPlusPlusApidae->getTextDomain() ),
@@ -149,7 +170,6 @@ class Apidae_Map implements WP_Shortcode {
 					'param_name'       => 'draggable',
 					'type'             => 'checkbox',
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param',
-					'std'              => 'true',
 					'always_save'      => true
 				),
 				array(
@@ -240,7 +260,7 @@ class Apidae_Map implements WP_Shortcode {
 		);
 		if ( ! $WPlusPlusApidae->isLicensed() ) {
 			foreach ( self::$vc_params['params'] as $key => $param ) {
-				if ( isset( $param['param_name'] ) && in_array( $param['param_name'], $this->pro ) ) {
+				if ( isset( $param['param_name'] ) && in_array( $param['param_name'], self::$pro ) ) {
 					self::$vc_params['params'][ $key ]['type']    = 'pro';
 					self::$vc_params['params'][ $key ]['buy_url'] = $WPlusPlusApidae->getBuyUrl();
 				}
@@ -375,5 +395,8 @@ HTML;
 		}
 
 		return $return;
+	}
+
+	protected function __init() {
 	}
 }

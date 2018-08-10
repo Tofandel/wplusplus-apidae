@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+/**
  * Created by PhpStorm.
  * User: Adrien
  * Date: 09/07/2018
@@ -60,14 +68,13 @@ class ApidaeRequest {
 	public static function getSingleObject( $id, $query ) {
 		global $tofandel_apidae;
 
-		$default_fields = '@all';
-
 		$query['projetId'] = $tofandel_apidae['project_id'];
 		$query['apiKey']   = $tofandel_apidae['api_key'];
+
+		$default_fields = '@all';
 		if ( empty( $query['responseFields'] ) ) {
 			$query['responseFields'] = $default_fields;
 		}
-
 
 		$query = apply_filters( 'apidae_single_request_query', $query );
 		foreach ( $query as $key => $querum ) {
@@ -148,6 +155,7 @@ class ApidaeRequest {
 			'count'    => $count,
 			'first'    => $first
 		);
+
 		$query     = array_merge( $query, $def_query );
 
 		$query = apply_filters( 'apidae_list_request_query', $query );

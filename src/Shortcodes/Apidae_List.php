@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+/**
  * Created by PhpStorm.
  * User: Adrien
  * Date: 03/07/2018
@@ -12,7 +20,7 @@ namespace Tofandel\Apidae\Shortcodes;
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
-use Tofandel\Core\Interfaces\WP_Shortcode;
+use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
@@ -32,7 +40,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @param           string  'search_fields' Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
  * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
  */
-class Apidae_List implements WP_Shortcode {
+class Apidae_List implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
 	public static function getLangs() {
@@ -67,44 +75,54 @@ class Apidae_List implements WP_Shortcode {
 		return $vars;
 	}
 
-	protected function __init() {
-		global $WPlusPlusApidae, $pagenow;
+	protected static $atts = [
+		'detail_id'     => '',
+		'selection_ids' => '',
+		'paged'         => 'true',
+		'nb_result'     => '30',
+		'order'         => 'PERTINENCE',
+		'reverse_order' => '',
+		'search_fields' => 'NOM_DESCRIPTION_CRITERES',
+		'langs'         => 'fr',
+		'detail_scheme' => '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
+		'more_json'     => ''
+	];
 
-		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
+	public static function initVCParams() {
+		global $WPlusPlusApidae;
 
-		$file_names = $selections = $details_pages = $langs = array();
+		$selections = $details_pages = array();
 
-		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
-			$langs      = self::getLangs();
-			$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
-			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
+		$langs      = self::getLangs();
+		$templates  = glob( $WPlusPlusApidae->file( 'templates/list/*.twig' ) );
+		$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
-			foreach ( $templates as $template ) {
-				$slug                = basename( $template, '.twig' );
-				$file_names[ $slug ] = $slug;
+		foreach ( $templates as $template ) {
+			$slug                = basename( $template, '.twig' );
+			$file_names[ $slug ] = $slug;
+		}
+
+		$pages = get_pages();
+
+		foreach ( $pages as $page ) {
+			if ( empty( $page->post_content ) ) {
+				continue;
 			}
-
-			$pages = get_pages();
-
-			foreach ( $pages as $page ) {
-				if ( empty( $page->post_content ) ) {
-					continue;
-				}
-				/** @var \WP_Post $page */
-				if ( strpos( $page->post_content, '[apidae_detail' ) !== false ) {
-					$details_pages[ $page->post_title ] = $page->ID;
-				}
-			}
-
-			$tmp_selections = ApidaeRequest::getSelections();
-			if ( ! empty( $tmp_selections ) ) {
-				foreach ( $tmp_selections as $selection ) {
-					$selections[ $selection['nom'] . ' (' . $selection['id'] . ')' ] = $selection['id'];
-				}
-			} else {
-				$selections[ __( 'No selection found', $WPlusPlusApidae->getTextDomain() ) ] = 0;
+			/** @var \WP_Post $page */
+			if ( strpos( $page->post_content, '[apidae_detail' ) !== false ) {
+				$details_pages[ $page->post_title ] = $page->ID;
 			}
 		}
+
+		$tmp_selections = ApidaeRequest::getSelections();
+		if ( ! empty( $tmp_selections ) ) {
+			foreach ( $tmp_selections as $selection ) {
+				$selections[ $selection['nom'] . ' (' . $selection['id'] . ')' ] = $selection['id'];
+			}
+		} else {
+			$selections[ __( 'No selection found', $WPlusPlusApidae->getTextDomain() ) ] = 0;
+		}
+
 
 		$params = empty( $file_names ) ? array(
 			array(
@@ -169,7 +187,6 @@ class Apidae_List implements WP_Shortcode {
 					'param_name'       => 'paged',
 					'description'      => __( 'If unchecked the results will not be paginated.', $WPlusPlusApidae->getTextDomain() ),
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param vc_column-with-padding',
-					'std'              => 'true'
 				),
 				array(
 					'type'             => 'number',
@@ -193,7 +210,6 @@ class Apidae_List implements WP_Shortcode {
 						__( 'Pertinence', $WPlusPlusApidae->getTextDomain() ) => 'PERTINENCE',
 						__( 'Distance', $WPlusPlusApidae->getTextDomain() )   => 'DISTANCE',
 					),
-					"std"              => 'PERTINENCE',
 					'admin_label'      => true,
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 				),
@@ -220,7 +236,6 @@ class Apidae_List implements WP_Shortcode {
 					'heading'     => esc_html__( 'Languages', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'langs',
 					'value'       => $langs,
-					"std"         => 'fr',
 					'admin_label' => true
 				),
 				array(
@@ -240,6 +255,10 @@ class Apidae_List implements WP_Shortcode {
 				),
 			) )
 		);
+	}
+
+	protected function __init() {
+		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
 	}
 
 	public static function applyScheme( $scheme, $object ) {
@@ -290,7 +309,7 @@ class Apidae_List implements WP_Shortcode {
 	 */
 	public static function shortcode( $atts, $content, $name ) {
 		if ( empty( $atts['template'] ) ) {
-			$f = TemplateFilesHandler::TPL_DIR . 'detail-layout.twig';
+			$f = 'list-layout.twig';
 		} else {
 			$f = TemplateFilesHandler::LIST_DIR . basename( $atts['template'] ) . '.twig';
 		}

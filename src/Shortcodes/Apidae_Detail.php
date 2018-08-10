@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+/**
  * Created by PhpStorm.
  * User: Adrien
  * Date: 03/07/2018
@@ -11,7 +19,7 @@ namespace Tofandel\Apidae\Shortcodes;
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
-use Tofandel\Core\Interfaces\WP_Shortcode;
+use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
@@ -19,9 +27,10 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @package Tofandel\Apidae\Shortcodes
  *
  * @required-param  string  'template'    The slug of the detail template
+ *
  * @param           string  'langs'       Comma separated list of languages that you want to receive in the template (defaults to 'fr')
  */
-class Apidae_Detail implements WP_Shortcode {
+class Apidae_Detail implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
 	static $doing_header = false;
@@ -65,23 +74,22 @@ class Apidae_Detail implements WP_Shortcode {
 	}
 
 
-	protected function __init() {
-		global $WPlusPlusApidae, $pagenow;
+	protected static $atts = array(
+		'title_scheme' => '%nom.libelle%',
+		'template'     => '',
+		'langs'        => 'fr'
+	);
 
-		self::add_detail_rewrite();
+	public static function initVCParams() {
+		global $WPlusPlusApidae;
 
-		$file_names = array();
-		$langs      = array();
+		$langs      = Apidae_List::getLangs();
+		$templates  = glob( $WPlusPlusApidae->file( 'templates/detail/*.twig' ) );
+		$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
-		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
-			$langs      = Apidae_List::getLangs();
-			$templates  = glob( $WPlusPlusApidae->file( 'templates/detail/*.twig' ) );
-			$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
-
-			foreach ( $templates as $template ) {
-				$slug                = basename( $template, '.twig' );
-				$file_names[ $slug ] = $slug;
-			}
+		foreach ( $templates as $template ) {
+			$slug                = basename( $template, '.twig' );
+			$file_names[ $slug ] = $slug;
 		}
 
 		static::$vc_params = array(
@@ -126,6 +134,10 @@ class Apidae_Detail implements WP_Shortcode {
 		);
 	}
 
+	protected function __init() {
+		self::add_detail_rewrite();
+	}
+
 	/**
 	 * @param array $atts
 	 * @param string $content
@@ -157,12 +169,16 @@ class Apidae_Detail implements WP_Shortcode {
 
 				return $title;
 			}, 10, 1 );
-			add_filter( 'the_title', function () {
-				global $post;
-
-				return $post->post_title;
-			}, 10, 0 );
 			$pid = $post->ID;
+			add_filter( 'the_title', function ( $title, $post_id ) use ( $pid ) {
+				if ( $post_id == $pid ) {
+					global $post;
+
+					return $post->post_title;
+				}
+
+				return $title;
+			}, 9, 2 );
 			add_filter( 'page_link', function ( $permalink, $post_id ) use ( $pid ) {
 				global $wp;
 				if ( $pid == $post_id ) {
@@ -176,7 +192,7 @@ class Apidae_Detail implements WP_Shortcode {
 		}
 
 		if ( empty( $atts['template'] ) ) {
-			$f = TemplateFilesHandler::TPL_DIR . 'detail-layout.twig';
+			$f = 'detail-layout.twig';
 		} else {
 			$f = TemplateFilesHandler::DETAIL_DIR . basename( $atts['template'] ) . '.twig';
 		}
@@ -192,11 +208,11 @@ class Apidae_Detail implements WP_Shortcode {
 		try {
 			global $tofandel_apidae;
 			$content = $tpl->render( apply_filters( 'apidae_single_twig_vars', array(
-				'referer'    => wp_get_referer(),
-				'siteUrl'    => site_url(),
-				'o'          => $object,
+				'referer' => wp_get_referer(),
+				'siteUrl' => site_url(),
+				'o'       => $object,
 				//'categories' => Apidae_Categories::getCategoriesCriterias(),
-				'useMaps'    => $tofandel_apidae['maps_enable']
+				'useMaps' => $tofandel_apidae['maps_enable']
 			) ) );
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() );

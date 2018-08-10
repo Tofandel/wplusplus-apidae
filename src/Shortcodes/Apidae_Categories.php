@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+/**
  * Created by PhpStorm.
  * User: Adrien
  * Date: 03/07/2018
@@ -9,7 +17,7 @@
 namespace Tofandel\Apidae\Shortcodes;
 
 
-use Tofandel\Core\Interfaces\WP_Shortcode;
+use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
@@ -20,17 +28,21 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  *
  * @param           bool    'all_link'      Whether to display the 'All' link or not (defaults to true)
  */
-class Apidae_Categories implements WP_Shortcode {
+class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
 	protected function __init() {
-		global $WPlusPlusApidae, $pagenow;
+	}
 
-		$cats = array();
+	protected static $atts = array(
+		'categories' => '',
+		'all_link'   => 'true'
+	);
 
-		if ( $pagenow == "post-new.php" || $pagenow == "post.php" || ( wp_doing_ajax() && $_REQUEST['action'] == 'vc_edit_form' ) ) {
-			$cats = array_reverse( self::getCategories() );
-		}
+	public static function initVCParams() {
+		global $WPlusPlusApidae;
+
+		$cats = array_reverse( self::getCategories() );
 
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
@@ -289,4 +301,5 @@ class Apidae_Categories implements WP_Shortcode {
 
 		return do_shortcode( $content );
 	}
+
 }

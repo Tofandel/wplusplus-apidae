@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+/**
  * Created by PhpStorm.
  * User: Adrien
  * Date: 03/07/2018
@@ -8,18 +16,28 @@
 
 namespace Tofandel\Apidae\Shortcodes;
 
-
-use Tofandel\Core\Interfaces\WP_Shortcode;
+use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
  * Class Apidae_Search
  * @package Tofandel\Apidae\Shortcodes
  */
-class Apidae_Search implements WP_Shortcode {
+class Apidae_Search implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
-	protected function __init() {
+	protected static $atts = array(
+		'url'                => '',
+		'search_input'       => 'true',
+		'date_inputs'        => 'true',
+		'start_placeholder'  => '',
+		'end_placeholder'    => '',
+		'search_placeholder' => '',
+		'submit_title'       => '',
+		'submit_text'        => '',
+	);
+
+	public static function initVCParams() {
 		global $WPlusPlusApidae;
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
@@ -31,7 +49,6 @@ class Apidae_Search implements WP_Shortcode {
 					'type'        => 'vc_link',
 					'heading'     => esc_html__( 'Destination url', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'url',
-					'std'         => '',
 					'admin_label' => true,
 				),
 				array(
@@ -52,32 +69,27 @@ class Apidae_Search implements WP_Shortcode {
 					'type'       => 'text',
 					'heading'    => esc_html__( 'Start Date Placeholder', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'start_placeholder',
-					'std'        => __( 'Start date', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
 					'type'       => 'text',
 					'heading'    => esc_html__( 'End Date Placeholder', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'end_placeholder',
-					'std'        => __( 'End date', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
 					'type'       => 'text',
 					'heading'    => esc_html__( 'Search Placeholder', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'search_placeholder',
-					'std'        => __( 'Search...', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
 					'type'       => 'text',
 					'heading'    => esc_html__( 'Submit Title', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'submit_title',
-					'std'        => __( 'Search', $WPlusPlusApidae->getTextDomain() ),
 				),
 				array(
 					'type'        => 'textarea_raw_html',
 					'heading'     => esc_html__( 'Submit Text', $WPlusPlusApidae->getTextDomain() ),
 					'description' => esc_html__( 'Leave it empty to display a SVG search icon', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'submit_text',
-					'std'         => '',
 				)
 			)
 		);

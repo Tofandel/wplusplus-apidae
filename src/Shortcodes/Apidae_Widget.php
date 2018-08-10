@@ -1,15 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Adrien
- * Date: 03/07/2018
- * Time: 16:06
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
 namespace Tofandel\Apidae\Shortcodes;
 
-
-use Tofandel\Core\Interfaces\WP_Shortcode;
+use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
@@ -17,14 +17,20 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @package Tofandel\Apidae\Shortcodes
  * @see https://base.apidae-tourisme.com/diffuser/widget/
  */
-class Apidae_Widget extends \WP_Widget implements WP_Shortcode {
+class Apidae_Widget extends \WP_Widget implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
 	public function __construct( $id_base, $name, array $widget_options = array(), array $control_options = array() ) {
 		parent::__construct( $id_base, $name, $widget_options, $control_options );
 	}
 
-	protected function __init() {
+	protected static $atts = array(
+		'widget_id' => '',
+		'width'     => '100%',
+		'height'    => '700px',
+	);
+
+	public static function initVCParams() {
 		global $WPlusPlusApidae;
 
 		static::$vc_params = array(
@@ -37,21 +43,18 @@ class Apidae_Widget extends \WP_Widget implements WP_Shortcode {
 					'type'        => 'number',
 					'heading'     => esc_html__( 'Widget ID', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'widget_id',
-					'std'         => '',
 					'admin_label' => true,
 				),
 				array(
 					'type'        => 'text',
 					'heading'     => esc_html__( 'Width', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'width',
-					'std'         => '100%',
 					'admin_label' => true,
 				),
 				array(
 					'type'        => 'text',
 					'heading'     => esc_html__( 'Height', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'height',
-					'std'         => '700px',
 					'admin_label' => true,
 				)
 			)

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
 
 namespace Tofandel;
 
@@ -28,10 +35,10 @@ if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with wordpress simply by creating Twig templates
- * Version: 1.5.1
+ * Version: 1.6
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
- * Text Domain: wplusplus-apidae
+ * Text Domain: wppa
  * Domain Path: /languages/
  */
 class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
@@ -48,7 +55,6 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue' ] );
 		add_action( 'template_redirect', [ Apidae_Detail::class, 'setPageTitle' ] );
 	}
-
 
 
 	public function admin_enqueue() {
