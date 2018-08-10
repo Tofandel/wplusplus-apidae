@@ -1,9 +1,14 @@
 /*
- * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
+ * Copyright (c) Adrien Foulon - 2018. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 .vc_element-icon.dashicons{font-size:2.5em;background-image:none}.vc_element-icon.dashicons.apidae{color:#df7b7b}.toplevel_page_WPlusPlusApidae #redux-header{display:none}.toplevel_page_WPlusPlusApidae .form-table>tbody>tr>th{width:190px}#adminmenu .wp-menu-image img{box-sizing:border-box;max-width:100%}#adminmenu .toplevel_page_WPlusPlusApidae .wp-menu-image img{padding:2px;max-height:100%}
