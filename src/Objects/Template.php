@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Adrien
- * Date: 09/07/2018
- * Time: 17:56
+ * Copyright
  */
 
 namespace Tofandel\Apidae\Objects;
