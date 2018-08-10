@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 
 .ui-widget {
 	font-family: Verdana, Arial, sans-serif;
@@ -139,6 +147,8 @@
 	display: none;
 	padding: .2em .2em 0;
 	width: 17em;
+	position: relative;
+	z-index: 9999;
 }
 
 .ui-datepicker .ui-datepicker-header {

@@ -155,7 +155,7 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 			$html = <<<HTML
 <script>
 jQuery(document).ready(function($){
-$('.apidae-searchform input[type=date]').attr('type', 'text').datepicker({dateFormat : 'yy-mm-dd'});
+$('.apidae-searchform input[type=date]').attr('type', 'text').attr('autocomplete', 'false').datepicker({dateFormat : 'yy-mm-dd'});
 $(".apidae-searchform input[name=apisearch]").on("search", function (){ $(this).closest('form').submit();});
 });
 </script>
