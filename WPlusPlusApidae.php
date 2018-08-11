@@ -315,10 +315,20 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 					'default' => false
 				),
 				array(
+					'title'    => __( 'Enqueue google maps', $this->getTextDomain() ),
+					'id'       => 'maps_enqueue',
+					'type'     => 'switch',
+					'default'  => true,
+					'required' => array( 'maps_enable', 'equals', true )
+				),
+				array(
 					'title'    => __( 'Api Key', $this->getTextDomain() ),
 					'id'       => 'maps_api_key',
 					'type'     => 'text',
-					'required' => array( 'maps_enable', 'equals', true )
+					'required' => array(
+						array( 'maps_enable', 'equals', true ),
+						array( 'maps_enqueue', 'equals', true ),
+					)
 				)
 			)
 		) );

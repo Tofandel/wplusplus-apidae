@@ -15,14 +15,23 @@
 
 	window.apidaeMaps = [];
 	var WPlusPlusApidae = typeof window.WPlusPlusApidae !== 'undefined' ? window.WPlusPlusApidae : {maps: {}};
-
-
+	var inited = false;
 	//Callback function to init maps
 	window.initApidaeMaps = function () {
-		$(function () {
-			$('.apidae-google-maps').apidaeMap();
-		});
+		if (!inited) {
+			inited = true;
+			$(function () {
+				$('.apidae-google-maps').apidaeMap();
+			});
+		}
 	};
+
+	$(function () {
+		//Fallback if the script with the callback is not enqueued
+		if (typeof google === 'object' && typeof google.maps === 'object') {
+			initApidaeMaps();
+		}
+	});
 
 	//Pseudo jQuery plugin to prepare map elements before Google Maps API has been loaded
 	$.fn.apidaeMap = function () {

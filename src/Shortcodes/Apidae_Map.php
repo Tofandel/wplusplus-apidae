@@ -295,6 +295,12 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 	 * @return string
 	 */
 	public static function shortcode( $atts, $content, $name ) {
+		global $WPlusPlusApidae, $tofandel_apidae;
+
+		if ( empty( $tofandel_apidae['maps_enable'] ) ) {
+			return '';
+		}
+
 		$presets = array(
 			'apple-maps-esque'        => '[{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]}]',
 			'avocado-world'           => '[{"featureType":"water","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#aee2e0"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#abce83"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#769E72"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#7B8758"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"color":"#EBF4A4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"visibility":"simplified"},{"color":"#8dab68"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#5B5B3F"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ABCE83"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#A4C67D"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#9BBF72"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#EBF4A4"}]},{"featureType":"transit","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"visibility":"on"},{"color":"#87ae79"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#7f2200"},{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"},{"visibility":"on"},{"weight":4.1}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#495421"}]},{"featureType":"administrative.neighborhood","elementType":"labels","stylers":[{"visibility":"off"}]}]',
@@ -325,8 +331,7 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 
 		$map_style = '';
 		// Enqueue maps js
-		global $WPlusPlusApidae, $tofandel_apidae;
-		$WPlusPlusApidae->addScript( 'maps', array( 'jquery' ), $atts['use_clusters'] ? array( 'clusterImagePath' => $WPlusPlusApidae->fileUrl( 'images/clusters/m' ) ) : false );
+		$handle = $WPlusPlusApidae->addScript( 'maps', array( 'jquery' ), $atts['use_clusters'] ? array( 'clusterImagePath' => $WPlusPlusApidae->fileUrl( 'images/clusters/m' ) ) : false );
 
 		if ( $WPlusPlusApidae->isLicensed() ) {
 			if ( $atts['color_scheme'] == 'preset' || ! empty( $atts['preset'] ) ) {
@@ -345,7 +350,10 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 			}
 		}
 
-		wp_enqueue_script( 'apidae-google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( 'maps' ) );
+		if ( ! empty( $tofandel_apidae['maps_enqueue'] ) && ! empty( $tofandel_apidae['maps_api_key'] ) ) {
+			$WPlusPlusApidae->addAsyncDeferAttribute( 'apidae-google-maps', 'async' );
+			wp_enqueue_script( 'apidae-google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( $handle ) );
+		}
 
 		$atts['draggable']           = ( $atts['draggable'] == 'true' ? 'true' : 'false' );
 		$atts['disable_ui']          = ( $atts['disable_ui'] == 'true' ? 'true' : 'false' );
