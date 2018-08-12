@@ -31,13 +31,14 @@ if ( is_admin() && ! wp_doing_ajax() ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-if ( ! class_exists( 'Tofandel\WPlusPlusCore' ) ) {
+if ( ! class_exists( WPlusPlusCore::class ) ) {
 	return;
 }
 
 /**
  * Plugin Name: W++ Apidae
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
+ * Donate link: https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with wordpress simply by creating Twig templates
  * Version: 1.6.2
  * Author: Adrien Foulon <tofandel@tukan.hu>
