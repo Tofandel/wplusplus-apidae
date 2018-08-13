@@ -362,8 +362,8 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		if ( $atts['paged'] == 'true' ) {
 			$url = '%PAGE%/';
 		}
-		$_SESSION['wpp_apidae_url_list'] = $urlScheme = add_query_arg( $page_query, get_page_link() . $url );
-		$url                             = add_query_arg( $page_query, get_page_link() );
+		$urlScheme = add_query_arg( $page_query, trailingslashit( get_page_link() ) . $url );
+		$url       = add_query_arg( $page_query, get_page_link() );
 
 		$search_query = array();
 
