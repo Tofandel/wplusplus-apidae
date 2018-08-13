@@ -41,6 +41,25 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_List implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
+	public static function __StaticInit__() {
+		WP_VC_Shortcode::__StaticInit__();
+		add_filter( 'query_vars', array( static::class, 'add_query_vars_filter' ) );
+	}
+
+	/**
+	 * @param array $vars
+	 *
+	 * @return array
+	 */
+	public static function add_query_vars_filter( $vars ) {
+		$vars[] = "apicategories";
+		$vars[] = "apisearch";
+		$vars[] = "datedebut";
+		$vars[] = "datefin";
+
+		return $vars;
+	}
+
 	public static function getLangs() {
 		global $WPlusPlusApidae;
 
@@ -57,23 +76,8 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		);
 	}
 
-	/**
-	 * ajout de variable(s) d'url query supplementaire(s) pour les pages de liste
-	 *
-	 * @param array $vars
-	 *
-	 * @return array
-	 */
-	public static function add_query_vars_filter( $vars ) {
-		$vars[] = "apicategories";
-		$vars[] = "apisearch";
-		$vars[] = "datedebut";
-		$vars[] = "datefin";
-
-		return $vars;
-	}
-
 	protected static $atts = [
+		'template'      => '',
 		'detail_id'     => '',
 		'selection_ids' => '',
 		'paged'         => 'true',
@@ -86,6 +90,9 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		'more_json'     => ''
 	];
 
+	/**
+	 * @throws \ReflectionException
+	 */
 	public static function initVCParams() {
 		global $WPlusPlusApidae;
 
@@ -107,7 +114,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 				continue;
 			}
 			/** @var \WP_Post $page */
-			if ( strpos( $page->post_content, '[apidae_detail' ) !== false ) {
+			if ( wpp_has_shortcode( $page, Apidae_Detail::getName() ) ) {
 				$details_pages[ $page->post_title ] = $page->ID;
 			}
 		}
@@ -255,9 +262,6 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		);
 	}
 
-	protected function __init() {
-		add_filter( 'query_vars', array( $this, 'add_query_vars_filter' ) );
-	}
 
 	public static function applyScheme( $scheme, $object ) {
 		$object = (array) $object;

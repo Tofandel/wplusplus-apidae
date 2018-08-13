@@ -93,6 +93,11 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
+		$query_cat = get_query_var( 'apicategories' );
+		if ( ! empty( $query_cat ) ) {
+			return trim( explode( ',', $query_cat )[0] );
+		}
+
 		$cats = self::getCategoriesCriterias();
 
 		$found = array();
@@ -167,6 +172,11 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoriesFromObject( $o, $searchQuery = array() ) {
+		$query_cat = get_query_var( 'apicategories' );
+		if ( ! empty( $query_cat ) ) {
+			return array_map( 'trim', explode( ',', $query_cat ) );
+		}
+
 		$cats = self::getCategoriesCriterias();
 
 		$found = array();
@@ -277,9 +287,13 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	public static function shortcode( $atts, $content, $name ) {
 		global $WPlusPlusApidae;
 
-		$atts['categories'] = explode( ',', $atts['categories'] );
 
 		$cats = self::getCategories();
+		if ( empty( $atts['categories'] ) ) {
+			$atts['categories'] = $cats;
+		} else {
+			$atts['categories'] = explode( ',', $atts['categories'] );
+		}
 
 		//TODO multiple categories
 		$current = get_query_var( 'apicategories', '' );

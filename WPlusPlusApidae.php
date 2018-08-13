@@ -40,16 +40,19 @@ if ( ! class_exists( WPlusPlusCore::class ) ) {
  * Plugin URI: https://github.com/Tofandel/wplusplus-apidae/
  * Donate link: https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with wordpress simply by creating Twig templates
+ * Tags: apidae,twig,maps,plugin
  * Version: 1.6.2
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wppa
  * Domain Path: /languages/
+ * Requires PHP: 7.0
+ * Requires at least: 4.7
+ * Tested up to: 4.9.8
  */
 class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 	protected $redux_opt_name = 'tofandel_apidae';
 	protected $is_licensed = true;
-	protected $download_url = 'https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/';
 	protected $product_id = 'wplusplus-apidae';
 	protected $repo_url = 'https://github.com/Tofandel/wplusplus-apidae/';
 
@@ -98,6 +101,17 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 		//We regenerate the templates
 		TemplateFilesHandler::saveTemplate( $tofandel_apidae, 'list' );
 		TemplateFilesHandler::saveTemplate( $tofandel_apidae, 'detail' );
+		if ( version_compare( $last_version, '1.7', '<' ) ) {
+			$pages = get_posts( array(
+				'post_type'   => 'page',
+				'post_status' => array( 'publish', 'draft' )
+			) );
+			foreach ( $pages as $page ) {
+				if ( $page->post_content ) {
+
+				}
+			}
+		}
 	}
 
 	public function activated() {

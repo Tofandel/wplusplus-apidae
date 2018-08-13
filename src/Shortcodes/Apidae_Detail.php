@@ -58,10 +58,10 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 			self::$doing_header = true;
 			global $shortcode_tags;
 			$_tags = $shortcode_tags;
-			$tags  = self::getNames();
+			$s_tag = self::getName();
 			foreach ( $_tags as $tag => $callback ) {
-				if ( ! in_array( $tag, $tags ) ) // filter unwanted shortcode
-				{
+				if ( ! $tag != $s_tag ) {
+					// filter unwanted shortcode
 					unset( $shortcode_tags[ $tag ] );
 				}
 			}

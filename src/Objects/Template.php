@@ -17,21 +17,21 @@ namespace Tofandel\Apidae\Objects;
 
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\TwigExtensions\ExtensionsLoader;
-use Tofandel\Core\Traits\StaticInitializable;
+use Tofandel\Core\Traits\Initializable;
 use Twig_Environment;
 use Twig_Error_Syntax;
 use Twig_Loader_Filesystem;
 use Twig_Source;
 
 class Template {
-	use StaticInitializable;
+	use Initializable;
 
 	/**
 	 * @var Twig_Environment
 	 */
 	static $twig;
 
-	public static function __init__() {
+	public static function __StaticInit() {
 		global $WPlusPlusApidae;
 		$loader       = new Twig_Loader_Filesystem( $WPlusPlusApidae->folder( TemplateFilesHandler::TPL_DIR ) );
 		static::$twig = new Twig_Environment( $loader, array(
@@ -53,6 +53,10 @@ class Template {
 	 * Template constructor.
 	 *
 	 * @param $file
+	 *
+	 * @throws Twig_Error_Syntax
+	 * @throws \Twig_Error_Loader
+	 * @throws \Twig_Error_Runtime
 	 */
 	public function __construct( $file ) {
 		$this->template = static::$twig->load( $file );
@@ -89,4 +93,4 @@ class Template {
 	}
 }
 
-Template::__init__();
+Template::__StaticInit();
