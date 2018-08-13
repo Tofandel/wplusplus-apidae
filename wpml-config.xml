@@ -12,5 +12,12 @@
   -->
 
 <wpml-config>
-    <custom-type translate="1">wpp_media</custom-type>
+    <admin-texts>
+        <key name="tofandel_apidae">
+            <key name="categories">
+                <key name="category-name"/>
+                <key name="category-query"/>
+            </key>
+        </key>
+    </admin-texts>
 </wpml-config>
