@@ -93,7 +93,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
-		$query_cat = get_query_var( 'apicategories' );
+		$query_cat = get_query_var( 'apicategories', '' );
 		if ( ! empty( $query_cat ) ) {
 			return trim( explode( ',', $query_cat )[0] );
 		}
@@ -172,7 +172,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoriesFromObject( $o, $searchQuery = array() ) {
-		$query_cat = get_query_var( 'apicategories' );
+		$query_cat = get_query_var( 'apicategories', '' );
 		if ( ! empty( $query_cat ) ) {
 			return array_map( 'trim', explode( ',', $query_cat ) );
 		}

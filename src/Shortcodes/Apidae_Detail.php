@@ -110,7 +110,6 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 					'param_name'       => 'template',
 					'value'            => $file_names,
 					'admin_label'      => true,
-					'always_save'      => true,
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 				),
 				/*array(

@@ -27,6 +27,7 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 	protected static $atts = array(
 		'url'                => '',
 		'search_input'       => 'true',
+		'categories_input'   => 'true',
 		'date_inputs'        => 'true',
 		'start_placeholder'  => '',
 		'end_placeholder'    => '',
@@ -53,6 +54,13 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 					'type'        => 'checkbox',
 					'heading'     => esc_html__( 'Search Input', $WPlusPlusApidae->getTextDomain() ),
 					'param_name'  => 'search_input',
+					'admin_label' => true,
+					'std'         => 'true'
+				),
+				array(
+					'type'        => 'checkbox',
+					'heading'     => esc_html__( 'Search Input', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'categories_input',
 					'admin_label' => true,
 					'std'         => 'true'
 				),
@@ -108,10 +116,10 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 		$page_query = array();
 
 
-		$search           = get_query_var( 'apisearch', '' );
-		$dateDebut        = get_query_var( 'datedebut', '' );
-		$dateFin          = get_query_var( 'datefin', '' );
-		$searchCategories = get_query_var( 'apicategories', '' );
+		$search          = get_query_var( 'apisearch', '' );
+		$dateDebut       = get_query_var( 'datedebut', '' );
+		$dateFin         = get_query_var( 'datefin', '' );
+		$queryCategories = get_query_var( 'apicategories', '' );
 
 		if ( ! empty( $dateDebut ) && ! Apidae_List::checkDateFormat( $dateDebut ) ) {
 			$dateDebut = '';
@@ -163,11 +171,26 @@ HTML;
 		$search_input = $search_input ? 'search' : 'hidden';
 		$date_inputs  = $date_inputs ? 'date' : 'hidden';
 
-		$searchCategories = ! empty( $searchCategories ) ? '<input type="hidden" name="apicategories" value="' . esc_attr( $searchCategories ) . '">' : '';
+		if ( ! empty( $atts['categories_input'] ) ) {
+			$cats             = Apidae_Categories::getCategories();
+			$searchCategories = '<select class="select2 category" name="apicategories">';
+			$queryCategories  = array_map( 'trim', explode( ',', $queryCategories ) );
+			foreach ( $cats as $slug => $label ) {
+				$selected = '';
+				if ( in_array( $slug, $queryCategories ) ) {
+					$selected = 'selected="selected"';
+				}
+				$searchCategories .= "<option value='$slug' $selected>$label</option>";
+			}
+			$searchCategories .= '</select>';
+		} else {
+			$searchCategories = ! empty( $queryCategories ) ? '<input type="hidden" name="apicategories" value="' . esc_attr( $queryCategories ) . '">' : '';
+		}
 
 		$html .= <<<HTML
 <form action="{$url}" class="apidae-searchform {$hasDates} {$hasSearch}" method="get">
 	{$searchCategories}
+	
 	<input type="{$date_inputs}" name="datedebut" class="date" value="{$dateDebut}" placeholder="{$startPlaceholder}">
 	<input type="{$date_inputs}" name="datefin" class="date" value="{$dateFin}" placeholder="$endPlaceholder">
 	<input type="{$search_input}" name="apisearch" value="{$search}" placeholder="{$searchPlaceholder}" class="searchinput">

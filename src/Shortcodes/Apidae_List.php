@@ -147,7 +147,6 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 				'param_name'       => 'template',
 				'value'            => $file_names,
 				'admin_label'      => true,
-				'always_save'      => true,
 				'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 			)
 		);
@@ -168,7 +167,6 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 				'param_name'       => 'detail_id',
 				'value'            => $details_pages,
 				'admin_label'      => true,
-				'always_save'      => true,
 				'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_dropdown vc_wrapper-param-type-dropdown vc_shortcode-param vc_column-with-padding',
 			);
 
@@ -335,11 +333,14 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		$searchWords = get_query_var( 'apisearch', '' );
 		//$searchCategories = get_query_var( 'apicategories', '' ) != '' ? explode( '/', get_query_var( 'apicategories', '' ) ) : array();
 		$searchCategories = get_query_var( 'apicategories', '' );
+		if ( ! empty( $searchCategories ) ) {
+			$searchCategories = array_map( 'trim', explode( ',', $searchCategories ) );
+		}
 
 		$page_query = array();
 
 		if ( ! empty( $searchCategories ) ) {
-			$page_query['apicategories'] = $searchCategories; //implode( '/', $searchCategories );
+			$page_query['apicategories'] = implode( ',', $searchCategories ); //implode( '/', $searchCategories );
 		}
 
 		if ( ! empty( $searchWords ) ) {
@@ -390,23 +391,26 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		if ( ! empty( $prevSearchQuery ) && ! empty( $searchWords ) ) {
 			$search_query['searchQuery'] = $prevSearchQuery . ' ' . $searchWords;
 		}
+		/*
 		$prevSearchQuery = $full_query['criteresQuery'];
 
 		if ( ! empty( $prevSearchQuery ) && ! empty( $searchCategories ) ) {
 			$search_query['criteresQuery'] = $prevSearchQuery . ' ' . $searchCategories; //implode( ' ', $searchCriteres );
-		}
+		}*/
 
-		if ( $criteria = Apidae_Categories::getCriteria( $searchCategories ) ) {
-			foreach ( $criteria as $k => $val ) {
-				if ( empty( $val ) ) {
-					continue;
-				}
-				if ( ! empty( $full_query[ $k ] ) && is_string( $full_query[ $k ] ) ) {
-					$full_query[ $k ] .= ' ' . $val;
-				} elseif ( ! empty( $full_query[ $k ] ) && is_array( $full_query[ $k ] ) ) {
-					$full_query[ $k ] = array_merge( $full_query[ $k ], (array) $val );
-				} else {
-					$full_query[ $k ] = $val;
+		foreach ( $searchCategories as $category ) {
+			if ( $criteria = Apidae_Categories::getCriteria( $searchCategories ) ) {
+				foreach ( $criteria as $k => $val ) {
+					if ( empty( $val ) ) {
+						continue;
+					}
+					if ( ! empty( $full_query[ $k ] ) && is_string( $full_query[ $k ] ) ) {
+						$full_query[ $k ] .= ' ' . $val;
+					} elseif ( ! empty( $full_query[ $k ] ) && is_array( $full_query[ $k ] ) ) {
+						$full_query[ $k ] = array_merge( $full_query[ $k ], (array) $val );
+					} else {
+						$full_query[ $k ] = $val;
+					}
 				}
 			}
 		}

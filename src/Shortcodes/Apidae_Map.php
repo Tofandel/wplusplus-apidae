@@ -168,7 +168,6 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 					'param_name'       => 'draggable',
 					'type'             => 'checkbox',
 					'edit_field_class' => 'vc_col-xs-6 vc_column wpb_el_type_checkbox vc_wrapper-param-type-checkbox vc_shortcode-param',
-					'always_save'      => true
 				),
 				array(
 					'heading'          => esc_html__( 'Use Clusters', $WPlusPlusApidae->getTextDomain() ),
