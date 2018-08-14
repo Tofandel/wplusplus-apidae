@@ -1,7 +1,1 @@
-/*
- * Copyright (c) Adrien Foulon - 2018.
- * Licensed under the Apache License, Version 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-
 .apidae-list .pagination{list-style:none;text-align:center;padding:0;margin:10px auto;display:block}.apidae-list .pagination li{display:inline-block;height:32px;width:32px;font-size:11px;margin:0 2px 0 .2em}.apidae-list .pagination a,.apidae-list .pagination .a-placeholder{float:left;height:100%;width:100%;line-height:3em;text-align:center;padding:0;border-radius:50%;margin-right:3px;background:#dedede;box-shadow:0 0 1px 0 rgba(0,0,0,0.2)}.apidae-list .pagination .disabled{display:none}.apidae-list .image-container{padding:30px 0 56.25%;height:0;margin:0;overflow:hidden;position:relative}.apidae-list .image-container img{position:absolute;top:0;left:0;width:100%;height:100%}.apidae-cell{width:32%;display:inline-block;vertical-align:top;padding:10px;overflow:hidden}@media(max-width:1200px){.apidae-cell{width:49%}}@media(max-width:767px){.apidae-cell{width:100%}}.apidae-searchform{display:inline-block;width:100%}.apidae-searchform input.date{width:150px;display:inline-block}.apidae-searchform input.searchinput{width:100%;display:inline-block}.apidae-searchform.has-dates input.searchinput{width:calc(100% - 360px);min-width:150px}.apidae-searchform button{width:45px;vertical-align:middle;display:inline-block}
