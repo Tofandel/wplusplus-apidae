@@ -4,6 +4,7 @@
  * Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+
 namespace Tofandel;
 
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
@@ -34,7 +35,7 @@ if ( ! class_exists( WPlusPlusCore::class ) ) {
  * Donate link: https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with wordpress simply by creating Twig templates
  * Tags: apidae,twig,maps,plugin
- * Version: 1.6.2
+ * Version: 1.7.8
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wppa
@@ -96,14 +97,23 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 		TemplateFilesHandler::saveTemplate( $tofandel_apidae, 'detail' );
 		if ( version_compare( $last_version, '1.7', '<' ) ) {
 			$pages = get_posts( array(
-				'post_type'   => 'page',
-				'post_status' => array( 'publish', 'draft' )
+				'post_type'      => 'page',
+				'post_status'    => array( 'publish', 'draft' ),
+				'posts_per_page' => - 1
 			) );
-			foreach ( $pages as $page ) {
-				if ( $page->post_content ) {
 
+			global $shortcode_tags;
+			$old              = $shortcode_tags;
+			$shortcodes       = array_values( array_flip( $this->getShortcodes() ) );
+			$lower_shortcodes = array_map( 'strtolower', $shortcodes );
+			$shortcode_tags   = array_flip( $lower_shortcodes );
+			foreach ( $pages as $page ) {
+				if ( wpp_has_shortcode( $page, $lower_shortcodes ) ) {
+					$page->post_content = str_replace( $lower_shortcodes, $shortcodes, $page->post_content );
+					wp_update_post( $page );
 				}
 			}
+			$shortcode_tags = $old;
 		}
 	}
 

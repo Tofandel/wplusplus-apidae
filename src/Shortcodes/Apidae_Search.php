@@ -154,6 +154,7 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 			$html = <<<HTML
 <script>
 jQuery(document).ready(function($){
+$('select.select2').each(function() { $(this).select2()});
 $('.apidae-searchform input[type=date]').attr('type', 'text').attr('autocomplete', 'false').datepicker({dateFormat : 'yy-mm-dd'});
 $(".apidae-searchform input[name=apisearch]").on("search", function (){ $(this).closest('form').submit();});
 });
@@ -166,7 +167,7 @@ HTML;
 
 		if ( ! empty( $atts['categories_input'] ) ) {
 			$cats             = Apidae_Categories::getCategories();
-			$searchCategories = '<select class="select2 category" name="apicategories">';
+			$searchCategories = '<select class="select2 category" multiple="multiple" name="apicategories">';
 			$queryCategories  = array_map( 'trim', explode( ',', $queryCategories ) );
 			foreach ( $cats as $slug => $label ) {
 				$selected = '';
@@ -176,16 +177,18 @@ HTML;
 				$searchCategories .= "<option value='$slug' $selected>$label</option>";
 			}
 			$searchCategories .= '</select>';
+			global $WPlusPlusCore;
+			$WPlusPlusCore->addScript( 'select2' );
+			$WPlusPlusCore->addStyle( 'select2' );
 		} else {
 			$searchCategories = ! empty( $queryCategories ) ? '<input type="hidden" name="apicategories" value="' . esc_attr( $queryCategories ) . '">' : '';
 		}
 
 		$html .= <<<HTML
 <form action="{$url}" class="apidae-searchform {$hasDates} {$hasSearch}" method="get">
-	{$searchCategories}
-	
 	<input type="{$date_inputs}" name="datedebut" class="date" value="{$dateDebut}" placeholder="{$startPlaceholder}">
 	<input type="{$date_inputs}" name="datefin" class="date" value="{$dateFin}" placeholder="$endPlaceholder">
+	{$searchCategories}
 	<input type="{$search_input}" name="apisearch" value="{$search}" placeholder="{$searchPlaceholder}" class="searchinput">
 	<button type="submit" title="{$submitTitle}" class="search-submit button">{$submit_text}</button>
 </form>
