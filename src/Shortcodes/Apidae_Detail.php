@@ -47,7 +47,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 	 */
 	public static function setPageTitle() {
 		global $post;
-		if ( $post->post_type == 'page' && wpp_has_shortcode( $post, self::getName() ) ) {
+		if ( $post->post_type == 'page' && wpp_has_shortcode( $post->post_content, self::getName() ) ) {
 			self::$doing_header = true;
 			global $shortcode_tags;
 			$_tags = $shortcode_tags;

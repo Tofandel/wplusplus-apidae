@@ -58,6 +58,24 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 		);
 	}
 
+	/**
+	 * @return array
+	 */
+	public static function getQueryCategories() {
+		$queryCategories = get_query_var( 'apicategories', array() );
+		if ( ! empty( $queryCategories ) && ! is_array( $queryCategories ) ) {
+			$queryCategories = array_map( 'trim', explode( ',', $queryCategories ) );
+		}
+		$cats = self::getCategories();
+		foreach ( $queryCategories as $key => $query_category ) {
+			if ( ! isset( $cats[ $query_category ] ) ) {
+				unset( $queryCategories[ $key ] );
+			}
+		}
+
+		return $queryCategories;
+	}
+
 	public static function getCategories() {
 		static $cats;
 
@@ -86,11 +104,10 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
-		$query_cat = get_query_var( 'apicategories', '' );
+		$query_cat = self::getQueryCategories();
 		if ( ! empty( $query_cat ) ) {
 			$cats       = self::getCategories();
-			$query_cats = array_map( 'trim', explode( ',', $query_cat ) );
-			foreach ( $query_cats as $cat ) {
+			foreach ( $query_cat as $cat ) {
 				if ( isset( $cats[ $cat ] ) ) {
 					return array( 'id' => $cat, 'label' => $cats[ $cat ] );
 				}
@@ -173,12 +190,11 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoriesFromObject( $o, $searchQuery = array() ) {
-		$query_cat = get_query_var( 'apicategories', '' );
+		$query_cat = self::getQueryCategories();
 		if ( ! empty( $query_cat ) ) {
 			$cats       = self::getCategories();
-			$query_cats = array_map( 'trim', explode( ',', $query_cat ) );
 			$found      = array();
-			foreach ( $query_cats as $cat ) {
+			foreach ( $query_cat as $cat ) {
 				if ( isset( $cats[ $cat ] ) ) {
 					$found[ $cat ] = $cats[ $cat ];
 				}
@@ -306,17 +322,17 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 		}
 
 		//TODO multiple categories
-		$current = get_query_var( 'apicategories', '' );
-		$content = '<ul class="categories">';
+		$currents = self::getQueryCategories();
+		$content  = '<ul class="categories">';
 		if ( $atts['all_link'] == 'true' ) {
-			$content .= '<li class="cat-all' . ( empty( $current ) ? ' current' : '' ) . '"><a href="' . get_page_link() . '">' . __( 'All', $WPlusPlusApidae->getTextDomain() ) . '</a></li>';
+			$content .= '<li class="cat-all' . ( empty( $currents ) ? ' current' : '' ) . '"><a href="' . get_page_link() . '">' . __( 'All', $WPlusPlusApidae->getTextDomain() ) . '</a></li>';
 		}
 		$search = get_query_var( 'apisearch' );
 		$args   = ! empty( $search ) ? array( 'apisearch' => $search ) : array();
 		foreach ( $atts['categories'] as $cat ) {
 			if ( ! empty( $cats[ $cat ] ) ) {
 				$args['apicategories'] = $cat;
-				$content               .= '<li class="cat-' . $cat . ( $cat == $current ? ' current' : '' ) . '"><a href="' . add_query_arg( $args, get_page_link() ) . '">' . $cats[ $cat ] . '</a></li>';
+				$content               .= '<li class="cat-' . $cat . ( in_array( $cat, $currents ) ? ' current' : '' ) . '"><a href="' . add_query_arg( $args, get_page_link() ) . '">' . $cats[ $cat ] . '</a></li>';
 			}
 		}
 		$content .= "</ul>";

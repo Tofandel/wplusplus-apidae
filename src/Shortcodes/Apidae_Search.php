@@ -112,7 +112,7 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 		$search          = get_query_var( 'apisearch', '' );
 		$dateDebut       = get_query_var( 'datedebut', '' );
 		$dateFin         = get_query_var( 'datefin', '' );
-		$queryCategories = get_query_var( 'apicategories', '' );
+		$queryCategories = Apidae_Categories::getQueryCategories();
 
 		if ( ! empty( $dateDebut ) && ! Apidae_List::checkDateFormat( $dateDebut ) ) {
 			$dateDebut = '';
@@ -167,8 +167,7 @@ HTML;
 
 		if ( ! empty( $atts['categories_input'] ) ) {
 			$cats             = Apidae_Categories::getCategories();
-			$searchCategories = '<select class="select2 category" multiple="multiple" name="apicategories">';
-			$queryCategories  = array_map( 'trim', explode( ',', $queryCategories ) );
+			$searchCategories = '<select class="select2 category" multiple="multiple" name="apicategories[]">';
 			foreach ( $cats as $slug => $label ) {
 				$selected = '';
 				if ( in_array( $slug, $queryCategories ) ) {
@@ -181,7 +180,7 @@ HTML;
 			$WPlusPlusCore->addScript( 'select2' );
 			$WPlusPlusCore->addStyle( 'select2' );
 		} else {
-			$searchCategories = ! empty( $queryCategories ) ? '<input type="hidden" name="apicategories" value="' . esc_attr( $queryCategories ) . '">' : '';
+			$searchCategories = ! empty( $queryCategories ) ? '<input type="hidden" name="apicategories" value="' . esc_attr( implode( ',', $queryCategories ) ) . '">' : '';
 		}
 
 		$html .= <<<HTML

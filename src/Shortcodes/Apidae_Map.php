@@ -343,8 +343,7 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 		}
 
 		if ( ! empty( $tofandel_apidae['maps_enqueue'] ) && ! empty( $tofandel_apidae['maps_api_key'] ) ) {
-			$WPlusPlusApidae->addAsyncDeferAttribute( 'apidae-google-maps', 'async' );
-			wp_enqueue_script( 'apidae-google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( $handle ) );
+			$WPlusPlusApidae->addExternalScript( 'google-maps', 'https://maps.googleapis.com/maps/api/js?callback=window.initApidaeMaps&key=' . $tofandel_apidae['maps_api_key'], array( $handle ) );
 		}
 
 		$atts['draggable']           = ( $atts['draggable'] == 'true' ? 'true' : 'false' );

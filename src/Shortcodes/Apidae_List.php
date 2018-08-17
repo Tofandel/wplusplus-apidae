@@ -32,10 +32,12 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
  */
 class Apidae_List implements WP_VC_Shortcode_Interface {
-	use WP_VC_Shortcode;
+	use WP_VC_Shortcode {
+		__StaticInit__ as parentStaticInit;
+	}
 
 	public static function __StaticInit__() {
-		WP_VC_Shortcode::__StaticInit__();
+		self::parentStaticInit();
 		add_filter( 'query_vars', array( static::class, 'add_query_vars_filter' ) );
 	}
 
@@ -107,7 +109,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 				continue;
 			}
 			/** @var \WP_Post $page */
-			if ( wpp_has_shortcode( $page, Apidae_Detail::getName() ) ) {
+			if ( wpp_has_shortcode( $page->post_content, Apidae_Detail::getName() ) ) {
 				$details_pages[ $page->post_title ] = $page->ID;
 			}
 		}
@@ -325,10 +327,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 
 		$searchWords = get_query_var( 'apisearch', '' );
 		//$searchCategories = get_query_var( 'apicategories', '' ) != '' ? explode( '/', get_query_var( 'apicategories', '' ) ) : array();
-		$searchCategories = get_query_var( 'apicategories', '' );
-		if ( ! empty( $searchCategories ) ) {
-			$searchCategories = array_map( 'trim', explode( ',', $searchCategories ) );
-		}
+		$searchCategories = Apidae_Categories::getQueryCategories();
 
 		$page_query = array();
 
@@ -392,7 +391,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		}*/
 
 		foreach ( $searchCategories as $category ) {
-			if ( $criteria = Apidae_Categories::getCriteria( $searchCategories ) ) {
+			if ( $criteria = Apidae_Categories::getCriteria( $category ) ) {
 				foreach ( $criteria as $k => $val ) {
 					if ( empty( $val ) ) {
 						continue;
