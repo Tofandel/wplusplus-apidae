@@ -417,6 +417,10 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 
 		$numFound = 0;
 		$list     = ApidaeRequest::getList( $full_query, $numPerPage, $first );
+		if ( ! is_array( $list ) || empty( $list['objetsTouristiques'] ) ) {
+			global $wp_query;
+			$wp_query->set_404();
+		}
 		if ( is_array( $list ) ) {
 			$numFound = $list['numFound'];
 		}

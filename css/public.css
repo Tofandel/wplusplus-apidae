@@ -77,29 +77,29 @@
 	width: 100%;
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 }
 
 .apidae-searchform input.date {
 	width: 150px;
 	display: inline-block;
+	flex-grow: 1;
 }
 
 .apidae-searchform input.searchinput {
 	width: 100%;
-	display: inline-block;
-}
-
-.apidae-searchform.has-search input.date {
-	/*width: 33%;*/
-}
-
-.apidae-searchform.has-dates input.searchinput {
-	width: calc(100% - 360px);
 	min-width: 150px;
+	display: inline-block;
+	flex-grow: 3;
+}
+
+.apidae-searchform > .select2 {
+	flex-grow: 3;
+	width: 100% !important;
 }
 
 .apidae-searchform button {
-	width: 45px;
+	flex-shrink: 3;
 	vertical-align: middle;
 	display: inline-block;
 }

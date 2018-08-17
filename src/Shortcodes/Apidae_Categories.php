@@ -105,18 +105,21 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
 		$query_cat = self::getQueryCategories();
-		if ( ! empty( $query_cat ) ) {
+		if ( count( $query_cat ) == 1 ) {
 			$cats       = self::getCategories();
 			foreach ( $query_cat as $cat ) {
 				if ( isset( $cats[ $cat ] ) ) {
 					return array( 'id' => $cat, 'label' => $cats[ $cat ] );
 				}
 			}
-
 			return false;
 		}
 
 		$cats = self::getCategoriesCriterias();
+		if ( ! empty( $query_cat ) ) {
+			$categories = self::getCategories();
+			$cats       = array_intersect_key( $cats, $categories );
+		}
 
 		$found = array();
 
@@ -191,19 +194,22 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 
 	public static function getCategoriesFromObject( $o, $searchQuery = array() ) {
 		$query_cat = self::getQueryCategories();
-		if ( ! empty( $query_cat ) ) {
+		if ( count( $query_cat ) == 1 ) {
 			$cats       = self::getCategories();
-			$found      = array();
 			foreach ( $query_cat as $cat ) {
 				if ( isset( $cats[ $cat ] ) ) {
-					$found[ $cat ] = $cats[ $cat ];
+					return array( 'id' => $cat, 'label' => $cats[ $cat ] );
 				}
 			}
 
-			return $found;
+			return false;
 		}
 
 		$cats = self::getCategoriesCriterias();
+		if ( ! empty( $query_cat ) ) {
+			$categories = self::getCategories();
+			$cats       = array_intersect_key( $cats, $categories );
+		}
 
 		$found = array();
 
