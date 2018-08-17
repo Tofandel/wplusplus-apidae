@@ -61,9 +61,10 @@ Displays a google map with the markers from the Apidae_List or Apidae_Detail pre
 Displays a search form for a list
 
 **Parameters:**
- * `'url' *         -  string -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
- * `'search_input'  -  bool   -` Whether to display the keyword search input (defaults to 'true')
- * `'date_inputs'   -  bool   -` Whether to display the dates input (defaults to 'true')
+ * `'url' *             -  string -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
+ * `'date_inputs'       -  bool   -` Whether to display the dates input (defaults to 'true')
+ * `'categories_input'  -  bool   -` Whether to display the dates input (defaults to 'true')
+ * `'search_input'      -  bool   -` Whether to display the keyword search input (defaults to 'true')
  
 TODO Other parameters for text customization are not yet documented
  
