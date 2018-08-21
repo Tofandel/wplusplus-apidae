@@ -2,42 +2,42 @@
 A Wordpress Plugin allowing you to create Twig templates for [Apidae](https://www.apidae-tourisme.com/)
 
 This plugin has some pro features, you can purchase a license [here](https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/)
+
 The Pro features included in the product are :
  - Map Styling and Presets
  - Infinite Twig Templates (limited to 1 of each in the non licensed version)
  - Infinite Categories (limited to 4 in the non licensed version) 
 
 ## Shortcodes
-Required parameters are marked with a `*`
 
 ### Apidae_List :
 Displays a list of Apidae objects from a defined list template
 
 **Parameters:**
- * `'template' *        - string -`     The slug of the list template
- * `'detail_id' *       - int    -`     The ID of the detail page
- * `'selection_ids' *   - int    -`     Comma separated list of apidae selection's id
- * `'paged'             - bool   -`     Whether the list should be paginated or not (defaults to 'true')
- * `'nb_result'         - int    -`     The number of result per page (defaults to '30')
- * `'order'             - string -`     How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
- * `'reverse_order'     - bool   -`     Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
- * `'langs'             - string -`     Comma separated list of languages that you want to receive in the template (defaults to 'fr')
- * `'search_fields'     - string -`     Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
- * `'detail_scheme'     - string -`     The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
+ * `'template'        - string -`     The slug of the list template (If not set the default template will be displayed)
+ * `'detail_id'       - int    -`     The ID of the detail page
+ * `'selection_ids'   - int    -`     Comma separated list of apidae selection's id
+ * `'paged'           - bool   -`     Whether the list should be paginated or not (defaults to 'true')
+ * `'nb_result'       - int    -`     The number of result per page (defaults to '30')
+ * `'order'           - string -`     How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
+ * `'reverse_order'   - bool   -`     Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
+ * `'langs'           - string -`     Comma separated list of languages that you want to receive in the template (defaults to 'fr')
+ * `'search_fields'   - string -`     Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
+ * `'detail_scheme'   - string -`     The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
 
 ### Apidae_Detail
 Displays a single Apidae object from a defined single object template
 
 **Parameters:**
- * `'template' *     - string -`     The slug of the detail template
- * `'langs'          - string -`     Comma separated list of languages that you want to receive in the template (defaults to 'fr')
+ * `'template'     - string -`     The slug of the detail template (If not set the default template will be displayed)
+ * `'langs'        - string -`     Comma separated list of languages that you want to receive in the template (defaults to 'fr')
 
 ### Apidae_Categories
 Displays a list of categories with links for the current Apidae_List
 
 **Parameters:**
- * `'categories' *       - string -`    Comma separated list of the Apidae categories slug you want displayed (you have to create them first in the apidae options)
- * `'all_link'           - bool -`      Whether to display the 'All' link or not (defaults to true)
+ * `'categories'    - string -`    Comma separated list of the Apidae categories slug you want displayed (you have to create them first in the apidae options, if left empty displays all categories)
+ * `'all_link'      - bool -`      Whether to display the 'All' link or not (defaults to true)
 
 ### Apidae_Map :
 Displays a google map with the markers from the Apidae_List or Apidae_Detail present on the page
@@ -76,9 +76,9 @@ Displays a search form for a list
 Displays an Apidae widget
 
 **Parameters:**
- * `'widget_id' *     -  int    -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
- * `'width'           -  string -` The width of the widget (defaults to '100%')
- * `'height'          -  string -` The height of the widget (defaults to '700px')
+ * `'widget_id'     -  int    -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
+ * `'width'         -  string -` The width of the widget (defaults to '100%')
+ * `'height'        -  string -` The height of the widget (defaults to '700px')
  
 ## Twig templates
 
