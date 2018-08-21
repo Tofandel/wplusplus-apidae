@@ -1,7 +1,11 @@
 # W++ Apidae
 A Wordpress Plugin allowing you to create Twig templates for [Apidae](https://www.apidae-tourisme.com/)
 
-This plugin has some pro features, you can purchase a licence [here](https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/)
+This plugin has some pro features, you can purchase a license [here](https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/)
+The Pro features included in the product are :
+ - Map Styling and Presets
+ - Infinite Twig Templates (limited to 1 of each in the non licensed version)
+ - Infinite Categories (limited to 4 in the non licensed version) 
 
 ## Shortcodes
 Required parameters are marked with a `*`
