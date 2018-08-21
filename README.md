@@ -179,7 +179,7 @@ array (
 In this block you should enqueue your scripts with enqueue_script/enqueue_style or define them in script/style tags (First option is preferred since else you won't get browser caching)
 
 ##### layout
-This is the root block and all the content have to be displayed inside
+This is the root block and all the content will be displayed in that block (except the scripts)
 
 ##### marker
 This block contains the script tag for the map marker
