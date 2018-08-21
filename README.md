@@ -247,11 +247,12 @@ This block displays the slider of images or a single image
 ##### tabs
 This block displays jquery ui tabs (or other kind of tabs if you overwrite the block and the scripts)
 
-To add a new tab you need to define the tabs variable
+To add a new tab you need to define the tabs variable with the previous tabs and your new tab, the tab will be displayed from the block having the same name
 ```twig
 {% block my_custom_tab %}
 <h3>My custom tab</h3>
 {% endblock my_custom_tab %}
+
 {% set tabs = {
 	description: "Description",
 	localisation: "Localisation",
