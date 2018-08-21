@@ -18,15 +18,16 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
 	protected static $atts = array(
-		'url'                => '',
-		'search_input'       => 'true',
-		'categories_input'   => 'true',
-		'date_inputs'        => 'true',
-		'start_placeholder'  => '',
-		'end_placeholder'    => '',
-		'search_placeholder' => '',
-		'submit_title'       => '',
-		'submit_text'        => '',
+		'url'                    => '',
+		'search_input'           => 'true',
+		'categories_input'       => 'true',
+		'date_inputs'            => 'true',
+		'start_placeholder'      => '',
+		'end_placeholder'        => '',
+		'search_placeholder'     => '',
+		'categories_placeholder' => '',
+		'submit_title'           => '',
+		'submit_text'            => '',
 	);
 
 	public static function initVCParams() {
@@ -81,6 +82,11 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 				),
 				array(
 					'type'       => 'text',
+					'heading'    => esc_html__( 'Categories Placeholder', $WPlusPlusApidae->getTextDomain() ),
+					'param_name' => 'categories_placeholder',
+				),
+				array(
+					'type'       => 'text',
 					'heading'    => esc_html__( 'Submit Title', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'submit_title',
 				),
@@ -130,8 +136,9 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 
 		$submit_text = ! empty( $atts['submit_text'] ) ? strip_tags( $atts['submit_text'], '<span><i><p><b><strong>' ) : '<svg width="32" height="32" viewBox="0 0 32 32" class="search-svg"><style type="text/css">.se0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;}</style><circle class="se0" cx="13" cy="13" r="7"/><line class="se0" x1="18" x2="24" y1="18" y2="24"/></svg>';
 
-		$search_input = $atts['search_input'] == 'true';
-		$date_inputs  = $atts['date_inputs'] == 'true';
+		$search_input     = $atts['search_input'] == 'true';
+		$date_inputs      = $atts['date_inputs'] == 'true';
+		$categories_input = $atts['categories_input'] == 'true';
 
 		$WPlusPlusApidae->addStyle( 'public' );
 
@@ -154,7 +161,7 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 			$html = <<<HTML
 <script>
 jQuery(document).ready(function($){
-$('select.select2').each(function() { $(this).select2()});
+$('select.select2').each(function() { $(this).select2({placeholder: $(this).data('placeholder')})});
 $('.apidae-searchform input[type=date]').attr('type', 'text').attr('autocomplete', 'off').datepicker({dateFormat : 'yy-mm-dd'});
 $(".apidae-searchform input[name=apisearch]").on("search", function (){ $(this).closest('form').submit();});
 });
@@ -165,9 +172,12 @@ HTML;
 		$search_input = $search_input ? 'search' : 'hidden';
 		$date_inputs  = $date_inputs ? 'date' : 'hidden';
 
-		if ( ! empty( $atts['categories_input'] ) ) {
-			$cats             = Apidae_Categories::getCategories();
-			$searchCategories = '<select class="select2 category" multiple="multiple" name="apicategories[]">';
+		if ( $categories_input ) {
+			$cats = Apidae_Categories::getCategories();
+			if ( empty( $atts['categories_placeholder'] ) ) {
+				$atts['categories_placeholder'] = __( "Select categories", $WPlusPlusApidae->getTextDomain() );
+			}
+			$searchCategories = '<select class="select2 category" multiple="multiple" name="apicategories[]" data-placeholder="' . esc_attr( $atts['categories_placeholder'] ) . '">';
 			foreach ( $cats as $slug => $label ) {
 				$selected = '';
 				if ( in_array( $slug, $queryCategories ) ) {

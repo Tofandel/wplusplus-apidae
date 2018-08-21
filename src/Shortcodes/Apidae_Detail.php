@@ -22,9 +22,16 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @param           string  'langs'       Comma separated list of languages that you want to receive in the template (defaults to 'fr')
  */
 class Apidae_Detail implements WP_VC_Shortcode_Interface {
-	use WP_VC_Shortcode;
+	use WP_VC_Shortcode {
+		__StaticInit as ParentStaticInit;
+	}
 
 	static $doing_header = false;
+
+	public static function __StaticInit() {
+		self::ParentStaticInit();
+		self::add_detail_rewrite();
+	}
 
 	/**
 	 * Ajout des règles de rewrite avec flush_rules si les donnees ne sont pas en base, plus demarrage de session.
@@ -124,9 +131,6 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 		);
 	}
 
-	protected function __init() {
-		self::add_detail_rewrite();
-	}
 
 	/**
 	 * @param array $atts

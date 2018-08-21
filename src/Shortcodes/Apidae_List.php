@@ -33,11 +33,11 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  */
 class Apidae_List implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode {
-		__StaticInit__ as parentStaticInit;
+		__StaticInit as ParentStaticInit;
 	}
 
-	public static function __StaticInit__() {
-		self::parentStaticInit();
+	public static function __StaticInit() {
+		self::ParentStaticInit();
 		add_filter( 'query_vars', array( static::class, 'add_query_vars_filter' ) );
 	}
 

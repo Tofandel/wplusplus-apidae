@@ -22,9 +22,6 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode;
 
-	protected function __init() {
-	}
-
 	protected static $atts = array(
 		'categories' => '',
 		'all_link'   => 'true'

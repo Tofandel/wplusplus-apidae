@@ -393,7 +393,4 @@ HTML;
 
 		return $return;
 	}
-
-	protected function __init() {
-	}
 }
