@@ -4,9 +4,6 @@ A Wordpress Plugin allowing you to create Twig templates for [Apidae](https://ww
 ## Apidae doc
 Read the [apidae documentation](http://dev.apidae-tourisme.com/fr/documentation-technique)
 
-## Twig Templates
-Read the [twig documentation](https://twig.symfony.com/doc/2.x/templates.html)
-
 ## Shortcodes
 Required parameters are marked with a `*`
 
@@ -61,18 +58,116 @@ Displays a google map with the markers from the Apidae_List or Apidae_Detail pre
 Displays a search form for a list
 
 **Parameters:**
- * `'url' *             -  string -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
- * `'date_inputs'       -  bool   -` Whether to display the dates input (defaults to 'true')
- * `'categories_input'  -  bool   -` Whether to display the dates input (defaults to 'true')
- * `'search_input'      -  bool   -` Whether to display the keyword search input (defaults to 'true')
- 
-TODO Other parameters for text customization are not yet documented
+ * `'url'                    -  string -` Where to send the search to (Should be an url to a Page with an Apidae_List shortcode)
+ * `'date_inputs'            -  bool   -` Whether to display the dates input (defaults to 'true')
+ * `'categories_input'       -  bool   -` Whether to display the dates input (defaults to 'true')
+ * `'search_input'           -  bool   -` Whether to display the keyword search input (defaults to 'true')
+ * `'start_placeholder'      -  string -` The placeholder for the start date input
+ * `'end_placeholder'        -  string -` The placeholder for the end date input
+ * `'search_placeholder'     -  string -` The placeholder for the search input
+ * `'categories_placeholder' -  string -` The placeholder for the categories input
+ * `'submit_title'           -  string -` The tooltip for the submit button
+ * `'submit_text'            -  string -` The text of the submit button
  
 ### Apidae_Widget :
 Displays an Apidae widget
 
 **Parameters:**
- * `'detail_id' *     -  int    -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
+ * `'widget_id' *     -  int    -` The ID of the [widget](https://base.apidae-tourisme.com/diffuser/widget/)
  * `'width'           -  string -` The width of the widget (defaults to '100%')
  * `'height'          -  string -` The height of the widget (defaults to '700px')
  
+## Twig templates
+
+You should take a look a the [twig documentation](https://twig.symfony.com/doc/2.x/templates.html) if you are not familiar with twig
+
+You can use wordpress shortcodes in the templates.
+
+If you need to add functions or filters to the twig templates you can hook to the 'apidae_twig_functions' and the 'apidae_twig_filters' filters
+
+```php
+function my_function_callable() {
+    return "Foo";
+}
+add_filter('apidae_twig_functions', function($functions) {
+    $functions['my_function'] = new Twig_Function( 'my_function', 'my_function_callable' );
+    return $functions;
+});
+```
+
+### List Template
+
+**Available Functions:**
+- `enqueue_script`: [wp_enqueue_script](https://developer.wordpress.org/reference/functions/wp_enqueue_script/) function of wordpress
+- `enqueue_style`: [wp_enqueue_style](https://developer.wordpress.org/reference/functions/wp_enqueue_style/) function of wordpress
+- `getCategoryFromObject(o)`: Get the approximated category of an apidae object based on the Apidae Categories defined on the Backend
+
+**Available Filters:**
+- `slugify`: This filter slugify strings passed to it (ex: `"I love Tukan"` => `"i-love-tukan"`)
+- `applyScheme(o)`: This filter takes an object as a parameter and apply the scheme given in the string
+```twig
+{{ "%nom.libelle%, %id%"|applyScheme({nom:{libelle:"Tukan"},id:1950}) }}
+  |
+  V
+"Tukan, 1950"
+```
+- `orderBy(path)`: This filter takes a string as a parameter and will order an array based on the value that the given path will have for each iteration
+```twig
+{% set o = { { params: { id: 1, order: 2 } }, { params: { id: 2, order: 1 } } } %}
+{{ dump(o|orderBy("params.order")) }}
+  |
+  V
+{ { params: {id: 2, order: 1} }, { params: { id: 1, order: 2 } } }
+```
+- `groupBy(path)`: This filter takes a string as a parameter and will group an array based on the value that the given path will have for each iteration
+```twig
+{% set o = { { params: { id: 1, group: 2 } }, { params: { id: 2, group: 1 } }, { params: { id: 3, group: 1 } } } %}
+{{ dump(o|orderBy("params.order")) }}
+  |
+  V
+{ 2:{ params: {id: 1, group: 2} }, 1:{ { params: { id: 2, group: 1 } }, { params: { id: 3, group: 1 } } } }
+```
+
+**Blocks:**
+##### scripts 
+In this block you should enqueue your scripts with enqueue_script/enqueue_style or define them in script/style tags (First option is preferred since else you won't get browser caching)
+
+##### layout
+This is the root block and all the content have to be displayed inside
+
+##### search_form
+The block that displays the Apidae_Search shortcode
+```twig
+{% block search_form %}
+    [Apidae_Search]
+{% endblock search_form %}
+```
+
+##### pagination
+The block that displays the header and footer pagination
+```twig
+{% block pagination %}
+    {% if totalPages > 1 %}
+        {{ paginate(urlScheme, totalPages, currentPage, 7, '<<', '>>') }}
+    {% endif %}
+{% endblock pagination %}
+```
+##### loop
+This is where we will loop trough each apidae object to display them
+```twig
+{% block loop %}
+    {% for o in searchResult %}
+		{% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
+        {# ... do stuff here #}
+    {% endfor %}
+{% endblock loop %}
+```
+
+##### marker
+This block contains the script tag for the map marker
+
+##### single
+This block is used to display what's inside a apidae object that will be defined in the 'o' variable, the 'link' variable will contain the link to the detail page of that object
+
+##### no_result
+This is the block displayed when no result is found
