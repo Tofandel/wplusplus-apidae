@@ -106,8 +106,6 @@ add_filter('apidae_twig_functions', function($functions) {
 ```twig
 {% set test = "%nom.libelle%, %id%"|applyScheme({nom:{libelle:"Tukan"},id:1950}) %}
 {{ dump(test) }}
-  |
-  V
 "Tukan, 1950"
 ```
 - `orderBy(path)`: This filter takes a string as a parameter and will order an array based on the value that the given path will have for each iteration
