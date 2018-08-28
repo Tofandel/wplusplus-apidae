@@ -1,5 +1,7 @@
 # W++ Apidae
-A Wordpress Plugin allowing you to create Twig templates for [Apidae](https://www.apidae-tourisme.com/)
+A Wordpress Plugin allowing you to do almost anything with [Apidae](https://www.apidae-tourisme.com/) thanks to the power of Twig templates
+
+It works almost out of the box with only a simple configuration required.
 
 This plugin has some pro features, you can purchase a license [here](https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/)
 
