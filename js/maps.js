@@ -8,9 +8,7 @@
 	window.apidaeMaps = [];
 	var WPlusPlusApidae = typeof window.WPlusPlusApidae !== 'undefined' ? window.WPlusPlusApidae : {maps: {}},
 		inited = false;
-	if (typeof markerNodes === 'undefined') {
-		var markerNodes = [];
-	}
+
 	//Callback function to init maps
 
 	window.initApidaeMaps = function () {
@@ -66,17 +64,19 @@
 
 			//Plugin init
 			var init = function (container) {
-				for (var i = 0; i < markerNodes.length; i++) {
-					markerNodes[i].position = new google.maps.LatLng(parseFloat(markerNodes[i].lat), parseFloat(markerNodes[i].lng));
+				if (typeof markerNodes !== 'undefined') {
+					for (var i = 0; i < markerNodes.length; i++) {
+						markerNodes[i].position = new google.maps.LatLng(parseFloat(markerNodes[i].lat), parseFloat(markerNodes[i].lng));
+					}
 				}
 				//Calculate center
-				if (settings['center'] == null && markerNodes.length > 0) {
+				if (settings['center'] == null && typeof markerNodes !== 'undefined' && markerNodes.length > 0) {
 					bounds = new google.maps.LatLngBounds();
 					for (i = 0; i < markerNodes.length; i++) {
 						bounds.extend(markerNodes[i].position);
 					}
 					var center = bounds.getCenter();
-				} else {
+				} else if (settings['center'] == null) {
 					center = new google.maps.LatLng(48, 0);
 				}
 
