@@ -5,26 +5,33 @@
  */
 
 (function ($) {
-
 	window.apidaeMaps = [];
-	var WPlusPlusApidae = typeof window.WPlusPlusApidae !== 'undefined' ? window.WPlusPlusApidae : {maps: {}};
-	var inited = false;
+	var WPlusPlusApidae = typeof window.WPlusPlusApidae !== 'undefined' ? window.WPlusPlusApidae : {maps: {}},
+		inited = false;
+	if (typeof markerNodes === 'undefined') {
+		var markerNodes = [];
+	}
 	//Callback function to init maps
+
 	window.initApidaeMaps = function () {
 		if (!inited) {
 			inited = true;
 			$(function () {
 				$('.apidae-google-maps').apidaeMap();
 			});
+			clearInterval(try_init);
 		}
 	};
 
-	$(function () {
+	function try_init() {
 		//Fallback if the script with the callback is not enqueued
 		if (typeof google === 'object' && typeof google.maps === 'object') {
 			initApidaeMaps();
 		}
-	});
+	}
+
+	setInterval(try_init, 100);
+
 
 	//Pseudo jQuery plugin to prepare map elements before Google Maps API has been loaded
 	$.fn.apidaeMap = function () {
@@ -69,6 +76,8 @@
 						bounds.extend(markerNodes[i].position);
 					}
 					var center = bounds.getCenter();
+				} else {
+					center = new google.maps.LatLng(48, 0);
 				}
 
 				//Init the map
