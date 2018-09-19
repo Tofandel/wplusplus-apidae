@@ -24,13 +24,15 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 
 	protected static $atts = array(
 		'categories' => '',
-		'all_link'   => 'true'
+		'all_link'   => 'true',
+		'langs'      => ''
 	);
 
 	public static function initVCParams() {
 		global $WPlusPlusApidae;
 
-		$cats = array_reverse( self::getCategories() );
+		$langs = Apidae_List::getLangs();
+		$cats  = array_reverse( self::getCategories( 'all' ) );
 
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
@@ -50,20 +52,29 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 					'heading'    => esc_html__( 'Show the "All" link', $WPlusPlusApidae->getTextDomain() ),
 					'param_name' => 'all_link',
 					'std'        => 'true'
-				)
+				),
+				array(
+					'type'        => 'multidropdown',
+					'heading'     => esc_html__( 'Languages', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'langs',
+					'value'       => $langs,
+					'admin_label' => true
+				),
 			)
 		);
 	}
 
 	/**
+	 * @param string|array $langs
+	 *
 	 * @return array
 	 */
-	public static function getQueryCategories() {
+	public static function getQueryCategories( $langs = 'all' ) {
 		$queryCategories = get_query_var( 'apicategories', array() );
 		if ( ! empty( $queryCategories ) && ! is_array( $queryCategories ) ) {
 			$queryCategories = array_map( 'trim', explode( ',', $queryCategories ) );
 		}
-		$cats = self::getCategories();
+		$cats = self::getCategories( $langs );
 		foreach ( $queryCategories as $key => $query_category ) {
 			if ( ! isset( $cats[ $query_category ] ) ) {
 				unset( $queryCategories[ $key ] );
@@ -73,13 +84,20 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 		return $queryCategories;
 	}
 
-	public static function getCategories() {
+	public static function getCategories( $langs = false ) {
 		static $cats;
 
 		if ( ! isset( $cats ) ) {
 			global $tofandel_apidae;
 
 			$cats = array();
+
+			if ( empty( $langs ) ) {
+				$langs = array( explode( '_', get_locale() )[0] );
+			}
+			if ( ! is_array( $langs ) ) {
+				$langs = array( $langs );
+			}
 
 			if ( ! empty( $tofandel_apidae['categories']['category-id'] )
 			     || ! empty( $tofandel_apidae['categories']['category-name'] ) ) {
@@ -88,33 +106,37 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 					$tofandel_apidae['categories']['category-id'] = array_map( '__return_false', $tofandel_apidae['categories']['category-id'] );
 				}
 				foreach ( $tofandel_apidae['categories']['category-id'] as $i => $name ) {
+					if ( ! in_array( 'all', $langs ) && ! empty( $tofandel_apidae['categories']['lang'][ $i ] ) && ! in_array( $tofandel_apidae['categories']['lang'][ $i ], $langs ) ) {
+						continue;
+					}
 					if ( empty( $name ) ) {
 						$name = wpp_slugify( $tofandel_apidae['categories']['category-name'][ $i ] );
 					}
 					$cats[ $name ] = $tofandel_apidae['categories']['category-name'][ $i ];
 				}
 			}
-			$cats = apply_filters( 'apidae_get_categories', $cats );
+			$cats = apply_filters( 'apidae_get_categories', $cats, $langs );
 		}
 
 		return $cats;
 	}
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
-		$query_cat = self::getQueryCategories();
+		$query_cat = self::getQueryCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 		if ( count( $query_cat ) == 1 ) {
-			$cats       = self::getCategories();
+			$cats = self::getCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 			foreach ( $query_cat as $cat ) {
 				if ( isset( $cats[ $cat ] ) ) {
 					return array( 'id' => $cat, 'label' => $cats[ $cat ] );
 				}
 			}
+
 			return false;
 		}
 
 		$cats = self::getCategoriesCriterias();
 		if ( ! empty( $query_cat ) ) {
-			$categories = self::getCategories();
+			$categories = self::getCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 			$cats       = array_intersect_key( $cats, $categories );
 		}
 
@@ -190,9 +212,9 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoriesFromObject( $o, $searchQuery = array() ) {
-		$query_cat = self::getQueryCategories();
+		$query_cat = self::getQueryCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 		if ( count( $query_cat ) == 1 ) {
-			$cats       = self::getCategories();
+			$cats = self::getCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 			foreach ( $query_cat as $cat ) {
 				if ( isset( $cats[ $cat ] ) ) {
 					return array( 'id' => $cat, 'label' => $cats[ $cat ] );
@@ -204,7 +226,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 
 		$cats = self::getCategoriesCriterias();
 		if ( ! empty( $query_cat ) ) {
-			$categories = self::getCategories();
+			$categories = self::getCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 			$cats       = array_intersect_key( $cats, $categories );
 		}
 
@@ -272,7 +294,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 		static $cats;
 
 		if ( ! isset( $cats ) ) {
-			foreach ( self::getCategories() as $slug => $category ) {
+			foreach ( self::getCategories( 'all' ) as $slug => $category ) {
 				$cats[ $slug ] = self::getCriteria( $slug );
 				if ( ! empty( $cats[ $slug ]['criteresQuery'] ) ) {
 					$crit                           = explode( ' ', $cats[ $slug ]['criteresQuery'] );
@@ -291,7 +313,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 
 
 	public static function getCriteria( $categorie_slug ) {
-		$cats = self::getCategories();
+		$cats = self::getCategories( 'all' );
 
 		$i = array_search( $categorie_slug, array_keys( $cats ) );
 
@@ -316,8 +338,12 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	public static function shortcode( $atts, $content, $name ) {
 		global $WPlusPlusApidae;
 
+		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
+		if ( empty( $langs ) ) {
+			$langs = array( explode( '_', get_locale() )[0] );
+		}
 
-		$cats = self::getCategories();
+		$cats = self::getCategories( $langs );
 		if ( empty( $atts['categories'] ) ) {
 			$atts['categories'] = $cats;
 		} else {
@@ -325,7 +351,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 		}
 
 		//TODO multiple categories
-		$currents = self::getQueryCategories();
+		$currents = self::getQueryCategories( $langs );
 		$content  = '<ul class="categories">';
 		if ( $atts['all_link'] == 'true' ) {
 			$content .= '<li class="cat-all' . ( empty( $currents ) ? ' current' : '' ) . '"><a href="' . get_page_link() . '">' . __( 'All', $WPlusPlusApidae->getTextDomain() ) . '</a></li>';

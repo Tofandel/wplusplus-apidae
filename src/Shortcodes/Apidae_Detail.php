@@ -144,7 +144,11 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 
 		$json = array();
 		//$json            = json_decode( $atts['more_json'] ) ?: array();
-		$json['locales'] = $atts['langs'];
+		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
+		if ( empty( $langs ) ) {
+			$langs = array( explode( '_', get_locale() )[0] );
+		}
+		$json['locales'] = $langs;
 
 		if ( empty( $oid ) || ( $object = ApidaeRequest::getSingleObject( $oid, $json ) ) === false ) {
 			if ( static::$doing_header ) {
@@ -205,6 +209,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 				'referer' => wp_get_referer(),
 				'siteUrl' => site_url(),
 				'o'       => $object,
+				'langs'   => $langs,
 				//'categories' => Apidae_Categories::getCategoriesCriterias(),
 				'useMaps' => $tofandel_apidae['maps_enable']
 			) ) );

@@ -340,6 +340,9 @@ class Apidae_Map implements WP_VC_Shortcode_I {
 			} elseif ( $atts['use_spiderfier'] ) {
 				$WPlusPlusApidae->addScript( 'oms' );
 			}
+		} else {
+			$atts['use_clusters']   = 'false';
+			$atts['use_spiderfier'] = 'false';
 		}
 
 		if ( ! empty( $tofandel_apidae['maps_enqueue'] ) && ! empty( $tofandel_apidae['maps_api_key'] ) ) {

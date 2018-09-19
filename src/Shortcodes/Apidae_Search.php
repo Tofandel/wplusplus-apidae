@@ -28,10 +28,12 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 		'categories_placeholder' => '',
 		'submit_title'           => '',
 		'submit_text'            => '',
+		'langs'                  => ''
 	);
 
 	public static function initVCParams() {
 		global $WPlusPlusApidae;
+		$langs             = Apidae_List::getLangs();
 		static::$vc_params = array(
 			'category'    => esc_html__( 'Apidae', $WPlusPlusApidae->getTextDomain() ),
 			'description' => esc_html__( 'Shortcode to display an Apidae search form', $WPlusPlusApidae->getTextDomain() ),
@@ -91,6 +93,13 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 					'param_name' => 'submit_title',
 				),
 				array(
+					'type'        => 'multidropdown',
+					'heading'     => esc_html__( 'Languages', $WPlusPlusApidae->getTextDomain() ),
+					'param_name'  => 'langs',
+					'value'       => $langs,
+					'admin_label' => true
+				),
+				array(
 					'type'        => 'textarea_raw_html',
 					'heading'     => esc_html__( 'Submit Text', $WPlusPlusApidae->getTextDomain() ),
 					'description' => esc_html__( 'Leave it empty to display a SVG search icon', $WPlusPlusApidae->getTextDomain() ),
@@ -114,11 +123,16 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 		$url        = esc_attr( $atts['url'] );
 		$page_query = array();
 
+		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
+		if ( empty( $langs ) ) {
+			$langs = array( explode( '_', get_locale() )[0] );
+		}
+
 
 		$search          = get_query_var( 'apisearch', '' );
 		$dateDebut       = get_query_var( 'datedebut', '' );
 		$dateFin         = get_query_var( 'datefin', '' );
-		$queryCategories = Apidae_Categories::getQueryCategories();
+		$queryCategories = Apidae_Categories::getQueryCategories( $langs );
 
 		if ( ! empty( $dateDebut ) && ! Apidae_List::checkDateFormat( $dateDebut ) ) {
 			$dateDebut = '';
@@ -173,7 +187,7 @@ HTML;
 		$date_inputs  = $date_inputs ? 'date' : 'hidden';
 
 		if ( $categories_input ) {
-			$cats = Apidae_Categories::getCategories();
+			$cats = Apidae_Categories::getCategories( $langs );
 			if ( empty( $atts['categories_placeholder'] ) ) {
 				$atts['categories_placeholder'] = __( "Select categories", $WPlusPlusApidae->getTextDomain() );
 			}

@@ -27,7 +27,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @param           string  'more_json'     If you need to modify the query sent to Apidae you can do this here in json format
  * @param           string  'order'         How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
  * @param           bool    'reverse_order' Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
- * @param           string  'langs'         Comma separated list of languages that you want to receive in the template (defaults to 'fr')
+ * @param           string  'langs'         Comma separated list of languages that you want to receive in the template (defaults to wordpress language)
  * @param           string  'search_fields' Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
  * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
  */
@@ -80,7 +80,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		'order'         => 'PERTINENCE',
 		'reverse_order' => '',
 		'search_fields' => 'NOM_DESCRIPTION_CRITERES',
-		'langs'         => 'fr',
+		'langs'         => '',
 		'detail_scheme' => '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
 		'more_json'     => ''
 	];
@@ -316,6 +316,10 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 
 			return WP_DEBUG ? $e->getMessage() : "";
 		}
+		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
+		if ( empty( $langs ) ) {
+			$langs = array( explode( '_', get_locale() )[0] );
+		}
 
 		$numPerPage = max( 1, intval( $atts['nb_result'] ) );
 
@@ -327,7 +331,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 
 		$searchWords = get_query_var( 'apisearch', '' );
 		//$searchCategories = get_query_var( 'apicategories', '' ) != '' ? explode( '/', get_query_var( 'apicategories', '' ) ) : array();
-		$searchCategories = Apidae_Categories::getQueryCategories();
+		$searchCategories = Apidae_Categories::getQueryCategories( $langs );
 
 		$page_query = array();
 
@@ -373,7 +377,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 			'order'         => $atts['order'],
 			'searchFields'  => $atts['search_fields'],
 			'asc'           => (bool) $atts['reverse_order'],
-			'locales'       => explode( ',', $atts['langs'] ),
+			'locales'       => $langs,
 			'searchQuery'   => '',
 			'criteresQuery' => ''
 		), $json );

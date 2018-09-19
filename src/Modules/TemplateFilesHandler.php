@@ -26,7 +26,7 @@ class TemplateFilesHandler implements SubModule {
 	}
 
 	const TPL_DIR = 'templates/';
-	const CACHE_DIR = WP_CONTENT_DIR . '/cache/twig/';
+	const CACHE_DIR = "/cache/twig/";
 	const LIST_DIR = 'list/';
 	const DETAIL_DIR = 'detail/';
 
@@ -34,7 +34,7 @@ class TemplateFilesHandler implements SubModule {
 		global $WPlusPlusApidae;
 		$WPlusPlusApidae->delete_dir( self::TPL_DIR . self::LIST_DIR );
 		$WPlusPlusApidae->delete_dir( self::TPL_DIR . self::DETAIL_DIR );
-		$WPlusPlusApidae->delete_dir( self::CACHE_DIR );
+		$WPlusPlusApidae->delete_dir( WP_CONTENT_DIR . self::CACHE_DIR );
 		//Prevent the template from being recreated from old values
 		remove_action( 'redux/options/tofandel_apidae/settings/change', [ self::class, 'update_templates' ], 10 );
 	}
@@ -59,7 +59,7 @@ class TemplateFilesHandler implements SubModule {
 		$dir = $type == 'list' ? self::TPL_DIR . self::LIST_DIR : self::TPL_DIR . self::DETAIL_DIR;
 
 		$WPlusPlusApidae->delete_dir( $dir );
-		$WPlusPlusApidae->delete_dir( self::CACHE_DIR );
+		$WPlusPlusApidae->delete_dir( WP_CONTENT_DIR . self::CACHE_DIR );
 		if ( ! empty( $options[ $type . '-template' ]['redux_repeater_data'] ) ) {
 			foreach ( $options[ $type . '-template' ]['redux_repeater_data'] as $k => $data ) {
 				$title = wpp_slugify( $options[ $type . '-template' ][ $type . '-name' ][ $k ] );

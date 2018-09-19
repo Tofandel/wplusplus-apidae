@@ -35,7 +35,7 @@ if ( ! class_exists( WPlusPlusCore::class ) ) {
  * Donate link: https://tukangroup.com/webshop/premium-plugins/wplusplus-apidae/
  * Description: W++ apidae allows you to use apidae with wordpress simply by creating Twig templates
  * Tags: apidae,twig,maps,plugin
- * Version: 1.8
+ * Version: 1.9
  * Author: Adrien Foulon <tofandel@tukan.hu>
  * Author URI: https://tukan.fr/a-propos/#adrien-foulon
  * Text Domain: wppa
@@ -211,6 +211,16 @@ class WPlusPlusApidae extends WP_Plugin implements WP_Plugin_Interface {
 							'validate' => 'preg_replace',
 							'preg'     => array(
 								'pattern'     => '/[^a-z0-9_-]/s',
+								'replacement' => ''
+							)
+						),
+						array(
+							'title'    => __( 'Language code', $this->getTextDomain() ),
+							'type'     => 'text',
+							'id'       => 'lang',
+							'validate' => 'preg_replace',
+							'preg'     => array(
+								'pattern'     => '/[^a-z_-]/s',
 								'replacement' => ''
 							)
 						),
