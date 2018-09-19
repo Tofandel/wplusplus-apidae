@@ -42,6 +42,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 		add_rewrite_tag( '%apioid%', '([0-9]+)' );
 		$rule = '^(.+?)/for/(.+?)/id/([0-9]+)';
 		add_rewrite_rule( $rule, $redirectUrl, 'top' );
+		add_rewrite_rule( '(.+)/for/(.+)/id/([0-9]+)', '$1?apioid=$matches[3]' );
 		$rules = get_option( 'rewrite_rules' );
 		if ( ! isset( $rules[ $rule ] ) ) {
 			flush_rewrite_rules( true );
@@ -54,7 +55,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 	 */
 	public static function setPageTitle() {
 		global $post;
-		if ( $post->post_type == 'page' && wpp_has_shortcode( $post->post_content, self::getName() ) ) {
+		if ( isset( $post ) && $post->post_type == 'page' && wpp_has_shortcode( $post->post_content, self::getName() ) ) {
 			self::$doing_header = true;
 			global $shortcode_tags;
 			$_tags = $shortcode_tags;
@@ -197,13 +198,6 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 
 		try {
 			$tpl = new Template( $f );
-		} catch ( \Exception $e ) {
-			error_log( $e->getMessage() );
-
-			return WP_DEBUG ? $e->getMessage() : "";
-		}
-
-		try {
 			global $tofandel_apidae;
 			$content = $tpl->render( apply_filters( 'apidae_single_twig_vars', array(
 				'referer' => wp_get_referer(),

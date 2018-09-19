@@ -62,13 +62,13 @@
 						<div class="communication communication-mode-{{ com.type.id.0 }}">
 							<h5>{{ com.type.libelle.0 }}</h5>
 							{% for key, val in com.type.id %}
-								<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
+								<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees|first, key)) }}</span>{% if not loop.last %},{% endif %}
 							{% endfor %}
 						</div>
 					{% else %}
 						<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
 							<h5>{{ com.type.libelle }}</h5>
-							<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
+							<span>{{ apidae.com_link(com.type.id, com.coordonnees|first) }}</span>
 						</div>
 					{% endif %}
 				{% endfor %}
@@ -84,13 +84,13 @@
 				<div class="communication communication-mode-{{ com.type.id.0 }}">
 					<h5>{{ com.type.libelle.0 }}</h5>
 					{% for key, val in com.type.id %}
-						<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees.fr, key)) }}</span>{% if not loop.last %},{% endif %}
+						<span>{{ apidae.com_link(com.type.id.0, attribute(com.coordonnees|first, key)) }}</span>{% if not loop.last %},{% endif %}
 					{% endfor %}
 				</div>
 			{% else %}
 				<div class="communication communication-mode-{{ com.type.id|raw|e('html_attr') }}">
 					<h5>{{ com.type.libelle }}</h5>
-					<span>{{ apidae.com_link(com.type.id, com.coordonnees.fr) }}</span>
+					<span>{{ apidae.com_link(com.type.id, com.coordonnees|first) }}</span>
 				</div>
 			{% endif %}
 		{% endfor %}
