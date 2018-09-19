@@ -125,7 +125,7 @@ class Apidae_Search implements WP_VC_Shortcode_Interface {
 
 		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
 		if ( empty( $langs ) ) {
-			$langs = array( explode( '_', get_locale() )[0] );
+			$langs = array( strtolower( explode( '_', get_locale() )[0] ) );
 		}
 
 

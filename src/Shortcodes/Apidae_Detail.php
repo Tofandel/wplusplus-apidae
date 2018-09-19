@@ -146,7 +146,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 		//$json            = json_decode( $atts['more_json'] ) ?: array();
 		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
 		if ( empty( $langs ) ) {
-			$langs = array( explode( '_', get_locale() )[0] );
+			$langs = array( strtolower( explode( '_', get_locale() )[0] ) );
 		}
 		$json['locales'] = $langs;
 

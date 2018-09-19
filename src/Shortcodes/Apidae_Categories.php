@@ -93,7 +93,7 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 			$cats = array();
 
 			if ( empty( $langs ) ) {
-				$langs = array( explode( '_', get_locale() )[0] );
+				$langs = array( strtolower( explode( '_', get_locale() )[0] ) );
 			}
 			if ( ! is_array( $langs ) ) {
 				$langs = array( $langs );
@@ -340,12 +340,12 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 
 		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
 		if ( empty( $langs ) ) {
-			$langs = array( explode( '_', get_locale() )[0] );
+			$langs = array( strtolower( explode( '_', get_locale() )[0] ) );
 		}
 
 		$cats = self::getCategories( $langs );
 		if ( empty( $atts['categories'] ) ) {
-			$atts['categories'] = $cats;
+			$atts['categories'] = array_keys( $cats );
 		} else {
 			$atts['categories'] = explode( ',', $atts['categories'] );
 		}
