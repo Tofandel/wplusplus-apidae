@@ -16,7 +16,7 @@
 			{% endblock pagination %}
 			{% block loop %}
 				{% for o in searchResult %}
-					{% set link = siteUrl ~ '/' ~ detailPageSlug ~ '/for/' ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
+					{% set link = siteUrl ~ '/' ~ detailPageSlug ~ '/for' ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
 					{% block marker %}
 					{% autoescape 'js' %}
 					{% if useMaps %}
