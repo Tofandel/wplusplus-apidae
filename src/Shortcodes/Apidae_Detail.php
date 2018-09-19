@@ -38,7 +38,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 	 * @global $wp_rewrite
 	 */
 	public static function add_detail_rewrite() {
-		$redirectUrl = 'index.php?pagename=$matches[1]&apioid=$matches[3]';
+		$redirectUrl = '$matches[1]?apioid=$matches[3]';
 		add_rewrite_tag( '%apioid%', '([0-9]+)' );
 		$rule = '^(.+?)/for/(.+?)/id/([0-9]+)';
 		add_rewrite_rule( $rule, $redirectUrl, 'top' );

@@ -211,7 +211,7 @@ This is where we will loop trough each apidae object to display them
 ```twig
 {% block loop %}
     {% for o in searchResult %}
-        {% set link = siteUrl ~ '/' ~ detailPageSlug ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
+        {% set link = detailLink ~ 'for' ~ (detailScheme|applyScheme(o)|lower|slugify(false)) ~ '/id/' ~ o.id %}
         {# ... do stuff here #}
     {% endfor %}
 {% endblock loop %}

@@ -431,30 +431,27 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		$totalPages  = ceil( $numFound / $numPerPage );
 		$currentPage = min( $totalPages, $currentPage );
 
-		$detailSlug = '';
+		$detailLink = '';
 		if ( ! empty( $atts['detail_id'] ) ) {
-			$p = get_post( $atts['detail_id'] );
-			if ( $p ) {
-				$detailSlug = $p->post_name;
-			}
+			$detailLink = trailingslashit( get_permalink( $atts['detail_id'] ) );
 		}
 
 		try {
 			global $tofandel_apidae;
 			$content = $tpl->render( apply_filters( 'apidae_list_twig_vars', array(
-				'numResult'      => $numFound,
-				'searchResult'   => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
-				'currentPage'    => $currentPage,
-				'totalPages'     => $totalPages,
-				'urlScheme'      => $urlScheme,
-				'url'            => $url,
-				'useMaps'        => $tofandel_apidae['maps_enable'],
-				'detailPageSlug' => $detailSlug,
-				'detailScheme'   => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
-				'siteUrl'        => site_url(),
-				'pageQuery'      => $page_query,
-				'searchWords'    => $searchWords,
-				'query'          => $full_query
+				'numResult'    => $numFound,
+				'searchResult' => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
+				'currentPage'  => $currentPage,
+				'totalPages'   => $totalPages,
+				'urlScheme'    => $urlScheme,
+				'url'          => $url,
+				'useMaps'      => $tofandel_apidae['maps_enable'],
+				'detailLink'   => $detailLink,
+				'detailScheme' => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
+				'siteUrl'      => site_url(),
+				'pageQuery'    => $page_query,
+				'searchWords'  => $searchWords,
+				'query'        => $full_query
 				//'categories'     => Apidae_Categories::getCategoriesCriterias()
 			) ) );
 		} catch ( \Exception $e ) {
