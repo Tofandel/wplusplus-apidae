@@ -122,7 +122,8 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
-		$query_cat = self::getQueryCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
+		$searchQuery = (array) $searchQuery;
+		$query_cat   = self::getQueryCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 		if ( count( $query_cat ) == 1 ) {
 			$cats = self::getCategories( isset( $searchQuery['locales'] ) ? $searchQuery['locales'] : 'all' );
 			foreach ( $query_cat as $cat ) {
