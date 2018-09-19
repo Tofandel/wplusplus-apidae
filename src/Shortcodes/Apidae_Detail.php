@@ -82,7 +82,7 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 		global $WPlusPlusApidae;
 
 		$langs      = Apidae_List::getLangs();
-		$templates  = glob( $WPlusPlusApidae->file( 'templates/detail/*.twig' ) );
+		$templates  = glob( $WPlusPlusApidae->file( TemplateFilesHandler::TPL_DIR . TemplateFilesHandler::DETAIL_DIR . '*.twig' ) );
 		$file_names = array( esc_html__( 'Please select a template', $WPlusPlusApidae->getTextDomain() ) => '' );
 
 		foreach ( $templates as $template ) {
