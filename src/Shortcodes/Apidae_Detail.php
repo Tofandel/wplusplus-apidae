@@ -38,13 +38,16 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 	 * @global $wp_rewrite
 	 */
 	public static function add_detail_rewrite() {
-		$redirectUrl = 'index.php?pagename=$matches[1]&apioid=$matches[2]';
+		$redirectUrl = array( 'pagename' => '$matches[1]', 'apioid' => '$matches[2]' );
 		add_rewrite_tag( '%apioid%', '([0-9]+)' );
-		$rule = '^(.+?)/for/.+?/id/([0-9]+)';
+		$rule  = '^(.+?)/for/.+?/id/([0-9]+)';
+		$rule2 = '^[^/]+?/(.+?)/for/.+?/id/([0-9]+)';
 		add_rewrite_rule( $rule, $redirectUrl, 'top' );
-		add_rewrite_rule( '(.+)/for/.+/id/([0-9]+)', '$1?apioid=$2' );
+		//For the language part of the url that will interfere with get_page_by_path
+		add_rewrite_rule( $rule2, $redirectUrl, 'top' );
+		//add_rewrite_rule( '(.+)/for/.+/id/([0-9]+)', '$1?apioid=$2' );
 		$rules = get_option( 'rewrite_rules' );
-		if ( ! isset( $rules[ $rule ] ) ) {
+		if ( ! isset( $rules[ $rule ] ) || ! isset( $rules[ $rule2 ] ) ) {
 			flush_rewrite_rules( true );
 		}
 	}
