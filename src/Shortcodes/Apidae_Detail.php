@@ -181,14 +181,20 @@ class Apidae_Detail implements WP_VC_Shortcode_Interface {
 
 				return $title;
 			}, 9, 2 );
-			add_filter( 'page_link', function ( $permalink, $post_id ) use ( $pid ) {
+			add_filter( 'page_link', function ( $permalink, $post_id ) use ( $pid, $oid ) {
 				global $wp;
 				if ( $pid == $post_id ) {
 					return home_url( $wp->request );
+				} elseif ( preg_match( '#^(.+?)/(for/.+?/id/[0-9]+)#', $wp->request, $matches ) ) {
+					$post = get_post( $post_id );
+					if ( wpp_has_shortcode( $post->post_content, self::getName() ) ) {
+						return trailingslashit( $permalink ) . $matches[2];
+						//We add the rest of the url to the link (for a language switcher for instance)
+					}
 				}
 
 				return $permalink;
-			}, 10, 2 );
+			}, 40, 2 );
 
 			return "";
 		}
