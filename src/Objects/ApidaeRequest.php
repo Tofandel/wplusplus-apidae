@@ -122,8 +122,11 @@ class ApidaeRequest {
 		foreach ( $array as $key => $val ) {
 			if ( is_array( $val ) ) {
 				self::setLibelle( $array[ $key ], $lang );
-			} elseif ( $key == 'libelle' . $lang ) {
+			} elseif ( strpos( $key, 'libelle' ) ) {
 				$array['libelle'] = $val;
+				if ( $key == 'libelle' . $lang ) {
+					break;
+				}
 			}
 		}
 	}
@@ -147,7 +150,7 @@ class ApidaeRequest {
 			'first'    => $first
 		);
 
-		$query     = array_merge( $query, $def_query );
+		$query = array_merge( $query, $def_query );
 
 		$query = apply_filters( 'apidae_list_request_query', $query );
 
