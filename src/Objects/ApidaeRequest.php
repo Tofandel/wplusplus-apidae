@@ -122,7 +122,7 @@ class ApidaeRequest {
 		foreach ( $array as $key => $val ) {
 			if ( is_array( $val ) ) {
 				self::setLibelle( $array[ $key ], $lang );
-			} elseif ( strpos( $key, 'libelle' ) ) {
+			} elseif ( strpos( $key, 'libelle' ) === 0 ) {
 				$array['libelle'] = $val;
 				if ( $key == 'libelle' . $lang ) {
 					break;
