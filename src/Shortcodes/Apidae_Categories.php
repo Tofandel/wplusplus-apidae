@@ -85,12 +85,17 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 	}
 
 	public static function getCategories( $langs = false ) {
-		static $cats;
+		static $cats = array();
 
-		if ( ! isset( $cats ) ) {
+		if ( is_array( $langs ) ) {
+			$l = implode( ',', $langs );
+		} else {
+			$l = (string) $langs;
+		}
+		if ( ! isset( $cats[ $l ] ) ) {
 			global $tofandel_apidae;
 
-			$cats = array();
+			$cats[ $l ] = array();
 
 			if ( empty( $langs ) ) {
 				$langs = array( strtolower( explode( '_', get_locale() )[0] ) );
@@ -112,13 +117,13 @@ class Apidae_Categories implements WP_VC_Shortcode_Interface {
 					if ( empty( $name ) ) {
 						$name = wpp_slugify( $tofandel_apidae['categories']['category-name'][ $i ] );
 					}
-					$cats[ $name ] = $tofandel_apidae['categories']['category-name'][ $i ];
+					$cats[ $l ][ $name ] = $tofandel_apidae['categories']['category-name'][ $i ];
 				}
 			}
-			$cats = apply_filters( 'apidae_get_categories', $cats, $langs );
+			$cats[ $l ] = apply_filters( 'apidae_get_categories', $cats, $langs );
 		}
 
-		return $cats;
+		return $cats[ $l ];
 	}
 
 	public static function getCategoryFromObject( $o, $searchQuery = array() ) {
