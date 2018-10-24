@@ -16,7 +16,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
 
 /**
  * Shortcode Apidae_List
- * @package Tofandel\Apidae\Shortcodes
+ * @package         Tofandel\Apidae\Shortcodes
  *
  * @required-param  string  'template'      The slug of the list template
  * @required-param  int     'detail_id'     The ID of the detail page
@@ -24,12 +24,21 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  *
  * @param           bool    'paged'         Whether the list should be paginated or not (defaults to 'true')
  * @param           int     'nb_result'     The number of result per page (defaults to '30')
- * @param           string  'more_json'     If you need to modify the query sent to Apidae you can do this here in json format
- * @param           string  'order'         How do you want the result to be ordered (available: 'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE') (defaults to 'PERTINENCE')
- * @param           bool    'reverse_order' Whether you want the order to be ascendant or descendant (defaults to 'false' => ascendant)
- * @param           string  'langs'         Comma separated list of languages that you want to receive in the template (defaults to wordpress language)
- * @param           string  'search_fields' Where do you want the search query to look in (available: 'NOM', 'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to 'NOM_DESCRIPTION_CRITERES')
- * @param           string  'detail_scheme' The link scheme to the detail template (defaults to '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any path from the apidae object
+ * @param           string  'more_json'     If you need to modify the query sent to Apidae you can do this here in json
+ *                                          format
+ * @param           string  'order'         How do you want the result to be ordered (available:
+ *                                          'NOM','IDENTIFIANT','RANDOM','DATE_OUVERTURE','PERTINENCE','DISTANCE')
+ *                                          (defaults to 'PERTINENCE')
+ * @param           bool    'reverse_order' Whether you want the order to be ascendant or descendant (defaults to
+ *                                          'false' => ascendant)
+ * @param           string  'langs'         Comma separated list of languages that you want to receive in the template
+ *                                          (defaults to wordpress language)
+ * @param           string  'search_fields' Where do you want the search query to look in (available: 'NOM',
+ *                                          'NOM_DESCRIPTION', 'NOM_DESCRIPTION_CRITERES') (defaults to
+ *                                          'NOM_DESCRIPTION_CRITERES')
+ * @param           string  'detail_scheme' The link scheme to the detail template (defaults to
+ *                                          '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any
+ *                                          path from the apidae object
  */
 class Apidae_List implements WP_VC_Shortcode_Interface {
 	use WP_VC_Shortcode {
@@ -117,9 +126,12 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		$tmp_selections = ApidaeRequest::getSelections();
 		if ( ! empty( $tmp_selections ) ) {
 			foreach ( $tmp_selections as $selection ) {
-				$selections[ $selection['nom'] . ' (' . $selection['id'] . ')' ] = $selection['id'];
+				if ( isset( $selection[ 'id' ] ) ) {
+					$selections[ $selection[ 'nom' ] . ' (' . $selection[ 'id' ] . ')' ] = $selection[ 'id' ];
+				}
 			}
-		} else {
+		}
+		else {
 			$selections[ __( 'No selection found', $WPlusPlusApidae->getTextDomain() ) ] = 0;
 		}
 
@@ -146,7 +158,7 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 			)
 		);
 
-		$params[1] = empty( $details_pages ) ?
+		$params[ 1 ] = empty( $details_pages ) ?
 			array(
 				'heading'    => esc_html__( 'No detail page found', $WPlusPlusApidae->getTextDomain() ),
 				'message'    => sprintf( esc_html__( 'Click %shere%s to create one', $WPlusPlusApidae->getTextDomain() ),
@@ -260,12 +272,13 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		$object = (array) $object;
 
 		return preg_replace_callback( '#%([^%]*)%#', function ( $var ) use ( $object ) {
-			$path = array_reverse( explode( '.', $var[1] ) );
+			$path = array_reverse( explode( '.', $var[ 1 ] ) );
 			$v    = $object;
 			while ( $k = array_pop( $path ) ) {
 				if ( isset( $v[ $k ] ) ) {
 					$v = $v[ $k ];
-				} else {
+				}
+				else {
 					return "";
 				}
 			}
@@ -285,28 +298,31 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		// match the format of the date
 		if ( preg_match( "/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/", $date, $parts ) ) {
 			// check whether the date is valid or not
-			if ( checkdate( $parts[2], $parts[3], $parts[1] ) ) {
+			if ( checkdate( $parts[ 2 ], $parts[ 3 ], $parts[ 1 ] ) ) {
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
 
 	/**
-	 * @param array $atts
+	 * @param array  $atts
 	 * @param string $content
 	 * @param string $name of the shortcode
 	 *
 	 * @return string
 	 */
 	public static function shortcode( $atts, $content, $name ) {
-		if ( empty( $atts['template'] ) ) {
+		if ( empty( $atts[ 'template' ] ) ) {
 			$f = 'list-layout.twig';
-		} else {
-			$f = TemplateFilesHandler::LIST_DIR . basename( $atts['template'] ) . '.twig';
+		}
+		else {
+			$f = TemplateFilesHandler::LIST_DIR . basename( $atts[ 'template' ] ) . '.twig';
 		}
 
 		try {
@@ -316,12 +332,12 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 
 			return WP_DEBUG ? $e->getMessage() : "";
 		}
-		$langs = array_map( 'trim', explode( ',', $atts['langs'] ) );
+		$langs = array_map( 'trim', explode( ',', $atts[ 'langs' ] ) );
 		if ( empty( $langs ) ) {
-			$langs = array( strtolower( explode( '_', get_locale() )[0] ) );
+			$langs = array( strtolower( explode( '_', get_locale() )[ 0 ] ) );
 		}
 
-		$numPerPage = max( 1, intval( $atts['nb_result'] ) );
+		$numPerPage = max( 1, intval( $atts[ 'nb_result' ] ) );
 
 		$inter = array(
 			'apisearch' => 'searchQuery',
@@ -336,27 +352,27 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 		$page_query = array();
 
 		if ( ! empty( $searchCategories ) ) {
-			$page_query['apicategories'] = implode( ',', $searchCategories ); //implode( '/', $searchCategories );
+			$page_query[ 'apicategories' ] = implode( ',', $searchCategories ); //implode( '/', $searchCategories );
 		}
 
 		if ( ! empty( $searchWords ) ) {
-			$page_query['apisearch'] = $searchWords;
+			$page_query[ 'apisearch' ] = $searchWords;
 		}
 
 		$dateDebut = get_query_var( 'datedebut', '' );
 		$dateFin   = get_query_var( 'datefin', '' );
 
 		if ( ! empty( $dateDebut ) && self::checkDateFormat( $dateDebut ) ) {
-			$page_query['datedebut'] = $dateDebut;
+			$page_query[ 'datedebut' ] = $dateDebut;
 		}
 		if ( ! empty( $dateFin ) && self::checkDateFormat( $dateFin ) ) {
-			$page_query['datefin'] = $dateFin;
+			$page_query[ 'datefin' ] = $dateFin;
 		}
 
 		$currentPage = max( 1, intval( get_query_var( 'page', 1 ) ) );
 
 		$url = '';
-		if ( $atts['paged'] == 'true' ) {
+		if ( $atts[ 'paged' ] == 'true' ) {
 			$url = '%PAGE%/';
 		}
 		$urlScheme = add_query_arg( $page_query, trailingslashit( get_page_link() ) . $url );
@@ -370,22 +386,22 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 			}
 		}
 
-		$json = json_decode( $atts['more_json'] ) ?: array();
+		$json = json_decode( $atts[ 'more_json' ] ) ?: array();
 
 		$full_query      = array_merge( array(
-			'selectionIds'  => ! empty( $atts['selection_ids'] ) ? array_map( 'trim', explode( ',', $atts['selection_ids'] ) ) : array(),
-			'order'         => $atts['order'],
-			'searchFields'  => $atts['search_fields'],
-			'asc'           => (bool) $atts['reverse_order'],
+			'selectionIds'  => ! empty( $atts[ 'selection_ids' ] ) ? array_map( 'trim', explode( ',', $atts[ 'selection_ids' ] ) ) : array(),
+			'order'         => $atts[ 'order' ],
+			'searchFields'  => $atts[ 'search_fields' ],
+			'asc'           => (bool) $atts[ 'reverse_order' ],
 			'locales'       => $langs,
 			'searchQuery'   => '',
 			'criteresQuery' => ''
 		), $json );
-		$prevSearchQuery = $full_query['searchQuery'];
+		$prevSearchQuery = $full_query[ 'searchQuery' ];
 
 		//If some searchQuery or critereQuery where defined in json we append them to what the user defined
 		if ( ! empty( $prevSearchQuery ) && ! empty( $searchWords ) ) {
-			$search_query['searchQuery'] = $prevSearchQuery . ' ' . $searchWords;
+			$search_query[ 'searchQuery' ] = $prevSearchQuery . ' ' . $searchWords;
 		}
 		/*
 		$prevSearchQuery = $full_query['criteresQuery'];
@@ -402,9 +418,11 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 					}
 					if ( ! empty( $full_query[ $k ] ) && is_string( $full_query[ $k ] ) ) {
 						$full_query[ $k ] .= ' ' . $val;
-					} elseif ( ! empty( $full_query[ $k ] ) && is_array( $full_query[ $k ] ) ) {
+					}
+					elseif ( ! empty( $full_query[ $k ] ) && is_array( $full_query[ $k ] ) ) {
 						$full_query[ $k ] = array_merge( $full_query[ $k ], (array) $val );
-					} else {
+					}
+					else {
 						$full_query[ $k ] = $val;
 					}
 				}
@@ -413,41 +431,42 @@ class Apidae_List implements WP_VC_Shortcode_Interface {
 
 		$full_query = array_merge( $full_query, $search_query );
 
-		if ( $currentPage > 1 && $atts['paged'] ) {
+		if ( $currentPage > 1 && $atts[ 'paged' ] ) {
 			$first = intval( $currentPage - 1 ) * $numPerPage;
-		} else {
+		}
+		else {
 			$first = 0;
 		}
 
 		$numFound = 0;
 		$list     = ApidaeRequest::getList( $full_query, $numPerPage, $first );
-		if ( ! is_array( $list ) || empty( $list['objetsTouristiques'] ) ) {
+		if ( ! is_array( $list ) || empty( $list[ 'objetsTouristiques' ] ) ) {
 			global $wp_query;
 			$wp_query->set_404();
 		}
 		if ( is_array( $list ) ) {
-			$numFound = $list['numFound'];
+			$numFound = $list[ 'numFound' ];
 		}
 		$totalPages  = ceil( $numFound / $numPerPage );
 		$currentPage = min( $totalPages, $currentPage );
 
 		$detailLink = '';
-		if ( ! empty( $atts['detail_id'] ) ) {
-			$detailLink = trailingslashit( get_permalink( $atts['detail_id'] ) );
+		if ( ! empty( $atts[ 'detail_id' ] ) ) {
+			$detailLink = trailingslashit( get_permalink( $atts[ 'detail_id' ] ) );
 		}
 
 		try {
 			global $tofandel_apidae;
 			$content = $tpl->render( apply_filters( 'apidae_list_twig_vars', array(
 				'numResult'    => $numFound,
-				'searchResult' => isset( $list['objetsTouristiques'] ) ? $list['objetsTouristiques'] : false,
+				'searchResult' => isset( $list[ 'objetsTouristiques' ] ) ? $list[ 'objetsTouristiques' ] : false,
 				'currentPage'  => $currentPage,
 				'totalPages'   => $totalPages,
 				'urlScheme'    => $urlScheme,
 				'url'          => $url,
-				'useMaps'      => $tofandel_apidae['maps_enable'],
+				'useMaps'      => $tofandel_apidae[ 'maps_enable' ],
 				'detailLink'   => $detailLink,
-				'detailScheme' => ! empty( $atts['detail_scheme'] ) ? $atts['detail_scheme'] : '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
+				'detailScheme' => ! empty( $atts[ 'detail_scheme' ] ) ? $atts[ 'detail_scheme' ] : '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%',
 				'siteUrl'      => site_url(),
 				'pageQuery'    => $page_query,
 				'searchWords'  => $searchWords,
