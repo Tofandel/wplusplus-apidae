@@ -8,6 +8,7 @@
 namespace Tofandel\Apidae\Shortcodes;
 
 
+use Tofandel\Core\Interfaces\StaticSubModule;
 use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_I;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -29,7 +30,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * 'apple-maps-esque','avocado-world','becomeadinosaur','black-white','blue-essence','blue-water','cool-grey','flat-map','greyscale','light-dream','light-monochrome',
  * 'mapbox','midnight-commander','neutral-blue','pale-down','paper','retro','shades-of-grey','subtle-grayscale','ultra-light-with-labels','unsaturated-browns')
  */
-class Apidae_Map implements WP_VC_Shortcode_I {
+class Apidae_Map implements WP_VC_Shortcode_I, StaticSubModule {
 	use WP_VC_Shortcode;
 
 	protected static $pro = [

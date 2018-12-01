@@ -11,6 +11,7 @@ namespace Tofandel\Apidae\Shortcodes;
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
+use Tofandel\Core\Interfaces\StaticSubModule;
 use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -40,7 +41,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  *                                          '/%type%/%nom.libelle%/%localisation.adresse.commune.nom%') you can use any
  *                                          path from the apidae object
  */
-class Apidae_List implements WP_VC_Shortcode_Interface {
+class Apidae_List implements WP_VC_Shortcode_Interface, StaticSubModule {
 	use WP_VC_Shortcode {
 		__StaticInit as ParentStaticInit;
 	}

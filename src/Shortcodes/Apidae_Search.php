@@ -7,6 +7,7 @@
 
 namespace Tofandel\Apidae\Shortcodes;
 
+use Tofandel\Core\Interfaces\StaticSubModule;
 use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -14,7 +15,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * Class Apidae_Search
  * @package Tofandel\Apidae\Shortcodes
  */
-class Apidae_Search implements WP_VC_Shortcode_Interface {
+class Apidae_Search implements WP_VC_Shortcode_Interface, StaticSubModule {
 	use WP_VC_Shortcode;
 
 	protected static $atts = array(

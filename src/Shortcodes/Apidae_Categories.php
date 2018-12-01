@@ -8,6 +8,7 @@
 namespace Tofandel\Apidae\Shortcodes;
 
 
+use Tofandel\Core\Interfaces\StaticSubModule;
 use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -19,7 +20,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  *
  * @param           bool    'all_link'      Whether to display the 'All' link or not (defaults to true)
  */
-class Apidae_Categories implements WP_VC_Shortcode_Interface {
+class Apidae_Categories implements WP_VC_Shortcode_Interface, StaticSubModule {
 	use WP_VC_Shortcode;
 
 	protected static $atts = array(

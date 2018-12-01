@@ -7,6 +7,7 @@
 
 namespace Tofandel\Apidae\Shortcodes;
 
+use Tofandel\Core\Interfaces\StaticSubModule;
 use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -15,7 +16,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  * @package Tofandel\Apidae\Shortcodes
  * @see https://base.apidae-tourisme.com/diffuser/widget/
  */
-class Apidae_Widget extends \WP_Widget implements WP_VC_Shortcode_Interface {
+class Apidae_Widget extends \WP_Widget implements WP_VC_Shortcode_Interface, StaticSubModule {
 	use WP_VC_Shortcode;
 
 	public function __construct( $id_base, $name, array $widget_options = array(), array $control_options = array() ) {

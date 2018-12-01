@@ -10,6 +10,7 @@ namespace Tofandel\Apidae\Shortcodes;
 use Tofandel\Apidae\Modules\TemplateFilesHandler;
 use Tofandel\Apidae\Objects\ApidaeRequest;
 use Tofandel\Apidae\Objects\Template;
+use Tofandel\Core\Interfaces\StaticSubModule;
 use Tofandel\Core\Interfaces\WP_VC_Shortcode as WP_VC_Shortcode_Interface;
 use Tofandel\Core\Traits\WP_VC_Shortcode;
 
@@ -21,7 +22,7 @@ use Tofandel\Core\Traits\WP_VC_Shortcode;
  *
  * @param           string  'langs'       Comma separated list of languages that you want to receive in the template (defaults to 'fr')
  */
-class Apidae_Detail implements WP_VC_Shortcode_Interface {
+class Apidae_Detail implements WP_VC_Shortcode_Interface, StaticSubModule {
 	use WP_VC_Shortcode {
 		__StaticInit as ParentStaticInit;
 	}
