@@ -1,3 +1,6 @@
+# Warning
+This repository has been moved to https://gitlab.tukan.hu/Tofandel/wplusplus-apidae
+
 # W++ Apidae
 A Wordpress Plugin allowing you to do almost anything with [Apidae](https://www.apidae-tourisme.com/) thanks to the power of Twig templates
 
